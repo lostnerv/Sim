@@ -1,0 +1,15 @@
+﻿<Window x:Class="数模建模.AllChResContainer"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="储量" Height="590" Width="450">
+    <Grid Background="AliceBlue">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <DataGrid AutoGenerateColumns="True" Height="550" Width="440" HorizontalAlignment="Left" Margin="0,0,0,0" Name="dataGrid" VerticalAlignment="Top"  />
+    </Grid>
+</Window>

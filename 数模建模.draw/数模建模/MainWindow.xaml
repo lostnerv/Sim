@@ -1,0 +1,222 @@
+﻿<ribbon:RibbonWindow x:Class="数模建模.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ribbon="clr-namespace:Microsoft.Windows.Controls.Ribbon;assembly=RibbonControlsLibrary"
+        xmlns:local="clr-namespace:数模建模"
+        Title="MainWindow"
+		x:Name="RibbonWindow"
+		Width="640" Height="480">
+
+    <Grid x:Name="LayoutRoot">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <ribbon:Ribbon x:Name="Ribbon" Grid.Row="0">
+            <ribbon:Ribbon.ApplicationMenu>
+                <ribbon:RibbonApplicationMenu SmallImageSource="Images\SmallIcon.png">
+                    <ribbon:RibbonApplicationMenuItem Header="Hello_Ribbon"
+                                                      x:Name="MenuItem1"
+                                                      ImageSource="Images\LargeIcon.png"/>
+                </ribbon:RibbonApplicationMenu>
+            </ribbon:Ribbon.ApplicationMenu>
+            <ribbon:RibbonTab x:Name="DataReady" Header="数据准备">
+                <ribbon:RibbonGroup x:Name="Group_DataReady" Header="数据库配置">
+                    <ribbon:RibbonTextBox x:Name="ServerAddress" Label="服务器"></ribbon:RibbonTextBox>
+                    <ribbon:RibbonTextBox x:Name="SID" Label="服务名"></ribbon:RibbonTextBox>
+                    <ribbon:RibbonTextBox x:Name="Username" Label="用户"></ribbon:RibbonTextBox>
+                    <ribbon:RibbonTextBox x:Name="Password" Label="密码"></ribbon:RibbonTextBox>
+                    <ribbon:RibbonButton x:Name="OracleConn"
+                                         LargeImageSource="Images\LargeIcon.png"
+                                         Label="连接数据库" Click="OracleConn_Click" />
+                    <ribbon:RibbonButton x:Name="ExcelConn"
+                                         LargeImageSource="Images\LargeIcon.png"
+                                         Label="连接Excel" Click="ExcelConn_Click" />
+                    <ribbon:RibbonButton x:Name="DataCheck"
+                                         LargeImageSource="Images\LargeIcon.png"
+                                         Label="数据检查" Click="DataCheck_Click_1"/>
+                </ribbon:RibbonGroup>
+                <ribbon:RibbonGroup x:Name="Group_DataBasic" Header="基础数据查询">
+                    
+                    <ribbon:RibbonButton x:Name="Daa01Reader"
+                                         LargeImageSource="Images\LargeIcon.png"
+                                         Label="单井基础数据" Click="Daa01Reader_Click" />
+                    <ribbon:RibbonButton x:Name="Daa074Reader"
+                                         LargeImageSource="Images\LargeIcon.png"
+                                         Label="小层数据" Click="Daa074Reader_Click" />
+                    <ribbon:RibbonButton x:Name="Daa054Reader"
+                                         LargeImageSource="Images\LargeIcon.png"
+                                         Label="夹层数据" Click="Daa054Reader_Click" />
+                    <ribbon:RibbonButton x:Name="Daa071Reader"
+                                         LargeImageSource="Images\LargeIcon.png"
+                                         Label="分层界限" Click="Daa071Reader_Click" />
+                </ribbon:RibbonGroup>
+            </ribbon:RibbonTab>
+            <ribbon:RibbonTab x:Name="DataP" 
+                              Header="建模前处理">
+                <ribbon:RibbonGroup x:Name="Group1" 
+                                    Header="直接输出">
+                    <ribbon:RibbonCheckBox x:Name="ck_wellhead" Label="Wellhead"/>
+                    <ribbon:RibbonCheckBox x:Name="ck_welltop" Label="Welltop"/>
+                    <ribbon:RibbonCheckBox x:Name="ck_wellprop" Label="岩性"/>
+                    <ribbon:RibbonCheckBox x:Name="ck_wellpropA" Label="属性数据库输出"/>
+                    <ribbon:RibbonCheckBox x:Name="ck_wellskew" Label="井斜文件处理"/>
+                    <ribbon:RibbonCheckBox x:Name="ck_wellpropB" Label="属性连续性解释"/>
+                    <ribbon:RibbonCheckBox x:Name="ck_wellsand" Label="折算砂岩"/>
+                    <ribbon:RibbonCheckBox x:Name="ck_wellcruve" Label="测井曲线标准化"/>
+                    <ribbon:RibbonCheckBox x:Name="ck_paller" Label="断层输出"/>
+                    <ribbon:RibbonButton x:Name="SimB_output"
+                                         LargeImageSource="Images\LargeIcon.png"
+                                         Label="输出" Click="SimB_output_Click" />
+                </ribbon:RibbonGroup>
+                <ribbon:RibbonGroup>
+                    <ribbon:RibbonButton x:Name="bt_wellhead"
+                                         LargeImageSource="Images\LargeIcon.png"
+                                         Margin ="5"
+                                         Label="Wellhead" Click="bt_wellhead_Click" />
+                    <ribbon:RibbonButton x:Name="bt_welltop"
+                                         LargeImageSource="Images\LargeIcon.png"
+                                         Margin ="5"
+                                         Label="Welltop" Click="bt_welltop_Click" />
+                    <ribbon:RibbonButton x:Name="bt_wellprop"
+                                         LargeImageSource="Images\LargeIcon.png"
+                                         Margin ="5"
+                                         Label="岩性" Click="bt_wellprop_Click" />
+                    <ribbon:RibbonButton x:Name="bt_wellpropA"
+                                         LargeImageSource="Images\LargeIcon.png"
+                                         Margin ="5"
+                                         Label="属性数据库输出" Click="bt_wellpropA_Click" />
+                    <ribbon:RibbonButton x:Name="bt_wellskew"
+                                         LargeImageSource="Images\LargeIcon.png"
+                                         Margin ="5"
+                                         Label="井斜文件处理" Click="bt_wellskew_Click" />
+                    <ribbon:RibbonButton x:Name="bt_wellpropB"
+                                         LargeImageSource="Images\LargeIcon.png"
+                                         Margin ="5"
+                                         Label="属性连续性解释" Click="bt_wellpropB_Click" />
+                    <ribbon:RibbonButton x:Name="bt_wellsand"
+                                         LargeImageSource="Images\LargeIcon.png"
+                                         Margin ="5"
+                                         Label="折算砂岩" Click="bt_wellsand_Click" />
+                    <ribbon:RibbonButton x:Name="bt_wellcruve"
+                                         LargeImageSource="Images\LargeIcon.png"
+                                         Margin ="5"
+                                         Label="测井曲线标准化" Click="bt_wellcruve_Click" />
+                    <ribbon:RibbonButton x:Name="bt_paller"
+                                         LargeImageSource="Images\LargeIcon.png"
+                                         Margin ="5"
+                                         Label="断层输出" Click="bt_paller_Click" />
+                </ribbon:RibbonGroup>
+                <!--<ribbon:RibbonGroup>
+                    <ProgressBar x:Name="LoadingProccess" Grid.Column="0" Grid.Row="0"></ProgressBar>
+                </ribbon:RibbonGroup>-->
+            </ribbon:RibbonTab>
+            <ribbon:RibbonTab x:Name="SimB" Header="数模前处理">
+                <ribbon:RibbonGroup x:Name="Group3" Header="OFFICE模块数据准备">
+                    <ribbon:RibbonCheckBox x:Name="ck_grid" Label="网格属性处理"/>
+                    <ribbon:RibbonCheckBox x:Name="ck_Region" Label="分区文件"/>
+                </ribbon:RibbonGroup>
+                <ribbon:RibbonGroup x:Name="Group4" Header="Schedule模块">
+                    <ribbon:RibbonCheckBox x:Name="ck_his" Label="井史文件"/>
+                    <ribbon:RibbonCheckBox x:Name="ck_sk" Label="射孔文件"/>
+                    <ribbon:RibbonCheckBox x:Name="ck_cs" Label="措施文件"/>
+                    <ribbon:RibbonCheckBox x:Name="ck_net" Label="井组文件"/>
+                    <ribbon:RibbonCheckBox x:Name="ck_limit" Label="流压文件"/>
+                </ribbon:RibbonGroup>
+                <ribbon:RibbonGroup Header="OFFICE模块数据准备">
+                    <ribbon:RibbonButton x:Name="bt_summary"
+                                         LargeImageSource="Images\LargeIcon.png"
+                                         Margin ="5"
+                                         Label="Summary" Click="bt_summary_Click"/>
+                </ribbon:RibbonGroup>
+                <ribbon:RibbonGroup Header="Schedule模块">
+                    <ribbon:RibbonButton x:Name="bt_his"
+                                         LargeImageSource="Images\LargeIcon.png"
+                                         Margin ="5"
+                                         Label="井史文件" Click="bt_his_Click"/>
+                    <ribbon:RibbonButton x:Name="bt_sk"
+                                         LargeImageSource="Images\LargeIcon.png"
+                                         Margin ="5"
+                                         Label="射孔文件" Click="bt_sk_Click"/>
+                    <ribbon:RibbonButton x:Name="bt_cs"
+                                         LargeImageSource="Images\LargeIcon.png"
+                                         Margin ="5"
+                                         Label="措施文件" Click="bt_cs_Click"/>
+                    <ribbon:RibbonButton x:Name="bt_net"
+                                         LargeImageSource="Images\LargeIcon.png"
+                                         Margin ="5"
+                                         Label="井组文件" Click="bt_net_Click"/>
+                    <ribbon:RibbonButton x:Name="bt_limit"
+                                         LargeImageSource="Images\LargeIcon.png"
+                                         Margin ="5"
+                                         Label="流压文件" Click="bt_limit_Click"/>
+                </ribbon:RibbonGroup>
+                <ribbon:RibbonGroup Header="OFFICE模块数据准备">
+                    <ribbon:RibbonButton x:Name="bt_grid"
+                                         LargeImageSource="Images\LargeIcon.png"
+                                         Margin ="5"
+                                         Label="网格属性处理" Click="bt_grid_Click"/>
+                    <ribbon:RibbonButton x:Name="bt_region"
+                                         LargeImageSource="Images\LargeIcon.png"
+                                         Margin ="5"
+                                         Label="分区文件"/>
+                </ribbon:RibbonGroup>
+                <ribbon:RibbonGroup Header="关键字维护">
+                    <ribbon:RibbonTextBox x:Name="gjztext" Label="关键字"></ribbon:RibbonTextBox>
+                    <ribbon:RibbonButton x:Name="bt_codeadd"
+                                         LargeImageSource="Images\LargeIcon.png"
+                                         Margin ="5"
+                                         Label="添加关键字" />
+              
+                </ribbon:RibbonGroup>
+            </ribbon:RibbonTab>
+            <ribbon:RibbonTab x:Name="Reservor" Header="剩余油分析">
+                <ribbon:RibbonGroup Header="剩余油分析">
+                    <ribbon:RibbonButton x:Name="bt_wellLoc"
+                                         LargeImageSource="Images\LargeIcon.png"
+                                         Margin ="5"
+                                         Label="剩余油数据配置" Click="bt_wellLoc_Click"/>
+                    <ribbon:RibbonButton x:Name="bt_wellLocZoomIn"
+                                         LargeImageSource="Images\LargeIcon.png"
+                                         Margin ="5"
+                                         Label="导出结果" Click="bt_wellLocZoomIn_Click"/>
+                    <ribbon:RibbonButton x:Name="bt_move"
+                                         LargeImageSource="Images\LargeIcon.png"
+                                         Margin ="5"
+                                         Label="参数设置" Click="bt_move_Click"/>
+                    <!--
+                    <ribbon:RibbonButton x:Name="bt_prt"
+                                         LargeImageSource="Images\LargeIcon.png"
+                                         Margin ="5"
+                                         Label="相图绘制" Click="bt_prt_Click"/>-->
+                    <ribbon:RibbonButton x:Name="btn_showResByLayer"
+                                         LargeImageSource="Images\LargeIcon.png"
+                                         Margin ="5"
+                                         Label="各层储量" Click="click_showResByLayer"/>
+                    
+                    <ribbon:RibbonButton x:Name="bt_prt"
+                                         LargeImageSource="Images\LargeIcon.png"
+                                         Margin ="5"
+                                         Label="对比展示" Click="bt_compare_Click"/>
+                    <ribbon:RibbonButton x:Name="bt_convertFacies"
+                                         LargeImageSource="Images\LargeIcon.png"
+                                         Margin ="5"
+                                         Label="相图文件生成" Click="bt_convertFacies_click"/>
+                </ribbon:RibbonGroup>
+            </ribbon:RibbonTab>
+        </ribbon:Ribbon>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="5*"/>
+            </Grid.ColumnDefinitions>
+            <DockPanel LastChildFill="True" Grid.Column="0">
+                <local:MainLeftTabPage x:Name="LeftMain"></local:MainLeftTabPage>
+            </DockPanel>
+            <DockPanel LastChildFill="True" Grid.Column="1">
+                <local:MainRightTabPage x:Name="RightMain"></local:MainRightTabPage>
+            </DockPanel>
+        </Grid>
+    </Grid>
+</ribbon:RibbonWindow>

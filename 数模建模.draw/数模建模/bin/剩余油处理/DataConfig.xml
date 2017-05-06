@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="gb2312"?>
+<DataPath>
+  <Node genre="张三" ISBN="1-1111-1">
+    <title>C#入门帮助</title>
+    <author>高手</author>
+    <price>158.3</price>
+  </Node>
+  <Node name="wellhead" path="D:\用户目录\Desktop\井口坐标\2003-2015年井位公报（八厂）201601.xls" />
+  <Node name="welltop" path="" />
+  <Node name="wellprop" path="" />
+  <Node name="wellpropa" path="" />
+  <Node name="wellskew" path="D:\全厂斜井井斜曲线" />
+  <Node name="wellnum" path="E:\Documents\项目开发\MyWork\8\需求\前后处理平台关注井.xls" />
+  <Node name="wellpropb" path="D:\用户目录\Desktop\bootstrap" />
+  <Node name="wellsand" path="" />
+  <Node name="wellcruve" path="D:\用户目录\Desktop\bootstrap" />
+  <Node name="paller" path="D:\采油八厂\数据平台建模数据格式1\断层\zhao5_fault.fault_data.txt" />
+  <Node name="simboutput" path="D:\用户目录\Desktop\新建文件夹 (6)" />
+  <Node name="sandvalue" path="" />
+  <Node name="FGRID" path="D:\测试结果\f10-27right\F10-27RIGHT_E100.FGRID" />
+  <Node name="PRTINC" path="D:\测试结果\f10-27right\wf.txt" />
+  <Node name="SCH" path="D:\测试结果\f10-27right\F10-27RIGHT_SCH.INC" />
+  <Node name="GOTH" path="D:\测试结果\f10-27right\F10-27RIGHT_GOTH.INC" />
+  <Node name="FACIES" path="D:\测试结果\f10-27right\1.txt" />
+</DataPath>
