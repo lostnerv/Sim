@@ -4,17 +4,17 @@
 winexe
 C#
 .cs
-D:\project\数模建模.draw.2017-1-10 203940落了一行代码\数模建模.draw\数模建模\obj\x86\Debug\
+D:\gitrepo\Sim\数模建模.draw\数模建模\obj\x86\Debug\
 数模建模
 none
 false
 DEBUG;TRACE
-D:\project\数模建模.draw.2017-1-10 203940落了一行代码\数模建模.draw\数模建模\App.xaml
+D:\gitrepo\Sim\数模建模.draw\数模建模\App.xaml
 121780656795
 
 51-442904158
-19-1286253660
+19-207644106
 DrawContainer.xaml;MainRightTabPage.xaml;MainWindow.xaml;MainLeftTabPage.xaml;ResByLayer.xaml;RightTabPageDataSourceConfig.xaml;SaveConfig.xaml;SelectFilePath.xaml;SelectFolderPath.xaml;CompareContainer.xaml;AllChResContainer.xaml;剩余油数据源配置.xaml;
 
-False
+True
 

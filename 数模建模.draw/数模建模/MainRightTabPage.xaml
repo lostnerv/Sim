@@ -10,97 +10,6 @@
              d:DesignHeight="700" d:DesignWidth="800">
     <Grid>
         <TabControl Grid.Row="1" DockPanel.Dock="Left" x:Name="ContentPage" >
-            <TabItem Header="首页" Name="FirstPage" MouseDoubleClick="FirstPage_MouseDoubleClick">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="30" ></RowDefinition>
-                        <RowDefinition Height="*"></RowDefinition>
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="200"></ColumnDefinition>
-                        <ColumnDefinition Width="*"></ColumnDefinition>
-                    </Grid.ColumnDefinitions>
-
-                </Grid>
-            </TabItem>
-            <TabItem Header="数据源配置" Name="DataConfig" MouseDoubleClick="FirstPage_MouseDoubleClick">
-                <GroupBox Header="建模数据配置">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="1*"/>
-                            <RowDefinition Height="1*"/>
-                            <RowDefinition Height="1*"/>
-                            <RowDefinition Height="1*"/>
-                            <RowDefinition Height="1*"/>
-                            <RowDefinition Height="1*"/>
-                            <RowDefinition Height="1*"/>
-                            <RowDefinition Height="1*"/>
-                            <RowDefinition Height="1*"/>
-                            <RowDefinition Height="1*"/>
-                            <RowDefinition Height="1*"/>
-                            <RowDefinition Height="1*"/>
-                            <RowDefinition Height="1*"/>
-                            <RowDefinition Height="1*"/>
-                            <RowDefinition Height="1*"/>
-                            <RowDefinition Height="1*"/>
-                            <RowDefinition Height="1*"/>
-                            <RowDefinition Height="1*"/>
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="1*"/>
-                            <ColumnDefinition Width="1*"/>
-                            <ColumnDefinition Width="1*"/>
-                            <!--<ColumnDefinition Width="1*"/>-->
-                            <!--<ColumnDefinition Width="1*"/>-->
-                        </Grid.ColumnDefinitions>
-                        <local:SelectFilePath x:Name="wellnum" dataPath="关键井号文件："  Grid.Row="0" Grid.Column="0" ></local:SelectFilePath>
-                        <local:SelectFilePath x:Name="wellhead" dataPath="WellHead："  Grid.Row="1" Grid.Column="0" ></local:SelectFilePath>
-                        <local:SelectFilePath x:Name="welltop" dataPath="WellTop：" Grid.Row="2" Grid.Column="0"></local:SelectFilePath>
-                        <local:SelectFilePath x:Name="wellprop"  dataPath="岩性：" Grid.Row="3" Grid.Column="0"></local:SelectFilePath>
-                        <local:SelectFilePath x:Name="wellpropa" dataPath="属性数据库输出：" Grid.Row="4" Grid.Column="0"></local:SelectFilePath>
-                        <local:SelectFolderPath x:Name="wellskew" dataPath="井斜文件处理：" Grid.Row="5" Grid.Column="0"></local:SelectFolderPath>
-                        <local:SelectFolderPath x:Name="wellpropb" dataPath="属性连续性解释：" Grid.Row="6" Grid.Column="0"></local:SelectFolderPath>
-                        <local:SelectFolderPath x:Name="wellsand" dataPath="折算砂岩：" Grid.Row="7" Grid.Column="0"></local:SelectFolderPath>
-                        <TextBlock Text="折算值:" Grid.Row="8" Height="20" Margin="50,0,0,0" ><TextBox x:Name="sandvalue" Width="150" Margin="45,0,0,0"></TextBox></TextBlock>
-                        <local:SelectFolderPath x:Name="wellcruve" dataPath="测井曲线标准化：" Grid.Row="9" Grid.Column="0"></local:SelectFolderPath>
-                        <local:SelectFilePath x:Name="paller" dataPath="断层输出：" Grid.Row="10" Grid.Column="0"></local:SelectFilePath>
-                        <local:SelectFolderPath x:Name="simboutput" dataPath="建模输出路径：" Grid.Row="11" Grid.Column="0"></local:SelectFolderPath>
-
-                        <local:SelectFilePath x:Name="standard" dataPath="测井曲线标准化模板：" Grid.Row="0" Grid.Column="1"></local:SelectFilePath>
-                        <local:SelectFilePath x:Name="office" dataPath="office数据：" Grid.Row="1" Grid.Column="1"></local:SelectFilePath>
-                        <local:SelectFilePath x:Name="summary" dataPath="summary数据：" Grid.Row="2" Grid.Column="1"></local:SelectFilePath>
-                        <Button x:Name="DataConfig_save" Grid.Row="12" Grid.Column="0" Content="保存" Click="DataConfig_save_Click"></Button>
-                    </Grid>
-                </GroupBox>
-            </TabItem>
-            <TabItem Header="基础数据" Name="DAA01Page" 
-MouseDoubleClick="FirstPage_MouseDoubleClick">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="30" ></RowDefinition>
-                        <RowDefinition Height="*"></RowDefinition>
-                    </Grid.RowDefinitions>
-                    <Button x:Name="ExportToExcel" Content="导出" Grid.Row="0" Width="70" Grid.Column="0" HorizontalAlignment="Left"  Click="ExportToExcel_Click" />
-                    <Button x:Name="ExportToResult" Content="输出结果" Width="70" HorizontalAlignment="Left"  Click="ExportToExcel_Click" Margin="76,0,0,0" />
-                    <DataGrid  x:Name="dataGrid1" Grid.Row="1" CellEditEnding="dataGrid1_CellEditEnding" SelectedCellsChanged="dataGrid1_SelectedCellsChanged" InitializingNewItem="dataGrid1_InitializingNewItem"  LoadingRow="dataGrid1_LoadingRow">
-                        <DataGrid.Columns>
-                            <DataGridCheckBoxColumn Header="选择" />
-                        </DataGrid.Columns>
-                    </DataGrid>
-                </Grid>
-            </TabItem>
-            <TabItem Header="储量" Name="ReserversPage1">
-                <Canvas x:Name="canves1"   MouseLeftButtonDown="canves1_MouseLeftButtonDown" MouseLeftButtonUp="canves1_MouseLeftButtonUp"  PreviewMouseWheel="canves1_PreviewMouseWheel" MouseWheel="canves1_MouseWheel" MouseRightButtonDown="canves1_MouseRightButtonDown"  ClipToBounds="True">
-                    <Canvas.RenderTransform>
-                        <TransformGroup>
-                            <ScaleTransform ScaleX="1" ScaleY="1"/>
-                            <SkewTransform/>
-                            <RotateTransform/>
-                            <TranslateTransform/>
-                        </TransformGroup>
-                    </Canvas.RenderTransform>
-                </Canvas>
-            </TabItem>
             <TabItem Header="剩余油" Name="prt">
                 <Grid  >
                     <Grid.RowDefinitions>
@@ -193,21 +102,7 @@ MouseDoubleClick="FirstPage_MouseDoubleClick">
                     <ComboBox  Name="combo_soiltime" HorizontalAlignment="Left" VerticalAlignment="Top"  Margin="25,33,0,0" Width="100" Grid.Row="0" Grid.Column="1" Height="23px"/>
                     <Button Content="全区储量" Height="23" HorizontalAlignment="Right" Margin="0,62,30,0" Grid.Column="2" VerticalAlignment="Top" Width="60"  Click="newWinAllRes" />
                     
-                    <!--
-                    <Canvas x:Name="canvespoly"  ZIndex="-1"
-                    Grid.Row="1" Grid.Column="1" MouseWheel="canves1_MouseWheel_poly"  >
-                        <Canvas.RenderTransform>
-                            <TransformGroup>
-                                <ScaleTransform ScaleX="1" ScaleY="1" />
-                                <SkewTransform />
-                                <RotateTransform />
-                                <TranslateTransform />
-                            </TransformGroup>
-                        </Canvas.RenderTransform>
-                    </Canvas>
-                    -->
-                    <!--
-                    <ScrollViewer  Grid.Row="1" Grid.Column="0" ></ScrollViewer>-->
+                    
                     <Canvas x:Name="canvesprt"   ZIndex="-1" Background="White"  Grid.Row="1" Grid.Column="0" 
                             MouseRightButtonUp="canves1_MouseRightButtonUp_prt"  Focusable="True" MouseMove="canvas_move" MouseDown="canvas_down"
                         MouseWheel="canves1_MouseWheel_prt" MouseLeftButtonUp="canves1_MouseLeftButtonUp_prt" KeyDown="window_keyDown"  >
@@ -220,8 +115,7 @@ MouseDoubleClick="FirstPage_MouseDoubleClick">
                             </TransformGroup>
                         </Canvas.RenderTransform>
                     </Canvas>
-                    <!-- 
-                    <ScrollViewer   ></ScrollViewer>-->
+                   
                     <Canvas Grid.Row="1" Grid.Column="2" >
                         <Button Content="断层(井控)" Margin="0,30,0,0"   Width="70" Height="23" Click="drawFaultBorder" HorizontalAlignment="Left"  ></Button>
                         <Button Content="砂体边部" Margin="0,0,0,0"   Width="120" Height="23" Click="drawSandBorder" HorizontalAlignment="Left"  ></Button>

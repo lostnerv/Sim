@@ -413,3 +413,40 @@ D:\project\数模建模.draw.2017-1-10 203940落了一行代码\数模建模.dra
 D:\project\数模建模.draw.2017-1-10 203940落了一行代码\数模建模.draw\数模建模\obj\x86\Debug\数模建模.csproj.GenerateResource.Cache
 D:\project\数模建模.draw.2017-1-10 203940落了一行代码\数模建模.draw\数模建模\obj\x86\Debug\剩余油数据源配置.g.cs
 D:\project\数模建模.draw.2017-1-10 203940落了一行代码\数模建模.draw\数模建模\obj\x86\Debug\剩余油数据源配置.baml
+D:\gitrepo\Sim\数模建模.draw\数模建模\bin\Debug\数模建模.exe.config
+D:\gitrepo\Sim\数模建模.draw\数模建模\obj\x86\Debug\数模建模.exe
+D:\gitrepo\Sim\数模建模.draw\数模建模\obj\x86\Debug\数模建模.pdb
+D:\gitrepo\Sim\数模建模.draw\数模建模\obj\x86\Debug\数模建模.csprojResolveAssemblyReference.cache
+D:\gitrepo\Sim\数模建模.draw\数模建模\obj\x86\Debug\DrawContainer.baml
+D:\gitrepo\Sim\数模建模.draw\数模建模\obj\x86\Debug\MainLeftTabPage.baml
+D:\gitrepo\Sim\数模建模.draw\数模建模\obj\x86\Debug\RightTabPageDataSourceConfig.baml
+D:\gitrepo\Sim\数模建模.draw\数模建模\obj\x86\Debug\SaveConfig.baml
+D:\gitrepo\Sim\数模建模.draw\数模建模\obj\x86\Debug\SelectFilePath.baml
+D:\gitrepo\Sim\数模建模.draw\数模建模\obj\x86\Debug\SelectFolderPath.baml
+D:\gitrepo\Sim\数模建模.draw\数模建模\obj\x86\Debug\CompareContainer.baml
+D:\gitrepo\Sim\数模建模.draw\数模建模\obj\x86\Debug\AllChResContainer.baml
+D:\gitrepo\Sim\数模建模.draw\数模建模\obj\x86\Debug\DrawContainer.g.cs
+D:\gitrepo\Sim\数模建模.draw\数模建模\obj\x86\Debug\MainRightTabPage.g.cs
+D:\gitrepo\Sim\数模建模.draw\数模建模\obj\x86\Debug\MainWindow.g.cs
+D:\gitrepo\Sim\数模建模.draw\数模建模\obj\x86\Debug\MainLeftTabPage.g.cs
+D:\gitrepo\Sim\数模建模.draw\数模建模\obj\x86\Debug\ResByLayer.g.cs
+D:\gitrepo\Sim\数模建模.draw\数模建模\obj\x86\Debug\SaveConfig.g.cs
+D:\gitrepo\Sim\数模建模.draw\数模建模\obj\x86\Debug\SelectFilePath.g.cs
+D:\gitrepo\Sim\数模建模.draw\数模建模\obj\x86\Debug\SelectFolderPath.g.cs
+D:\gitrepo\Sim\数模建模.draw\数模建模\obj\x86\Debug\CompareContainer.g.cs
+D:\gitrepo\Sim\数模建模.draw\数模建模\obj\x86\Debug\AllChResContainer.g.cs
+D:\gitrepo\Sim\数模建模.draw\数模建模\obj\x86\Debug\剩余油数据源配置.g.cs
+D:\gitrepo\Sim\数模建模.draw\数模建模\obj\x86\Debug\App.g.cs
+D:\gitrepo\Sim\数模建模.draw\数模建模\obj\x86\Debug\GeneratedInternalTypeHelper.g.cs
+D:\gitrepo\Sim\数模建模.draw\数模建模\obj\x86\Debug\数模建模_MarkupCompile.cache
+D:\gitrepo\Sim\数模建模.draw\数模建模\obj\x86\Debug\数模建模_MarkupCompile.lref
+D:\gitrepo\Sim\数模建模.draw\数模建模\bin\Debug\数模建模.exe
+D:\gitrepo\Sim\数模建模.draw\数模建模\bin\Debug\数模建模.pdb
+D:\gitrepo\Sim\数模建模.draw\数模建模\bin\Debug\WPFToolkit.dll
+D:\gitrepo\Sim\数模建模.draw\数模建模\obj\x86\Debug\MainRightTabPage.baml
+D:\gitrepo\Sim\数模建模.draw\数模建模\obj\x86\Debug\MainWindow.baml
+D:\gitrepo\Sim\数模建模.draw\数模建模\obj\x86\Debug\ResByLayer.baml
+D:\gitrepo\Sim\数模建模.draw\数模建模\obj\x86\Debug\剩余油数据源配置.baml
+D:\gitrepo\Sim\数模建模.draw\数模建模\obj\x86\Debug\数模建模.g.resources
+D:\gitrepo\Sim\数模建模.draw\数模建模\obj\x86\Debug\数模建模.Properties.Resources.resources
+D:\gitrepo\Sim\数模建模.draw\数模建模\obj\x86\Debug\数模建模.csproj.GenerateResource.Cache

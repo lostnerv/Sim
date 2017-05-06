@@ -61,39 +61,12 @@ namespace 数模建模
         public MainRightTabPage()
         {
             InitializeComponent();
-            fillPath();
+            
             reservers_init();
             initCanvesGrid();
         }
 
-        public void fillPath()
-        {
-            XmlHelper helper = new XmlHelper();
-            string wellnumpath = helper.GetXMLDocument("wellnum");
-
-            string wellheadpath = helper.GetXMLDocument("wellhead");
-            string welltoppath = helper.GetXMLDocument("welltop");
-            string wellproppath = helper.GetXMLDocument("wellprop");
-            string wellpropapath = helper.GetXMLDocument("wellpropa");
-            string wellskewpath = helper.GetXMLDocument("wellskew");
-            string wellsandpath = helper.GetXMLDocument("wellsand");
-            string wellpropbpath = helper.GetXMLDocument("wellpropb");
-            string wellcruvepath = helper.GetXMLDocument("wellcruve");
-            string pallerpath = helper.GetXMLDocument("paller");
-            string simboutputpath = helper.GetXMLDocument("simboutput");
-
-            this.wellnum.filePath.Text = wellnumpath;
-            this.wellhead.filePath.Text = wellheadpath;
-            this.welltop.filePath.Text = welltoppath;
-            this.wellprop.filePath.Text = wellproppath;
-            this.wellpropa.filePath.Text = wellpropapath;
-            this.wellpropb.filePath.Text = wellpropbpath;
-            this.wellsand.filePath.Text = wellsandpath;
-            this.wellskew.filePath.Text = wellskewpath;
-            this.wellcruve.filePath.Text = wellcruvepath;
-            this.paller.filePath.Text = pallerpath;
-            this.simboutput.filePath.Text = simboutputpath;
-        }
+        
 
         private void initCanvesGrid()
         {
@@ -255,20 +228,7 @@ namespace 数模建模
             this.drawtype.SelectedIndex = 0;
         }
 
-        private void dataGrid1_Initialized(object sender, EventArgs e)
-        {
-            //string sql = "select * from daa01";
-            //DataTable result = GetDataAsDataTable.GetDataReasult(sql);
-            //this.dataGrid1.ItemsSource = result.DefaultView;
-        }
-
-        private void FirstPage_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            if (this.FirstPage.Visibility == Visibility.Hidden)
-                this.FirstPage.Visibility = Visibility.Visible;
-            else
-                this.FirstPage.Visibility = Visibility.Hidden;
-        }
+        
 
         private void ExportToExcel_Click(object sender, RoutedEventArgs e)
         {
@@ -280,211 +240,6 @@ namespace 数模建模
             }
         }
 
-        private void DataConfig_save_Click(object sender, RoutedEventArgs e)
-        {
-            XmlHelper helper = new XmlHelper();
-
-            if (helper.GetXMLDocument("wellnum") == null)
-            {
-                helper.AddXMLDocument("wellnum", this.wellnum.filePath.Text);
-            }
-            else
-            {
-                helper.EditXMLDocument("wellnum", this.wellnum.filePath.Text);
-            }
-
-            if (helper.GetXMLDocument("wellhead") == null)
-            {
-                helper.AddXMLDocument("wellhead", this.wellhead.filePath.Text);
-            }
-            else
-            {
-                helper.EditXMLDocument("wellhead", this.wellhead.filePath.Text);
-            }
-
-            if (helper.GetXMLDocument("welltop") == null)
-            {
-                helper.AddXMLDocument("welltop", this.welltop.filePath.Text);
-            }
-            else
-            {
-                helper.EditXMLDocument("welltop", this.welltop.filePath.Text);
-            }
-
-            if (helper.GetXMLDocument("wellprop") == null)
-            {
-                helper.AddXMLDocument("wellprop", this.wellprop.filePath.Text);
-            }
-            else
-            {
-                helper.EditXMLDocument("wellprop", this.wellprop.filePath.Text);
-            }
-
-            if (helper.GetXMLDocument("wellpropa") == null)
-            {
-                helper.AddXMLDocument("wellpropa", this.wellpropa.filePath.Text);
-            }
-            else
-            {
-                helper.EditXMLDocument("wellpropa", this.wellpropa.filePath.Text);
-            }
-
-            if (helper.GetXMLDocument("wellskew") == null)
-            {
-                helper.AddXMLDocument("wellskew", this.wellskew.filePath.Text);
-            }
-            else
-            {
-                helper.EditXMLDocument("wellskew", this.wellskew.filePath.Text);
-            }
-
-            if (helper.GetXMLDocument("wellpropb") == null)
-            {
-                helper.AddXMLDocument("wellpropb", this.wellpropb.filePath.Text);
-            }
-            else
-            {
-                helper.EditXMLDocument("wellpropb", this.wellpropb.filePath.Text);
-            }
-
-            if (helper.GetXMLDocument("wellsand") == null)
-            {
-                helper.AddXMLDocument("wellsand", this.wellsand.filePath.Text);
-            }
-            else
-            {
-                helper.EditXMLDocument("wellsand", this.wellsand.filePath.Text);
-            }
-
-            if (helper.GetXMLDocument("wellcruve") == null)
-            {
-                helper.AddXMLDocument("wellcruve", this.wellcruve.filePath.Text);
-            }
-            else
-            {
-                helper.EditXMLDocument("wellcruve", this.wellcruve.filePath.Text);
-            }
-
-            if (helper.GetXMLDocument("paller") == null)
-            {
-                helper.AddXMLDocument("paller", this.paller.filePath.Text);
-            }
-            else
-            {
-                helper.EditXMLDocument("paller", this.paller.filePath.Text);
-            }
-
-            if (helper.GetXMLDocument("simboutput") == null)
-            {
-                helper.AddXMLDocument("simboutput", this.simboutput.filePath.Text);
-            }
-            else
-            {
-                helper.EditXMLDocument("simboutput", this.simboutput.filePath.Text);
-            }
-
-            if (helper.GetXMLDocument("sandvalue") == null)
-            {
-                helper.AddXMLDocument("sandvalue", this.sandvalue.Text);
-            }
-            else
-            {
-                helper.EditXMLDocument("sandvalue", this.sandvalue.Text);
-            }
-        }
-
-        private void dataGrid1_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
-        {
-            //System.Console.WriteLine("hahahaha:" + this.dataGrid1.Items[1]);
-            //DataRow dr = 
-            //this.dataGrid1.Items[i]
-            //System.Console.WriteLine((e.EditingElement as TextBox).Text);
-            //System.Console.WriteLine(e.Row.GetIndex().ToString());
-            //System.Console.WriteLine(e.Column.DisplayIndex.ToString());
-            //e.EditingElement.
-        }
-
-        private void dataGrid1_SelectedCellsChanged(object sender, SelectedCellsChangedEventArgs e)
-        {
-            //for (int i = 0; i < this.dataGrid1.Items.Count; i++)
-            //{
-            //    //DataRowView drv = this.dataGrid1.Items[i] as DataRowView;
-            //    //System.Console.WriteLine(drv[1].ToString());
-            //    //double age = Convert.ToDouble(drv["x坐标"]);
-            //    //if (age > 18)
-            //    //{
-            //    //    DataGridRow row = this.dataGrid1.ItemContainerGenerator.ContainerFromItem(this.dataGrid1.Items[i]) as DataGridRow;
-
-            //    //    //row.Background = new SolidColorBrush(Colors.Red);
-            //    //}
-            //}   
-        }
-
-        private void dataGrid1_InitializingNewItem(object sender, InitializingNewItemEventArgs e)
-        {
-            //System.Console.WriteLine("hahahaha:"+this.dataGrid1.Items.Count);
-            //for (int i = 0; i < this.dataGrid1.Items.Count;i++ )
-            //{
-            //    if (this.dataGrid1.Items[i] != this.dataGrid1.Items[i][3].ToString())
-            //    {
-            //    }
-            //}
-        }
-
-        private void dataGrid1_LoadingRow(object sender, DataGridRowEventArgs e)
-        {
-            //DataGridRow dataGridRow = e.Row;
-            ////CommandResultInfo dataRow = e.Row.Item as CommandResultInfo;
-            //if (dataGridRow.cell.ToString() != dataGridRow[2].ToString())
-            //{
-            //    dataGridRow.Background = Brushes.Plum;
-            //}
-        }
-
-        private void canves1_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            //System.Console.WriteLine(e.GetPosition(this.canves1).X);
-            //System.Console.WriteLine(e.GetPosition(this.canves1).Y);
-            ReservorDraw.DrawLine(this.canves1, e);
-        }
-
-        private void canves1_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
-        {
-            //Line line = new Line();
-            //line.Stroke = System.Windows.Media.Brushes.Red;
-            //line.X1 = 1;
-            //line.X2 = e.GetPosition(this.canves1).X;
-            //line.Y1 = 1;
-            //line.Y2 = e.GetPosition(this.canves1).Y;
-            //line.HorizontalAlignment = HorizontalAlignment.Left;
-            //line.VerticalAlignment = VerticalAlignment.Center;
-            //canves1.Children.Add(line);
-            //Point point = new Point();
-            //point.X = e.GetPosition(this.canves1).X - ReservorDraw.point.X;
-            //point.Y = e.GetPosition(this.canves1).Y - ReservorDraw.point.X;
-            //ReservorDraw.move(canves1,point);
-            //ReservorDraw.DrawPoint(canves1);
-        }
-
-        private void canves1_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
-        {
-
-        }
-
-        private void canves1_MouseWheel(object sender, MouseWheelEventArgs e)
-        {
-            ReservorDraw.zoom_in(canves1, e);
-        }
-
-        private void canves1_MouseWheel_prt(object sender, MouseWheelEventArgs e)
-        {
-            ReservorDraw.zoom_in(canvesprt, e);
-        }
-
-        private void canves1_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            ReservorDraw.EreaseLine(canves1, e);
-        }
         double lastMoveX = 0;
         double lastMoveY = 0;
         private void canvas_move(object sender, MouseEventArgs e)
@@ -604,13 +359,6 @@ namespace 数模建模
 
                         if (ReservorDraw.isInRegion(pClick, pointL))
                         {
-                            //System.Console.WriteLine("----");
-                            //System.Console.WriteLine((double)canvesRow["x0"]);
-                            //System.Console.WriteLine((double)canvesRow["y0"]);
-                            //System.Console.WriteLine((double)canvesRow["poro"]);
-                            //System.Console.WriteLine((double)canvesRow["barsa"]);
-                            //System.Console.WriteLine((double)canvesRow["permx"]);
-                            //System.Console.WriteLine("----");
                             ksbEditDT.Clear();
                             DataRow editDTRowbarsa = ksbEditDT.NewRow();//准备点击事件孔渗饱
                             editDTRowbarsa["xcount"] = canvesRow["xcount"];
@@ -740,12 +488,7 @@ namespace 数模建模
                                 }
                                 // }
                             }
-                            /* else if ("OIL".Equals(stat)
-                                 && wellLength < 100 * m_d_zoomfactor2)//百米内油井视为同井
-                             {
-                                 //System.Console.WriteLine(stat);
-                                 pClick = point0;
-                             }*/
+                            
                         }
                     }
                     //判断边界点补全
@@ -798,24 +541,7 @@ namespace 数模建模
                             hasD = true;
                         }
                     }
-                    /*if (!hasy1)
-                       {
-                           wellCtrlPoint.Add(new Point(pClick.X, pClick.Y+wellR));
-                       }
-                       if (!hasy2)
-                       {
-                           wellCtrlPoint.Add(new Point(pClick.X, pClick.Y - wellR));
-                       }
-                       if (!hasx1)
-                       {
-                           wellCtrlPoint.Add(new Point(pClick.X + wellR, pClick.Y));
-                       }
-                       if (!hasx2)
-                       {
-                           wellCtrlPoint.Add(new Point(pClick.X - wellR, pClick.Y));
-                       }*/
-                    // System.Console.WriteLine("ccc" + wellCtrlPoint.Count);
-
+                    
                     if (!hasA && !(hasNX && hasY))
                     {
                         if (!cuthasNX && !cuthasY)
@@ -838,12 +564,7 @@ namespace 数模建模
                             wellCtrlPoint.Add(new Point(pClick.X + drawedWellR, pClick.Y + drawedWellR));
                         }
                     }
-                    //System.Console.WriteLine("1" + hasC);
-                    //System.Console.WriteLine("1" + hasNX);
-                    //System.Console.WriteLine("1" + hasNY);
-
-                    //System.Console.WriteLine("1" + cuthasNX);
-                    //System.Console.WriteLine("1" + cuthasNY);
+                  
                     if (!hasC && !(hasNX && hasNY))
                     {
                         if (!cuthasNX && !cuthasNY)
@@ -5780,6 +5501,11 @@ namespace 数模建模
             draw.Title = "孔渗饱";
             draw.Show();
             allCh = null;
+        }
+
+        private void canves1_MouseWheel_prt(object sender, MouseWheelEventArgs e)
+        {
+            ReservorDraw.zoom_in(canvesprt, e);
         }
         /**
          * 圈选孔渗饱
