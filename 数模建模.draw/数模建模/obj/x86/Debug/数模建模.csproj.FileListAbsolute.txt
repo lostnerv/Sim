@@ -418,7 +418,6 @@ D:\gitrepo\Sim\数模建模.draw\数模建模\obj\x86\Debug\数模建模.exe
 D:\gitrepo\Sim\数模建模.draw\数模建模\obj\x86\Debug\数模建模.pdb
 D:\gitrepo\Sim\数模建模.draw\数模建模\obj\x86\Debug\数模建模.csprojResolveAssemblyReference.cache
 D:\gitrepo\Sim\数模建模.draw\数模建模\obj\x86\Debug\DrawContainer.baml
-D:\gitrepo\Sim\数模建模.draw\数模建模\obj\x86\Debug\MainLeftTabPage.baml
 D:\gitrepo\Sim\数模建模.draw\数模建模\obj\x86\Debug\RightTabPageDataSourceConfig.baml
 D:\gitrepo\Sim\数模建模.draw\数模建模\obj\x86\Debug\SaveConfig.baml
 D:\gitrepo\Sim\数模建模.draw\数模建模\obj\x86\Debug\SelectFilePath.baml
@@ -428,7 +427,6 @@ D:\gitrepo\Sim\数模建模.draw\数模建模\obj\x86\Debug\AllChResContainer.ba
 D:\gitrepo\Sim\数模建模.draw\数模建模\obj\x86\Debug\DrawContainer.g.cs
 D:\gitrepo\Sim\数模建模.draw\数模建模\obj\x86\Debug\MainRightTabPage.g.cs
 D:\gitrepo\Sim\数模建模.draw\数模建模\obj\x86\Debug\MainWindow.g.cs
-D:\gitrepo\Sim\数模建模.draw\数模建模\obj\x86\Debug\MainLeftTabPage.g.cs
 D:\gitrepo\Sim\数模建模.draw\数模建模\obj\x86\Debug\ResByLayer.g.cs
 D:\gitrepo\Sim\数模建模.draw\数模建模\obj\x86\Debug\SaveConfig.g.cs
 D:\gitrepo\Sim\数模建模.draw\数模建模\obj\x86\Debug\SelectFilePath.g.cs

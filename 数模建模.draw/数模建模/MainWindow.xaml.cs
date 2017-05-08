@@ -22,7 +22,7 @@ using System.IO;
 using System.ComponentModel;
 using System.Windows.Forms;
 using 数模建模.tools;
-using 数模建模.SIMB;
+
 using 数模建模.Drawer;
 
 namespace 数模建模

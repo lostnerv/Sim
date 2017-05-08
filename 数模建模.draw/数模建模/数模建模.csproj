@@ -108,17 +108,17 @@
     <Compile Include="SelectFolderPath.xaml.cs">
       <DependentUpon>SelectFolderPath.xaml</DependentUpon>
     </Compile>
-    <Compile Include="SIMB\FgridPrt.cs" />
-    <Compile Include="SIMB\Fitting.cs" />
-    <Compile Include="SIMB\OfficePre.cs" />
-    <Compile Include="SIMB\SchPre.cs" />
+    <Compile Include="SIMB\BallConcave.cs" />
+    <Compile Include="SIMB\ConvertFacies.cs" />
     <Compile Include="SIMB\DFDPoly.cs" />
     <Compile Include="SIMB\FgridNew.cs" />
-    <Compile Include="SIMB\Reserve.cs" />
+    <Compile Include="SIMB\FgridPrt.cs" />
+    <Compile Include="SIMB\Fitting.cs" />
     <Compile Include="SIMB\Linear.cs" />
-    <Compile Include="SIMB\BallConcave.cs" />
     <Compile Include="SIMB\MyConcaveHull.cs" />
-    <Compile Include="SIMB\ConvertFacies.cs" />
+    <Compile Include="SIMB\OfficePre.cs" />
+    <Compile Include="SIMB\Reserve.cs" />
+    <Compile Include="SIMB\SchPre.cs" />
     <Compile Include="tools\DataGridToExcel.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -130,19 +130,6 @@
     <Compile Include="tools\RWFile.cs" />
     <Compile Include="tools\XmlHelper.cs" />
     <Compile Include="tools\ConvexAogrithm.cs" />
-    <Compile Include="WellBlock.cs" />
-    <Compile Include="Wellcruve.cs" />
-    <Compile Include="Wellhead.cs" />
-    <Compile Include="WellList.cs" />
-    <Compile Include="MainLeftTabPage.xaml.cs">
-      <DependentUpon>MainLeftTabPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Wellprop.cs" />
-    <Compile Include="WellpropA.cs" />
-    <Compile Include="WellpropB.cs" />
-    <Compile Include="WellSand.cs" />
-    <Compile Include="Wellskew.cs" />
-    <Compile Include="Welltop.cs" />
     <Compile Include="CompareContainer.xaml.cs">
       <DependentUpon>CompareContainer.xaml</DependentUpon>
     </Compile>
@@ -172,10 +159,6 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="MainLeftTabPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="ResByLayer.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
