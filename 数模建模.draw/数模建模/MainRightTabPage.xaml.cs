@@ -35,7 +35,7 @@ namespace 数模建模
         DataTable wellCoordTrueEnd = new DataTable();//井
         DataTable welspecs = new DataTable();//井口网格坐标
         DataTable canvesGrid = new DataTable();//坐标转换并记录对应网格坐标和层号
-        
+
         Point wellPoint4allres = new Point();//4单井各层储
         double wellRes4allres = 0;//4单井各层储
         DataTable faultDt = new DataTable();//断层
@@ -48,7 +48,7 @@ namespace 数模建模
         string drawTypeStr = "";
         //  combo_soiltimeStr = "";
         int[] facies = null;
-        double[] ntgs=null;//净毛比
+        double[] ntgs = null;//净毛比
         int[] tablesize = { 0, 0, 0 };
         double[] permx;//渗透率 多层
         String allCh = null;//计算全区储量
@@ -57,16 +57,19 @@ namespace 数模建模
         double[] faciesNumRes = new double[10];// new double[2];
         string tmpVol4EachRes;
         List<String> soiltimeList = new List<string>();//时间簿
+        Boolean noDzAlert = true;
+        double[] dzs = null;
+
 
         public MainRightTabPage()
         {
             InitializeComponent();
-            
+
             reservers_init();
             initCanvesGrid();
         }
 
-        
+
 
         private void initCanvesGrid()
         {
@@ -228,7 +231,7 @@ namespace 数模建模
             this.drawtype.SelectedIndex = 0;
         }
 
-        
+
 
         private void ExportToExcel_Click(object sender, RoutedEventArgs e)
         {
@@ -395,7 +398,7 @@ namespace 数模建模
                     {
                         pClick = new Point(e.GetPosition(this.canvesprt).X, e.GetPosition(this.canvesprt).Y);
                     }
-                    Console.WriteLine("单井井控范围"+pClick.X + ":" + pClick.Y);
+                    Console.WriteLine("单井井控范围" + pClick.X + ":" + pClick.Y);
                     //bool hasy1=false,hasy2=false,hasx1=false,hasx2=false;
                     bool hasA = false, hasB = false, hasC = false, hasD = false;
                     bool hasX = false, hasY = false, hasNX = false, hasNY = false;
@@ -410,9 +413,9 @@ namespace 数模建模
                         {
                             string stat = canvesRow["stat"].ToString();
                             Point point0 = new Point();
-                           
-                                point0 = new Point((double)canvesRow["x0"], (double)canvesRow["y0"]);
-                           
+
+                            point0 = new Point((double)canvesRow["x0"], (double)canvesRow["y0"]);
+
                             double wellLength = pointl(pClick, point0);
                             if ("OIL".Equals(stat) && wellLength < 100 * m_d_zoomfactor2)//百米内油井视为同井
                             {
@@ -429,7 +432,7 @@ namespace 数模建模
                             else if ("OIL".Equals(stat) && wellLength <= wellR * 2 * 1.5
                                 && wellLength >= 100 * m_d_zoomfactor2)//百米内油井视为同井
                             {
-                                Console.WriteLine("邻油井找到");
+                                //Console.WriteLine("邻油井找到");
                                 //System.Console.WriteLine(stat);
                                 point0 = new Point((point0.X + pClick.X) / 2,
                                     (point0.Y + pClick.Y) / 2);
@@ -488,7 +491,7 @@ namespace 数模建模
                                 }
                                 // }
                             }
-                            
+
                         }
                     }
                     //判断边界点补全
@@ -541,7 +544,7 @@ namespace 数模建模
                             hasD = true;
                         }
                     }
-                    
+
                     if (!hasA && !(hasNX && hasY))
                     {
                         if (!cuthasNX && !cuthasY)
@@ -564,7 +567,7 @@ namespace 数模建模
                             wellCtrlPoint.Add(new Point(pClick.X + drawedWellR, pClick.Y + drawedWellR));
                         }
                     }
-                  
+
                     if (!hasC && !(hasNX && hasNY))
                     {
                         if (!cuthasNX && !cuthasNY)
@@ -587,7 +590,7 @@ namespace 数模建模
                             wellCtrlPoint.Add(new Point(pClick.X + drawedWellR, pClick.Y + drawedWellR));
                         }
                     }
-                    Point[] wellCtrlPoints =wellCtrlPoint.Distinct().ToArray();
+                    Point[] wellCtrlPoints = wellCtrlPoint.Distinct().ToArray();
                     wellCtrlPoint.Clear();
                     foreach (Point onePoint in wellCtrlPoints)
                     {
@@ -687,14 +690,14 @@ namespace 数模建模
                     //faultPoints.Clear();
                     if (hasProd)//百米内没有油井不画
                     {
-                       if (allCh== null)
+                        if (allCh == null)
                         {
                             Polygon polygon = new Polygon();
                             polygon.Stroke = System.Windows.Media.Brushes.Black;
                             polygon.StrokeThickness = 1;
                             polygon.Points = pointCollection;
                             this.canvesprt.Children.Add(polygon);
-                       }
+                        }
                         //计算储量
                         cal_res(newOrderPoint);
                     }
@@ -1184,7 +1187,10 @@ namespace 数模建模
             string schIncPath = helper.GetXMLDocument("SCH");
             string gothIncPath = helper.GetXMLDocument("GOTH");
             string faciesPath = helper.GetXMLDocument("FACIES");
-
+            // 2017年5月8日 19:30:22 新文件
+            //  净毛比、孔隙度、渗透率关键字分别为NTG、PORO、PERMX
+            string gproPath = helper.GetXMLDocument("GPRO");
+            string finitPath = helper.GetXMLDocument("FINIT");
             string ch = this.ComboBoxCH.Text;
             drawTypeStr = this.drawtype.Text;
             if (allCh != null)
@@ -1250,13 +1256,17 @@ namespace 数模建模
                 // 解析文件
                 tablesize = fgridPrt.readFGRID(fgridpath);
                 DataTable dtfgridNew = fgridNew.readFile(fgridpath, ch);
-                DataTable dtprt = fgridPrt.readPRT(prtpath, ch, combo_soiltimeStr);
+                DataTable dtprt = fgridPrt.readPRT(prtpath, ch, combo_soiltimeStr);// 现饱和度 旧版读取 孔隙度、渗透率
                 faultDt = fgridPrt.readGothInc(gothIncPath, ch);//断层
                 fgridPrt.readSchInc(schIncPath, ch);
-                double[] poro = fgridPrt.poro;//孔隙度
-                permx = fgridPrt.permx;//渗透率
-                DataTable dzDt = fgridPrt.dzDt;//厚度
+                double[] poro;// = fgridPrt.poro;//孔隙度 旧版 现在为空值
+                //permx = fgridPrt.permx;//渗透率 旧版 现在为空值
+                DataTable dzDt = fgridPrt.dzDt;//厚度 旧版 不用了
                 welspecs = fgridPrt.welspecs;//井口网格坐标
+                ntgs = fgridPrt.readNTG(gproPath);// 净毛比 2017年5月8日 20:43:53
+                poro = fgridPrt.poro;// 孔隙度 2017年5月8日 20:44:06
+                permx = fgridPrt.permx;// 渗透率 2017年5月8日 20:44:08.
+                dzs = fgridPrt.readDz(finitPath);
                 //
                 System.Console.WriteLine("开始求极值:" + ((DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds - timed));
                 //求极值
@@ -1268,6 +1278,11 @@ namespace 数模建模
                     {
                         list.Add(tempd);
                     }
+                }
+                if (0 == list.Count)
+                {
+                    MessageBox.Show("Prt文件没有数据");
+                    Environment.Exit(0);
                 }
                 list.Sort();
                 double minpermx = Convert.ToDouble(list[0]);
@@ -1316,11 +1331,16 @@ namespace 数模建模
                 double[] pointY = new double[wellCoord.Rows.Count];
                 int jhCount = 0;
                 facies = null;
+
                 if ("相图".Equals(drawTypeStr))
                 {
-                    facies = fgridPrt.readFacies(faciesPath);
+                    facies = fgridPrt.readFacies(faciesPath); // 新版变成旧版了 2017年5月23日 14:29:04变成新版
+                    // 2017年5月23日 14:29:20变成旧版
+                    //facies = fgridPrt.readRegInc(faciesPath); // 原旧版 重新启用 2017年5月8日 21:02:39 
                 }
-                ntgs=fgridPrt.readNTG(faciesPath);
+                //ntgs=fgridPrt.readNTG(gproPath);// 净毛比 2017年5月8日 20:43:53
+                // poro = fgridPrt.poro;// 孔隙度 2017年5月8日 20:44:06
+                //permx = fgridPrt.permx;// 渗透率 2017年5月8日 20:44:08
                 System.Console.WriteLine("底图绘制:" + ((DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds - timed));
                 //   this.Dispatcher.Invoke(DispatcherPriority.Normal,
                 //new Action(() =>
@@ -1334,7 +1354,6 @@ namespace 数模建模
                     PointCollection myPointCollection2 = new PointCollection();
                     //myPolygon2.Stroke = System.Windows.Media.Brushes.Black;
                     myPolygon2.StrokeThickness = 0.00;//00000000000000
-
                     double rawx0 = Convert.ToDouble(dtfgridNew.Rows[i + 0][0]);
                     double rawy0 = Convert.ToDouble(dtfgridNew.Rows[i + 0][1]);
                     double rawx1 = Convert.ToDouble(dtfgridNew.Rows[i + 1][0]);
@@ -1366,9 +1385,21 @@ namespace 数模建模
                     //上prt
                     int hadC = (Convert.ToInt32(ch) - 1) * tablesize[0] * tablesize[1]; //跳过前几层
                     int hady = prtYCount * tablesize[0];//跳过前几行
-                    double val = Convert.ToDouble(dtprt.Rows[prtYCount][prtXCount]);
-                    double dzval = Convert.ToDouble(dzDt.Rows[prtYCount][prtXCount]);
-
+                    double val = Convert.ToDouble(dtprt.Rows[prtYCount][prtXCount]);//饱和度
+                    double dzval = 3;
+                    dzval = dzs[hadC + hady + prtXCount];
+                    noDzAlert = false;
+                    /*if (DBNull.Value != dzDt.Rows[prtYCount][prtXCount])// 2017年5月10日 14:29:41缺失关键字
+                    {
+                        dzval = Convert.ToDouble(dzDt.Rows[prtYCount][prtXCount]);
+                        noDzAlert = false;
+                    }
+                    if (noDzAlert)
+                    {
+                        Console.WriteLine("++++++++没有DZ++++++++");
+                        MessageBox.Show("PRT文件没有DZ，默认置3");
+                        noDzAlert = false;//不用再提醒啦 分层分相都会多次调用
+                    }*/
                     //canvesGrid.Rows.Add(canvesGridRow);跳转至1005行
                     //全局储量
                     if (val > 0 && poro[hadC + hady + prtXCount] > 0 && b0 > 0)
@@ -1565,6 +1596,7 @@ namespace 数模建模
                         prtYCount++;
                     }
                 }
+
                 //System.Console.WriteLine("allVol:" + allVol);
                 if (allVol > 0)
                 {
@@ -2222,7 +2254,7 @@ namespace 数模建模
                 Point thisPoint = new Point((double)canvesRow["x3"], (double)canvesRow["y3"]);
                 int prtXCount = (int)canvesRow["xcount"];
                 int prtYCount = (int)canvesRow["ycount"];
-               // if (thisFacies.Length > 0) Console.WriteLine("thisFacies"+thisFacies);
+                // if (thisFacies.Length > 0) Console.WriteLine("thisFacies"+thisFacies);
                 if (thisFacies.Length > 0 && !"0".Equals(thisFacies))//未考虑断层影响（坐标差距空白点）
                 {
                     //int colNum = (int)canvesRow["xcount"];
@@ -2271,8 +2303,8 @@ namespace 数模建模
             foreach (DataRow canvesRow in canvesGrid.Rows)
             {
                 string tmpStr = canvesRow["facies"].ToString();
-               // Console.WriteLine(tmpStr);
-                int onefacies = Convert.ToInt32( tmpStr);
+                // Console.WriteLine(tmpStr);
+                int onefacies = Convert.ToInt32(tmpStr);
                 if (onefacies > 0)
                 {
                     double x3 = (double)canvesRow["x3"];
@@ -3429,8 +3461,8 @@ namespace 数模建模
                             if ((pointD <= a || pointD <= b) // 注采完善
                             && (
                             yxhd >= 1//射开有效厚度大于1m的层;
-                                //|| (chCount <= 4 && avgDicengXishu / maxDicengXishu < obFactorD)
-                                // || (chCount >= 5 && avgDicengXishu / maxDicengXishu < notObFactorD)
+                                     //|| (chCount <= 4 && avgDicengXishu / maxDicengXishu < obFactorD)
+                                     // || (chCount >= 5 && avgDicengXishu / maxDicengXishu < notObFactorD)
                             ))
                             {
                                 hasInj = true;
@@ -3818,8 +3850,8 @@ namespace 数模建模
                             if ((pointD <= a || pointD <= b) // 注采完善
                             && (
                             yxhd < 1//射开有效厚度大于1m的层;
-                                //|| (chCount <= 4 && avgDicengXishu / maxDicengXishu < obFactorD)
-                                // || (chCount >= 5 && avgDicengXishu / maxDicengXishu < notObFactorD)
+                                    //|| (chCount <= 4 && avgDicengXishu / maxDicengXishu < obFactorD)
+                                    // || (chCount >= 5 && avgDicengXishu / maxDicengXishu < notObFactorD)
                             ))
                             {
                                 hasInj = true;
@@ -3990,8 +4022,8 @@ namespace 数模建模
                             string faciesInj2 = row2["facies"].ToString();
                             if ((pointD <= a || pointD <= b) // 注采完善
                             && (yxhd >= 1//射开有效厚度大于1m的层;
-                                //|| (chCount <= 4 && avgDicengXishu / maxDicengXishu < obFactorD)
-                                // || (chCount >= 5 && avgDicengXishu / maxDicengXishu < notObFactorD)
+                                         //|| (chCount <= 4 && avgDicengXishu / maxDicengXishu < obFactorD)
+                                         // || (chCount >= 5 && avgDicengXishu / maxDicengXishu < notObFactorD)
                             ))
                             {
                                 hasInj = true;
@@ -4320,8 +4352,8 @@ namespace 数模建模
                             string faciesInj2 = row2["facies"].ToString();
                             if ((pointD <= a || pointD <= b) // 注采完善
                             && (yxhd >= 1//射开有效厚度大于1m的层;
-                                //|| (chCount <= 4 && avgDicengXishu / maxDicengXishu < obFactorD)
-                                // || (chCount >= 5 && avgDicengXishu / maxDicengXishu < notObFactorD)
+                                         //|| (chCount <= 4 && avgDicengXishu / maxDicengXishu < obFactorD)
+                                         // || (chCount >= 5 && avgDicengXishu / maxDicengXishu < notObFactorD)
                             ))
                             {
                                 hasInj = true;
@@ -4585,8 +4617,8 @@ namespace 数模建模
                             if ((pointD <= a || pointD <= b) // 注采完善
                             && (
                             yxhd < 1//射开有效厚度大于1m的层;
-                                //|| (chCount <= 4 && avgDicengXishu / maxDicengXishu < obFactorD)
-                                // || (chCount >= 5 && avgDicengXishu / maxDicengXishu < notObFactorD)
+                                    //|| (chCount <= 4 && avgDicengXishu / maxDicengXishu < obFactorD)
+                                    // || (chCount >= 5 && avgDicengXishu / maxDicengXishu < notObFactorD)
                             ))
                             {
                                 hasInj = true;
@@ -4868,8 +4900,11 @@ namespace 数模建模
         private void newWinEachRes(object sender, RoutedEventArgs e)
         {
             String comboCh = ComboBoxCH.Text;
+            String oldDrawTypeStr = this.ComboBoxCH.Text;
+            int oldSoil = combo_soiltime.SelectedIndex;
             if (null == comboCh || "".Equals(comboCh))
             {
+                Console.WriteLine("newWinEachRes读取文件");
                 findDc(sender, e);//读取文件
                 Console.WriteLine("读取文件");
             }
@@ -5000,8 +5035,13 @@ namespace 数模建模
 
                 AllChResContainer draw = new AllChResContainer("储量", allResDt);
                 draw.Show();
+
             }
             allCh = null;
+            ComboBoxCH.Text = comboCh;
+            this.ComboBoxCH.Text = oldDrawTypeStr;
+            combo_soiltime.SelectedIndex = oldSoil;
+            findDc(sender, e);
         }
 
         /**
@@ -5030,6 +5070,8 @@ namespace 数模建模
             string schIncPath = helper.GetXMLDocument("SCH");
             string gothIncPath = helper.GetXMLDocument("GOTH");
             string faciesPath = helper.GetXMLDocument("FACIES");
+            string gproPath = helper.GetXMLDocument("GPRO");
+            string finitPath = helper.GetXMLDocument("FINIT");
             string ch = this.ComboBoxCH.Text;
             drawTypeStr = this.drawtype.Text;
             if (allCh != null)
@@ -5057,7 +5099,9 @@ namespace 数模建模
             {
                 数模建模.SIMB.FgridPrt fgridPrt = new 数模建模.SIMB.FgridPrt();
                 tablesize = fgridPrt.readFGRID(fgridpath);
-                facies = fgridPrt.readFacies(faciesPath);
+                facies = fgridPrt.readFacies(faciesPath); // 新版变成旧版了 2017年5月23日 14:30:01再变新版
+                // 2017年5月23日 14:30:17 尼玛变成旧版了
+                //facies = fgridPrt.readRegInc(faciesPath); // 原旧版 重新启用 2017年5月8日 21:02:39 
                 //Console.WriteLine(facies.Length);
                 faciesNum = facies.Distinct().ToArray();
                 /*foreach(int kkm in kk)
@@ -5113,10 +5157,16 @@ namespace 数模建模
                 DataTable dtprt = fgridPrt.readPRT(prtpath, ch, combo_soiltimeStr);
                 faultDt = fgridPrt.readGothInc(gothIncPath, ch);//断层
                 fgridPrt.readSchInc(schIncPath, ch);
-                double[] poro = fgridPrt.poro;//孔隙度
-                permx = fgridPrt.permx;//渗透率
-                DataTable dzDt = fgridPrt.dzDt;//厚度
-                facies = fgridPrt.readFacies(faciesPath);
+                double[] poro;//= fgridPrt.poro;//孔隙度
+                //permx = fgridPrt.permx;//渗透率
+                DataTable dzDt = fgridPrt.dzDt;//厚度 
+                facies = fgridPrt.readFacies(faciesPath); // 新版变成旧版了 2017年5月23日 14:31:11 变新
+                // 、、facies = 2017年5月23日 14:31:46 变旧
+               // 、、facies = fgridPrt.readRegInc(faciesPath); // 原旧版 重新启用 2017年5月8日 21:02:39
+                ntgs = fgridPrt.readNTG(gproPath);// 净毛比 2017年5月8日 20:43:53
+                poro = fgridPrt.poro;// 孔隙度 2017年5月8日 20:44:06
+                permx = fgridPrt.permx;// 渗透率 2017年5月8日 20:44:08
+                dzs = fgridPrt.readDz(finitPath); // 新DZ 2017年5月23日 14:24:35
                 System.Console.WriteLine("开始求极值:" + ((DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds - timed));
                 //求极值
                 //渗透率
@@ -5172,6 +5222,7 @@ namespace 数模建模
                 double[] pointX = new double[wellCoord.Rows.Count];
                 double[] pointY = new double[wellCoord.Rows.Count];
                 int jhCount = 0;
+                Boolean noDz = false;
                 //facies = null;
                 /*if ("相图".Equals(drawTypeStr))
                 {
@@ -5223,8 +5274,18 @@ namespace 数模建模
                     int hadC = (Convert.ToInt32(ch) - 1) * tablesize[0] * tablesize[1]; //跳过前几层
                     int hady = prtYCount * tablesize[0];//跳过前几行
                     double val = Convert.ToDouble(dtprt.Rows[prtYCount][prtXCount]);
-                    double dzval = Convert.ToDouble(dzDt.Rows[prtYCount][prtXCount]);
-
+                    double dzval = 3;
+                    dzval = dzs[hadC + hady + prtXCount];
+                    /*
+                    if (DBNull.Value != dzDt.Rows[prtYCount][prtXCount])// 2017年5月10日 14:29:41缺失关键字
+                    {
+                        dzval = Convert.ToDouble(dzDt.Rows[prtYCount][prtXCount]);
+                    }
+                    else
+                    {
+                        noDz = true;
+                    }
+                    */
                     //canvesGrid.Rows.Add(canvesGridRow);跳转至1005行
 
                     if ("相图".Equals(drawTypeStr))
@@ -5263,9 +5324,6 @@ namespace 数模建模
                             }
                         }
                     }
-
-
-                  
                     // canvesGrid.Rows.Add(canvesGridRow);
                     //行号结算
                     prtXCount++;
@@ -5277,7 +5335,6 @@ namespace 数模建模
                 }
                 //System.Console.WriteLine("allVol:" + allVol);
 
-
                 //断层 他项权证
                 //List<PointCollection> faultPointCollections=new  List<PointCollection>();                
 
@@ -5285,7 +5342,6 @@ namespace 数模建模
                 //}));  
                 //   }) { IsBackground = true }.Start();
                 //最后我们来个图例
-
                 System.Console.WriteLine("end:" + ((DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds - timed));
             }
             else
@@ -5369,7 +5425,7 @@ namespace 数模建模
                 Console.WriteLine("读取文件");
                 findDc(null, null);//读取文件();//读取文件
             }
-           
+
             for (int i = 1; i <= maxCh; i++)
             {
                 DataColumn column2 = new DataColumn();
@@ -5410,10 +5466,10 @@ namespace 数模建模
                     String jh = bigGridRow["jh"].ToString();
                     String x0 = bigGridRow["x0"].ToString();
                     String y0 = bigGridRow["y0"].ToString();
-                    wellPoint4allres = new Point(Convert.ToDouble(x0),Convert.ToDouble(y0));
+                    wellPoint4allres = new Point(Convert.ToDouble(x0), Convert.ToDouble(y0));
                     switchClickMode = "单井井控范围";
-                    canves1_MouseLeftButtonUp_prt(null,null);
-                    DataRow dRow = allResDt.Select("井号='"+jh+"'")[0]; 
+                    canves1_MouseLeftButtonUp_prt(null, null);
+                    DataRow dRow = allResDt.Select("井号='" + jh + "'")[0];
                     dRow.BeginEdit();
                     dRow["层号" + i] = wellRes4allres.ToString("0.0000");
                     dRow.EndEdit();
@@ -5465,7 +5521,7 @@ namespace 数模建模
                 double sumPoro = 0;
                 double sumPermx = 0;
                 double sumCalSoil = 0;
-                int poroNum=0;
+                int poroNum = 0;
                 int permxNum = 0;
                 foreach (DataRow bigRow in canvesGrid.Rows)
                 {
@@ -5576,7 +5632,7 @@ namespace 数模建模
                         avgCalSoil += tmpPoro * tmpDz * tmpNTG;
                     }
                 }
-                
+
             }
             DataRow row = allResDt.NewRow();
             row["层号"] = allCh;

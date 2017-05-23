@@ -152,6 +152,10 @@ namespace 数模建模.SIMB
         }
         //提取数据
         //网格
+        /**
+         * 饱和度
+         * 2017年5月10日 09:30:51
+         * */
         public DataTable readPRT(string filepath, String ch, String soiltime)
         {
             permx = new double[x * y * z];
@@ -196,40 +200,40 @@ namespace 数模建模.SIMB
             {
                 if (line.Trim() != "")
                 {
-                    if (line.Contains("1: PORO"))//空隙度
-                    {
-                        int poroCount = 0;
-                        while ((line = sr.ReadLine()) != null)
-                        {
-                            if (line.Contains("/"))
-                            { break; }
-                            int sp = line.IndexOf(":");
-                            line = line.Substring(sp + 1);
-                            string[] poros = line.Split(' ');
-                            foreach (string tobeporo in poros)
-                            {
-                                // System.Console.WriteLine(tobeporo);
-                                if (tobeporo != null && tobeporo.Contains("*"))
-                                {//解压缩
-                                    string[] manyporos = tobeporo.Split('*');
-                                    for (int i = 0; i < Convert.ToInt32(manyporos[0]); i++)
-                                    {
-                                        poro[poroCount] = Convert.ToDouble(manyporos[1]);
-                                        poroCount++;
-                                    }
+                    /* if (line.Contains("1: PORO"))//空隙度
+                     {
+                         int poroCount = 0;
+                         while ((line = sr.ReadLine()) != null)
+                         {
+                             if (line.Contains("/"))
+                             { break; }
+                             int sp = line.IndexOf(":");
+                             line = line.Substring(sp + 1);
+                             string[] poros = line.Split(' ');
+                             foreach (string tobeporo in poros)
+                             {
+                                 // System.Console.WriteLine(tobeporo);
+                                 if (tobeporo != null && tobeporo.Contains("*"))
+                                 {//解压缩
+                                     string[] manyporos = tobeporo.Split('*');
+                                     for (int i = 0; i < Convert.ToInt32(manyporos[0]); i++)
+                                     {
+                                         poro[poroCount] = Convert.ToDouble(manyporos[1]);
+                                         poroCount++;
+                                     }
 
-                                }
-                                else if (tobeporo != null && !"".Equals(tobeporo))
-                                {
-                                    poro[poroCount] = Convert.ToDouble(tobeporo);
-                                    poroCount++;
-                                }
-                            }
-                        }
-                        //System.Console.WriteLine(poro[x * y * z - 2]);
-                        //System.Console.WriteLine(poro[x*y*z-1]);
-                    }
-                    else if (line.Contains("1: PERMX"))//渗透率
+                                 }
+                                 else if (tobeporo != null && !"".Equals(tobeporo))
+                                 {
+                                     poro[poroCount] = Convert.ToDouble(tobeporo);
+                                     poroCount++;
+                                 }
+                             }
+                         }
+                         //System.Console.WriteLine(poro[x * y * z - 2]);
+                         //System.Console.WriteLine(poro[x*y*z-1]);
+                     }*/
+                    /*else if (line.Contains("1: PERMX"))//渗透率
                     {
                         int permxCount = 0;
                         while ((line = sr.ReadLine()) != null)
@@ -258,7 +262,7 @@ namespace 数模建模.SIMB
                                 }
                             }
                         }
-                    }
+                    }*/
                     /* else if (line.Contains("COMPDAT")) //井号的网格坐标wellCoord
                      {
                          line = sr.ReadLine();
@@ -301,7 +305,8 @@ namespace 数模建模.SIMB
                          row["stat"] = "WATER";
                          wellStat.Rows.Add(row);
                      }*/
-                    else if (line.Contains("DZ ") && line.Contains(" AT"))//z厚度
+                    // else
+                    if (line.Contains("DZ ") && line.Contains(" AT"))//z厚度
                     {
                         bool findDzFlag = false;
                         while ((line = sr.ReadLine()) != null)
@@ -360,6 +365,7 @@ namespace 数模建模.SIMB
                     }
                     else if (line.Contains("SOIL ") && line.Contains(" AT"))//饱和度信息 UNITS BARSA是压力单位
                     {
+                        //Console.WriteLine(line);
                         line = sr.ReadLine();
                         if (line.Contains(soiltime))
                         {
@@ -391,15 +397,17 @@ namespace 数模建模.SIMB
                         filech = int.Parse(line.Substring(8, 3).Trim());//层号k
                         if (ch.Equals("" + filech))
                         {
-                            string[] sArray = line.Substring(12).Split(' ');
+                            line = line.Substring(12).Replace("-0", " 0");// 不规范数据
+                            string[] sArray = line.Split(' ');
                             if (sArray.Length > 2)
                             {
                                 foreach (string i in sArray)
                                 {
+                                    // System.Console.WriteLine("~~" + i);
                                     if (i != "" && "-----" != i)
                                     {
                                         //System.Console.WriteLine("++:"+i);
-                                        double val = Convert.ToDouble(i.Replace("*", "."));
+                                        double val = Convert.ToDouble(i.Replace("*", "."));// 不规范数据
                                         dtresult.Rows[rowNum - 1][startNum + k - 1] = val;
                                         k++;
                                     }
@@ -457,7 +465,7 @@ namespace 数模建模.SIMB
                             wellCoord.Rows.Add(row);
                         }
                     }
-                   else if ("WELSPECS".Equals(line.Trim()))//油井井别wellStat
+                    else if ("WELSPECS".Equals(line.Trim()))//油井井别wellStat
                     {
                         line = sr.ReadLine();
                         int startJh = line.IndexOf("'");
@@ -575,18 +583,30 @@ namespace 数模建模.SIMB
             sr.Close();
             return faultDt;
         }
-
+        /**
+         * 2017年5月8日 21:00:05 这方法以前特么写过 现在怎么又改回来读readREG了
+         * 是不是
+         * */
         public int[] readRegInc(string filepath)
         {
             fipnum = new int[x * y * z];
             StreamReader sr = new StreamReader(filepath, Encoding.Default);
             String line;
+            Boolean checkComplete = false;
             while ((line = sr.ReadLine()) != null)
             {
                 if (line.Trim() != "")
                 {
-                    if ("FIPNUM".Equals(line.Trim()))//
+                    String keyword = "";
+                    if (line.Length > 5)
                     {
+                        keyword = line.Substring(0, 6).Trim();
+                    }
+                    if (checkComplete)
+                    { break; }
+                    else if ("FIPNUM".Equals(keyword))// 2017年5月8日 20:57:12 line.Trim()))//
+                    {
+                        checkComplete = true;
                         int fipnumCount = 0;
                         while ((line = sr.ReadLine()) != null)
                         {
@@ -687,21 +707,203 @@ namespace 数模建模.SIMB
         /**
          *  读取Facies文件中的NTG 1.txt
          *  2017-1-9 20:00:40
+         *  
+         *  2017年5月8日 20:28:58
+         *  改为GPRO 的NTG、PORO、PERMX
          */
         public double[] readNTG(string filepath)
         {
             ntgs = new double[x * y * z];
+            poro = new double[x * y * z];
+            permx = new double[x * y * z];
             StreamReader sr = new StreamReader(filepath, Encoding.Default);
             String line;
+            Boolean check1complete = false;
+            Boolean check2complete = false;
+            Boolean check3complete = false;
             while ((line = sr.ReadLine()) != null)
             {
-                if (line.Trim() != "")
+                if (check1complete && check2complete && check3complete)
                 {
-                    if ("NTG".Equals(line.Substring(0,3).Trim()))//相图
+                    break;
+                }
+                else if (line.Trim() != "")
+                {
+                    String keyword = line.Trim();
+                    //if (line.Length > 2)
+                    //{
+                    //keyword = line.Substring(0, 3).Trim();
+                    // }
+                    // Console.WriteLine(keyword);
+                    switch (keyword)
                     {
-                        int fipnumCount = 0;
+                        default:
+                            // Console.WriteLine("de" + line);
+                            break;
+                        case "NTG":
+                            Console.WriteLine("nt" + line);
+                            int fipnumCount = 0;
+                            while ((line = sr.ReadLine()) != null)
+                            {
+
+                                check1complete = true;
+                                if ("".Equals(line))
+                                {
+                                    break;
+                                }
+                                else if (line.Contains("--"))
+                                {
+                                    continue;
+                                }
+                                else
+                                {
+
+                                    string[] fipnumOneline = line.Split(' ');
+                                    foreach (string onefipnum in fipnumOneline)
+                                    {
+                                        if ("/".Equals(onefipnum))
+                                        {
+                                            break;
+                                        }
+                                        else if (onefipnum != null && onefipnum.Contains("*"))
+                                        {//解压缩
+                                            string[] manys = onefipnum.Split('*');
+                                            for (int i = 0; i < Convert.ToDouble(manys[0]); i++)
+                                            {
+                                                ntgs[fipnumCount] = Convert.ToDouble(manys[1]);
+                                                fipnumCount++;
+                                            }
+                                        }
+                                        else if (onefipnum != null && !"".Equals(onefipnum))
+                                        {
+                                            //Console.WriteLine(onefipnum+"ntcccc" + line);
+                                            ntgs[fipnumCount] = Convert.ToDouble(onefipnum);
+                                            fipnumCount++;
+                                        }
+                                    }
+                                }
+                            }
+                            break;
+                        case "PORO":// 孔隙度
+                            Console.WriteLine("poro" + line);
+                            int poroCount = 0;
+                            while ((line = sr.ReadLine()) != null)
+                            {
+                                check2complete = true;
+                                if ("".Equals(line))
+                                {
+                                    break;
+                                }
+                                else if (line.Contains("--"))
+                                {
+                                    continue;
+                                }
+                                else
+                                {
+                                    string[] fipnumOneline = line.Split(' ');
+                                    foreach (string onefipnum in fipnumOneline)
+                                    {
+                                        if ("/".Equals(onefipnum))
+                                        {
+                                            break;
+                                        }
+                                        else if (onefipnum != null && onefipnum.Contains("*"))
+                                        {//解压缩
+                                            string[] manys = onefipnum.Split('*');
+                                            for (int i = 0; i < Convert.ToDouble(manys[0]); i++)
+                                            {
+                                                poro[poroCount] = Convert.ToDouble(manys[1]);
+                                                poroCount++;
+                                            }
+                                        }
+                                        else if (onefipnum != null && !"".Equals(onefipnum))
+                                        {
+                                            poro[poroCount] = Convert.ToDouble(onefipnum);
+                                            poroCount++;
+                                        }
+                                    }
+                                }
+                            }
+                            break;
+                        case "PERMX":// 渗透率
+                            Console.WriteLine("PERMX" + line);
+                            int permxCount = 0;
+                            while ((line = sr.ReadLine()) != null)
+                            {
+                                check3complete = true;
+                                if ("".Equals(line))
+                                {
+                                    break;
+                                }
+                                else if (line.Contains("--"))
+                                {
+                                    continue;
+                                }
+                                else
+                                {
+                                    string[] fipnumOneline = line.Split(' ');
+                                    foreach (string onefipnum in fipnumOneline)
+                                    {
+                                        if ("/".Equals(onefipnum))
+                                        {
+                                            break;
+                                        }
+                                        else if (onefipnum != null && onefipnum.Contains("*"))
+                                        {//解压缩
+                                            string[] manys = onefipnum.Split('*');
+                                            for (int i = 0; i < Convert.ToDouble(manys[0]); i++)
+                                            {
+                                                permx[permxCount] = Convert.ToDouble(manys[1]);
+                                                permxCount++;
+                                            }
+                                        }
+                                        else if (onefipnum != null && !"".Equals(onefipnum))
+                                        {
+                                            //Console.WriteLine(line);
+                                            permx[permxCount] = Convert.ToDouble(onefipnum);
+                                            permxCount++;
+                                        }
+                                    }
+                                }
+                            }
+                            break;
+                    }
+
+                }
+            }
+            sr.Close();
+            return ntgs;
+        }
+        /**
+         * 读取dz 从finit
+         * 2017年5月23日 10:47:02         * 
+         * */
+        public double[] readDz(string filepath)
+        {
+            double[] dzs = new double[x * y * z];
+            StreamReader sr = new StreamReader(filepath, Encoding.Default);
+            String line;
+            Boolean check1complete = false;
+            Console.WriteLine(filepath);
+            while ((line = sr.ReadLine()) != null)
+            {
+                if (check1complete)
+                {
+                    break;
+                }
+                else if (line.Trim() != "")
+                {
+                    String keyword = line.Trim();
+                    if (keyword.Contains("DZ"))
+                    {
+                        int dzCount = 0;
                         while ((line = sr.ReadLine()) != null)
                         {
+                            if (check1complete)
+                            {
+                                break;
+                            }
+                           
                             if ("".Equals(line))
                             {
                                 break;
@@ -712,36 +914,43 @@ namespace 数模建模.SIMB
                             }
                             else
                             {
-                                string[] fipnumOneline = line.Split(' ');
-                                foreach (string onefipnum in fipnumOneline)
+                                string[] dzOneline = line.Split(' ');
+                                foreach (string onedz in dzOneline)
                                 {
-                                    if ("/".Equals(onefipnum))
+                                    if ("/".Equals(onedz)|| onedz.Contains("'"))
                                     {
+                                        check1complete = true;
                                         break;
                                     }
-                                    else if (onefipnum != null && onefipnum.Contains("*"))
+                                    else if (onedz != null && onedz.Contains("*"))
                                     {//解压缩
-                                        string[] manys = onefipnum.Split('*');
+                                        string[] manys = onedz.Split('*');
                                         for (int i = 0; i < Convert.ToDouble(manys[0]); i++)
                                         {
-                                            ntgs[fipnumCount] = Convert.ToDouble(manys[1]);
-                                            fipnumCount++;
+                                            dzs[dzCount] = Convert.ToDouble(manys[1]);
+                                            dzCount++;
                                         }
                                     }
-                                    else if (onefipnum != null && !"".Equals(onefipnum))
+                                    else if (onedz != null && !"".Equals(onedz))
                                     {
-                                        ntgs[fipnumCount] = Convert.ToDouble(onefipnum);
-                                        fipnumCount++;
+                                        dzs[dzCount] = Convert.ToDouble(onedz);
+                                        dzCount++;
                                     }
                                 }
                             }
                         }
+                        break;
                     }
+                    /*
+                    else
+                    {
+                        break;
+                    }*/
                 }
             }
             sr.Close();
-            return ntgs;
+            return dzs;
         }
-        
+
     }
 }

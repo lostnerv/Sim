@@ -17,9 +17,11 @@
   <Node name="paller" path="D:\采油八厂\数据平台建模数据格式1\断层\zhao5_fault.fault_data.txt" />
   <Node name="simboutput" path="D:\用户目录\Desktop\新建文件夹 (6)" />
   <Node name="sandvalue" path="" />
-  <Node name="FGRID" path="D:\测试结果\q\q\SYYCS_E100.FGRID" />
-  <Node name="PRTINC" path="D:\测试结果\q\q\SYYCS_E100.PRT" />
-  <Node name="SCH" path="D:\测试结果\q\q\SYYCS_SCH.INC" />
-  <Node name="GOTH" path="D:\测试结果\q\q\SYYCS_GOTH.INC" />
-  <Node name="FACIES" path="D:\测试结果\q\q\SYYCS_REG.INC" />
+  <Node name="FGRID" path="D:\360Downloads\数模建模.draw\SYYCS_E100.FGRID" />
+  <Node name="PRTINC" path="D:\360Downloads\数模建模.draw\SYYCS_E100.PRT" />
+  <Node name="SCH" path="D:\360Downloads\数模建模.draw\SYYCS_SCH.INC" />
+  <Node name="GOTH" path="D:\360Downloads\数模建模.draw\SYYCS_GOTH.INC" />
+  <Node name="FACIES" path="D:\360Downloads\数模建模.draw\SYYCS_REG.INC" />
+  <Node name="GPRO" path="D:\360Downloads\数模建模.draw\SYYCS_GPRO.INC" />
+  <Node name="FINIT" path="D:\360Downloads\数模建模.draw\SYYCS_E100.FINIT" />
 </DataPath>

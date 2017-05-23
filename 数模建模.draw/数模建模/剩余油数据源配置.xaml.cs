@@ -22,6 +22,14 @@ namespace 数模建模
         public 剩余油数据源配置()
         {
             InitializeComponent();
+            XmlHelper helper = new XmlHelper();
+            this.fgrid.filePath.Text = helper.GetXMLDocument("FGRID");
+            this.prtinc.filePath.Text = helper.GetXMLDocument("PRTINC");
+            this.schinc.filePath.Text = helper.GetXMLDocument("SCH");
+            this.gothinc.filePath.Text = helper.GetXMLDocument("GOTH");
+            this.faciesinc.filePath.Text = helper.GetXMLDocument("FACIES");
+            this.gproinc.filePath.Text = helper.GetXMLDocument("GPRO");
+            this.finitinc.filePath.Text = helper.GetXMLDocument("FINIT");
         }
 
         private void simaf_save_Click(object sender, RoutedEventArgs e)
@@ -72,6 +80,25 @@ namespace 数模建模
             {
                 helper.EditXMLDocument("FACIES", this.faciesinc.filePath.Text);
             }
+            // 2017年5月8日 19:32:56 新文件
+            if (helper.GetXMLDocument("GPRO") == null)
+            {
+                helper.AddXMLDocument("GPRO", this.gproinc.filePath.Text);
+            }
+            else
+            {
+                helper.EditXMLDocument("GPRO", this.gproinc.filePath.Text);
+            }
+            // 2017年5月23日 10:16:59 dz
+            if (helper.GetXMLDocument("FINIT") == null)
+            {
+                helper.AddXMLDocument("FINIT", this.finitinc.filePath.Text);
+            }
+            else
+            {
+                helper.EditXMLDocument("FINIT", this.finitinc.filePath.Text);
+            }
+            MessageBox.Show("保存成功");
         }
     }
 }
