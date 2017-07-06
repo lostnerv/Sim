@@ -101,7 +101,7 @@
                                 VerticalAlignment="Top" Width="50" Text="时间" Grid.Row="0" Grid.Column="1"/>
                     <ComboBox  Name="combo_soiltime" HorizontalAlignment="Left" VerticalAlignment="Top"  Margin="25,33,0,0" Width="100" Grid.Row="0" Grid.Column="1" Height="23px"/>
                     <Button Content="全区储量" Height="23" HorizontalAlignment="Right" Margin="0,62,30,0" Grid.Column="2" VerticalAlignment="Top" Width="60"  Click="newWinAllRes" />
-                    
+                    <ProgressBar Height="10" Name="progressBar1"  Margin="0,85,20,0"   Width="240" Grid.Column="1" Grid.ColumnSpan="2"/>
                     
                     <Canvas x:Name="canvesprt"   ZIndex="-1" Background="White"  Grid.Row="1" Grid.Column="0" 
                             MouseRightButtonUp="canves1_MouseRightButtonUp_prt"  Focusable="True" MouseMove="canvas_move" MouseDown="canvas_down"
@@ -142,7 +142,8 @@
 
                         <Button Content="剩余油储量" Margin="0,390,0,0"   Width="120" Click="newWinEachRes" HorizontalAlignment="Left"  ></Button>
                         <Button Content="单井各层储量" Margin="0,415,0,0"   Width="120"  Click="newWinEachWell" HorizontalAlignment="Left"  ></Button>
-                        <Button Content="各层平均孔渗饱" Margin="0,440,0,0"   Width="120"  Click="newKsbEachC" HorizontalAlignment="Left"  ></Button>
+                        <Button Content="各层平均孔渗饱" Margin="0,440,0,0"   Width="120"  Click="newKsbEachC" HorizontalAlignment="Left"  ></Button> 
+                        
 
                     </Canvas>
 

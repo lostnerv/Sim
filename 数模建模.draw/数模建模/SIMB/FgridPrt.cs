@@ -695,12 +695,17 @@ namespace 数模建模.SIMB
             String line;
             while ((line = sr.ReadLine()) != null)
             {
+                //if (line.Length > 10)
+                //{ 
                 if (line.Contains("SOIL     AT"))
+                //   int tempIndex = line.IndexOf("SOIL     AT");
+                //if (tempIndex != -1)
                 {
                     line = sr.ReadLine();
                     line = line.Substring(15, 15).Trim();
                     timeList.Add(line);
                 }
+               // }
             }
             return timeList;
         }

@@ -17,11 +17,11 @@
   <Node name="paller" path="D:\采油八厂\数据平台建模数据格式1\断层\zhao5_fault.fault_data.txt" />
   <Node name="simboutput" path="D:\用户目录\Desktop\新建文件夹 (6)" />
   <Node name="sandvalue" path="" />
-  <Node name="FGRID" path="D:\360Downloads\数模建模.draw\SYYCS_E100.FGRID" />
-  <Node name="PRTINC" path="D:\360Downloads\数模建模.draw\SYYCS_E100.PRT" />
-  <Node name="SCH" path="D:\360Downloads\数模建模.draw\SYYCS_SCH.INC" />
-  <Node name="GOTH" path="D:\360Downloads\数模建模.draw\SYYCS_GOTH.INC" />
-  <Node name="FACIES" path="D:\360Downloads\数模建模.draw\SYYCS_REG.INC" />
-  <Node name="GPRO" path="D:\360Downloads\数模建模.draw\SYYCS_GPRO.INC" />
-  <Node name="FINIT" path="D:\360Downloads\数模建模.draw\SYYCS_E100.FINIT" />
+  <Node name="FGRID" path="F:\QMDownload\feiq\王营(10.64.212.150)\f407gz - youshuixiangshfenqu\F407_E100.FGRID" />
+  <Node name="PRTINC" path="F:\QMDownload\feiq\王营(10.64.212.150)\f407gz - youshuixiangshfenqu\F407_E100.PRT" />
+  <Node name="SCH" path="F:\QMDownload\feiq\王营(10.64.212.150)\f407gz - youshuixiangshfenqu\F407_SCH.INC" />
+  <Node name="GOTH" path="F:\QMDownload\feiq\王营(10.64.212.150)\f407gz - youshuixiangshfenqu\F407_GOTH.INC" />
+  <Node name="FACIES" path="F:\QMDownload\feiq\王营(10.64.212.150)\F407_REG.INC" />
+  <Node name="GPRO" path="F:\QMDownload\feiq\王营(10.64.212.150)\f407gz - youshuixiangshfenqu\F407_GPRO.INC" />
+  <Node name="FINIT" path="F:\QMDownload\feiq\王营(10.64.212.150)\f407gz - youshuixiangshfenqu\F407_E100.FINIT" />
 </DataPath>

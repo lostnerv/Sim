@@ -5,7 +5,7 @@
         xmlns:local="clr-namespace:数模建模"
         Title="MainWindow"
 		x:Name="RibbonWindow"
-		Width="640" Height="480">
+		Width="Auto" Height="840">
 
     <Grid x:Name="LayoutRoot">
         <Grid.RowDefinitions>

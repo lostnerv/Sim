@@ -1165,6 +1165,24 @@ namespace 数模建模
                 textReservers.Text = "预测剩余可采储量：" + reserve + "万吨";
         }
 
+        private delegate void UpdateProgressBarDelegate(System.Windows.DependencyProperty dp, Object value);
+
+
+      /*  private void readIndex_Click(object sender, EventArgs e)
+        {
+            progressBar1.Maximum = 100;
+            progressBar1.Value = 0;
+
+            UpdateProgressBarDelegate updatePbDelegate = new UpdateProgressBarDelegate(progressBar1.SetValue);
+
+            for (int i = 0; i < 100; i++)
+            {
+                Dispatcher.Invoke(updatePbDelegate, System.Windows.Threading.DispatcherPriority.Background, new object[] {
+                    System.Windows.Controls.ProgressBar.ValueProperty, Convert.ToDouble(i + 1) 
+                });
+            }
+        }  */
+       
         /**
          * 饱和度和断层
          * 2016-7-2 11:33:06
@@ -1172,7 +1190,17 @@ namespace 数模建模
 
         private void findDc(object sender, RoutedEventArgs e)
         {
+            progressBar1.Maximum = 100;
+            progressBar1.Value = 0;
+
+            UpdateProgressBarDelegate updatePbDelegate = new UpdateProgressBarDelegate(progressBar1.SetValue);
+
+            Dispatcher.Invoke(updatePbDelegate, System.Windows.Threading.DispatcherPriority.Background, new object[] {
+                    System.Windows.Controls.ProgressBar.ValueProperty, Convert.ToDouble( 1) 
+                });
+
             TimeSpan ts = DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0);
+
             double timed = ts.TotalSeconds;
             //string fgridpath = "E:\\Documents\\项目开发\\MyWork\\8\\需求\\f10-27right\\F10-27RIGHT_E100.FGRID";
             //string prtpath = "E:\\wf.txt";
@@ -1252,13 +1280,34 @@ namespace 数模建模
                 //调用主线程UI的的代码  
                 //    new Thread(o =>
                 //  { 
+                Dispatcher.Invoke(updatePbDelegate, System.Windows.Threading.DispatcherPriority.Background, new object[] {
+                    System.Windows.Controls.ProgressBar.ValueProperty, Convert.ToDouble(10) 
+                });
                 System.Console.WriteLine("开始解析文件:" + ((DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds - timed));
                 // 解析文件
                 tablesize = fgridPrt.readFGRID(fgridpath);
+                Dispatcher.Invoke(updatePbDelegate, System.Windows.Threading.DispatcherPriority.Background, new object[] {
+                    System.Windows.Controls.ProgressBar.ValueProperty, Convert.ToDouble(15) 
+                });
+                Console.WriteLine("fgrid-Size完成");
                 DataTable dtfgridNew = fgridNew.readFile(fgridpath, ch);
+                Console.WriteLine("fgrid完成2");
+                Dispatcher.Invoke(updatePbDelegate, System.Windows.Threading.DispatcherPriority.Background, new object[] {
+                    System.Windows.Controls.ProgressBar.ValueProperty, Convert.ToDouble(20) 
+                });
                 DataTable dtprt = fgridPrt.readPRT(prtpath, ch, combo_soiltimeStr);// 现饱和度 旧版读取 孔隙度、渗透率
+                Console.WriteLine("prt完成");
+                Dispatcher.Invoke(updatePbDelegate, System.Windows.Threading.DispatcherPriority.Background, new object[] {
+                    System.Windows.Controls.ProgressBar.ValueProperty, Convert.ToDouble(30) 
+                });
                 faultDt = fgridPrt.readGothInc(gothIncPath, ch);//断层
+                Dispatcher.Invoke(updatePbDelegate, System.Windows.Threading.DispatcherPriority.Background, new object[] {
+                    System.Windows.Controls.ProgressBar.ValueProperty, Convert.ToDouble(35) 
+                });
                 fgridPrt.readSchInc(schIncPath, ch);
+                Dispatcher.Invoke(updatePbDelegate, System.Windows.Threading.DispatcherPriority.Background, new object[] {
+                    System.Windows.Controls.ProgressBar.ValueProperty, Convert.ToDouble(40) 
+                });
                 double[] poro;// = fgridPrt.poro;//孔隙度 旧版 现在为空值
                 //permx = fgridPrt.permx;//渗透率 旧版 现在为空值
                 DataTable dzDt = fgridPrt.dzDt;//厚度 旧版 不用了
@@ -1334,9 +1383,9 @@ namespace 数模建模
 
                 if ("相图".Equals(drawTypeStr))
                 {
-                    facies = fgridPrt.readFacies(faciesPath); // 新版变成旧版了 2017年5月23日 14:29:04变成新版
+                    facies = fgridPrt.readFacies(faciesPath); // 新版变成旧版了 2017年5月23日 14:29:04变成新版 FACIES
                     // 2017年5月23日 14:29:20变成旧版
-                    //facies = fgridPrt.readRegInc(faciesPath); // 原旧版 重新启用 2017年5月8日 21:02:39 
+                    //facies = fgridPrt.readRegInc(faciesPath); // 原旧版 重新启用 2017年5月8日 21:02:39 FIPNUM 
                 }
                 //ntgs=fgridPrt.readNTG(gproPath);// 净毛比 2017年5月8日 20:43:53
                 // poro = fgridPrt.poro;// 孔隙度 2017年5月8日 20:44:06
@@ -1346,6 +1395,9 @@ namespace 数模建模
                 //new Action(() =>
                 //{
                 //调用主线程UI的的代码   
+                Dispatcher.Invoke(updatePbDelegate, System.Windows.Threading.DispatcherPriority.Background, new object[] {
+                    System.Windows.Controls.ProgressBar.ValueProperty, Convert.ToDouble(50) 
+                });
                 //无尽华尔兹
                 for (int i = 0; i < dtfgridNew.Rows.Count - 3; i = i + 4)
                 {
@@ -1388,7 +1440,8 @@ namespace 数模建模
                     double val = Convert.ToDouble(dtprt.Rows[prtYCount][prtXCount]);//饱和度
                     double dzval = 3;
                     dzval = dzs[hadC + hady + prtXCount];
-                    noDzAlert = false;
+
+                    noDzAlert = true;//该提示dz0值
                     /*if (DBNull.Value != dzDt.Rows[prtYCount][prtXCount])// 2017年5月10日 14:29:41缺失关键字
                     {
                         dzval = Convert.ToDouble(dzDt.Rows[prtYCount][prtXCount]);
@@ -1404,6 +1457,16 @@ namespace 数模建模
                     //全局储量
                     if (val > 0 && poro[hadC + hady + prtXCount] > 0 && b0 > 0)
                     {
+                        //Console.WriteLine("dz:" + dzval);
+
+                        if (0 == dzval)
+                        {
+                            //noDzAlert = true;
+                        }
+                        else if (dzval > 0)//有个别零
+                        {
+                            noDzAlert = false;//不该提示dz0值
+                        }
                         List<Point> points = new List<Point>();
                         points.Add(new Point(rawx0, rawy0));
                         points.Add(new Point(rawx1, rawy1));
@@ -1596,7 +1659,13 @@ namespace 数模建模
                         prtYCount++;
                     }
                 }
-
+                Dispatcher.Invoke(updatePbDelegate, System.Windows.Threading.DispatcherPriority.Background, new object[] {
+                    System.Windows.Controls.ProgressBar.ValueProperty, Convert.ToDouble(80) 
+                });
+                if (noDzAlert)
+                {
+                    MessageBox.Show("厚度Dz值为0");                
+                }
                 //System.Console.WriteLine("allVol:" + allVol);
                 if (allVol > 0)
                 {
@@ -1611,7 +1680,9 @@ namespace 数模建模
                         canvesptr.Children.Add(TextNames[i]);
                     }
                 }
-
+                Dispatcher.Invoke(updatePbDelegate, System.Windows.Threading.DispatcherPriority.Background, new object[] {
+                    System.Windows.Controls.ProgressBar.ValueProperty, Convert.ToDouble(90) 
+                });
                 //断层 他项权证
                 //List<PointCollection> faultPointCollections=new  List<PointCollection>();                
                 List<Point> faultPoints = new List<Point>();
@@ -1691,7 +1762,14 @@ namespace 数模建模
             }
             else
             {
+                Dispatcher.Invoke(updatePbDelegate, System.Windows.Threading.DispatcherPriority.Background, new object[] {
+                    System.Windows.Controls.ProgressBar.ValueProperty, Convert.ToDouble(20) 
+                });
                 fgrid_ch(fgridpath);
+                Dispatcher.Invoke(updatePbDelegate, System.Windows.Threading.DispatcherPriority.Background, new object[] {
+                    System.Windows.Controls.ProgressBar.ValueProperty, Convert.ToDouble(50) 
+                });
+                Console.WriteLine("真的解析完成");//上面的后台进度条运行灰常慢
                 数模建模.SIMB.FgridPrt fgridPrt = new 数模建模.SIMB.FgridPrt();
                 soiltimeList = fgridPrt.readSoilTime(prtpath);
                 foreach (string soiltime in soiltimeList)
@@ -1700,6 +1778,9 @@ namespace 数模建模
                 }
                 this.combo_soiltime.SelectedIndex = 0;
             }
+            Dispatcher.Invoke(updatePbDelegate, System.Windows.Threading.DispatcherPriority.Background, new object[] {
+                    System.Windows.Controls.ProgressBar.ValueProperty, Convert.ToDouble(100) 
+                });
         }
 
         //找出极值点
@@ -1838,7 +1919,9 @@ namespace 数模建模
             ObservableCollection<Fgrid_ch> imgs = new ObservableCollection<Fgrid_ch>();
             数模建模.SIMB.FgridPrt fgridPrt = new 数模建模.SIMB.FgridPrt();
             // 解析文件
+            
             int[] tablesize = fgridPrt.readFGRID(filepath);
+            Console.WriteLine("Size解析完成");
             maxCh = tablesize[2];
             for (int i = 1; i <= tablesize[2]; i++)
             {
@@ -2583,6 +2666,7 @@ namespace 数模建模
         ///井控范围
         ///
         List<List<Point>> wellCtrlList = new List<List<Point>>();//存储排过序的井控范围点
+        
         private void drawWellCtrl(object sender, RoutedEventArgs e)
         {
             double a = 0;
@@ -5646,5 +5730,6 @@ namespace 数模建模
             draw.Show();
             allCh = null;
         }
+
     }
 }

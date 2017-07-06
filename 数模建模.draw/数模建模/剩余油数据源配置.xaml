@@ -19,7 +19,7 @@
         <local:SelectFilePath x:Name="schinc" dataPath="sch文件：" Grid.Row="2" Grid.Column="2"></local:SelectFilePath>
         <local:SelectFilePath x:Name="gothinc" dataPath="goth断层文件：" Grid.Row="3" Grid.Column="2"></local:SelectFilePath>
         <!--  reg/facies -->
-        <local:SelectFilePath x:Name="faciesinc" dataPath="reg沉积相文件：" Grid.Row="4" Grid.Column="2"></local:SelectFilePath>
+        <local:SelectFilePath x:Name="faciesinc" dataPath="reg(FACIES)文件：" Grid.Row="4" Grid.Column="2"></local:SelectFilePath>
         <local:SelectFilePath x:Name="gproinc" dataPath="gpro文件：" Grid.Row="5" Grid.Column="2"></local:SelectFilePath>
         <local:SelectFilePath x:Name="finitinc" dataPath="finit文件：" Grid.Row="6" Grid.Column="2"></local:SelectFilePath>
         <Button x:Name="simaf_save" Grid.Row="12" Grid.Column="7" Content="保存" Click="simaf_save_Click"></Button>
