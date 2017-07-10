@@ -1291,7 +1291,7 @@ namespace 数模建模
                 });
                 Console.WriteLine("fgrid-Size完成");
                 DataTable dtfgridNew = fgridNew.readFile(fgridpath, ch);
-                Console.WriteLine("fgrid完成2");
+                Console.WriteLine("fgrid坐标完成");
                 Dispatcher.Invoke(updatePbDelegate, System.Windows.Threading.DispatcherPriority.Background, new object[] {
                     System.Windows.Controls.ProgressBar.ValueProperty, Convert.ToDouble(20) 
                 });
@@ -1315,7 +1315,8 @@ namespace 数模建模
                 ntgs = fgridPrt.readNTG(gproPath);// 净毛比 2017年5月8日 20:43:53
                 poro = fgridPrt.poro;// 孔隙度 2017年5月8日 20:44:06
                 permx = fgridPrt.permx;// 渗透率 2017年5月8日 20:44:08.
-                dzs = fgridPrt.readDz(finitPath);
+                //dzs = fgridPrt.readDz(finitPath);
+                dzs = fgridNew.readDzFromFgrid(fgridpath, tablesize);// fgrid dz 2017年7月10日 11:38:57
                 //
                 System.Console.WriteLine("开始求极值:" + ((DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds - timed));
                 //求极值
@@ -1441,7 +1442,7 @@ namespace 数模建模
                     double dzval = 3;
                     dzval = dzs[hadC + hady + prtXCount];
 
-                    noDzAlert = true;//该提示dz0值
+                   // noDzAlert = true;//该提示dz0值
                     /*if (DBNull.Value != dzDt.Rows[prtYCount][prtXCount])// 2017年5月10日 14:29:41缺失关键字
                     {
                         dzval = Convert.ToDouble(dzDt.Rows[prtYCount][prtXCount]);
@@ -1457,7 +1458,8 @@ namespace 数模建模
                     //全局储量
                     if (val > 0 && poro[hadC + hady + prtXCount] > 0 && b0 > 0)
                     {
-                        //Console.WriteLine("dz:" + dzval);
+                       // Console.WriteLine("dzNUM:" + (hadC + hady + prtXCount));
+                     //   Console.WriteLine("dz:" + dzval);
 
                         if (0 == dzval)
                         {
@@ -5250,7 +5252,8 @@ namespace 数模建模
                 ntgs = fgridPrt.readNTG(gproPath);// 净毛比 2017年5月8日 20:43:53
                 poro = fgridPrt.poro;// 孔隙度 2017年5月8日 20:44:06
                 permx = fgridPrt.permx;// 渗透率 2017年5月8日 20:44:08
-                dzs = fgridPrt.readDz(finitPath); // 新DZ 2017年5月23日 14:24:35
+               // dzs = fgridPrt.readDz(finitPath); // 新DZ 2017年5月23日 14:24:35
+                dzs = fgridNew.readDzFromFgrid(fgridpath, tablesize);// fgrid dz 2017年7月10日 11:38:57
                 System.Console.WriteLine("开始求极值:" + ((DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds - timed));
                 //求极值
                 //渗透率
