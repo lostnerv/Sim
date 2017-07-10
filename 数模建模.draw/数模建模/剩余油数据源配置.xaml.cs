@@ -29,7 +29,7 @@ namespace 数模建模
             this.gothinc.filePath.Text = helper.GetXMLDocument("GOTH");
             this.faciesinc.filePath.Text = helper.GetXMLDocument("FACIES");
             this.gproinc.filePath.Text = helper.GetXMLDocument("GPRO");
-            this.finitinc.filePath.Text = helper.GetXMLDocument("FINIT");
+            //this.finitinc.filePath.Text = helper.GetXMLDocument("FINIT");
         }
 
         private void simaf_save_Click(object sender, RoutedEventArgs e)
@@ -90,14 +90,14 @@ namespace 数模建模
                 helper.EditXMLDocument("GPRO", this.gproinc.filePath.Text);
             }
             // 2017年5月23日 10:16:59 dz
-            if (helper.GetXMLDocument("FINIT") == null)
+           /* if (helper.GetXMLDocument("FINIT") == null)
             {
                 helper.AddXMLDocument("FINIT", this.finitinc.filePath.Text);
             }
             else
             {
                 helper.EditXMLDocument("FINIT", this.finitinc.filePath.Text);
-            }
+            }*/
             MessageBox.Show("保存成功");
         }
     }

@@ -1399,7 +1399,9 @@ namespace 数模建模
                 Dispatcher.Invoke(updatePbDelegate, System.Windows.Threading.DispatcherPriority.Background, new object[] {
                     System.Windows.Controls.ProgressBar.ValueProperty, Convert.ToDouble(50) 
                 });
+                bool hasDraw = false;
                 //无尽华尔兹
+
                 for (int i = 0; i < dtfgridNew.Rows.Count - 3; i = i + 4)
                 {
                     //if (i >100) break;
@@ -1460,7 +1462,7 @@ namespace 数模建模
                     {
                        // Console.WriteLine("dzNUM:" + (hadC + hady + prtXCount));
                      //   Console.WriteLine("dz:" + dzval);
-
+                        hasDraw = true;
                         if (0 == dzval)
                         {
                             //noDzAlert = true;
@@ -1664,7 +1666,7 @@ namespace 数模建模
                 Dispatcher.Invoke(updatePbDelegate, System.Windows.Threading.DispatcherPriority.Background, new object[] {
                     System.Windows.Controls.ProgressBar.ValueProperty, Convert.ToDouble(80) 
                 });
-                if (noDzAlert)
+                if (noDzAlert && hasDraw)
                 {
                     MessageBox.Show("厚度Dz值为0");                
                 }
@@ -1672,6 +1674,10 @@ namespace 数模建模
                 if (allVol > 0)
                 {
                     this.ch_res_all.Text = "本层储量" + allVol.ToString("0.0000") + "万吨";
+                }
+                else
+                {
+                    this.ch_res_all.Text = "本层储量0万吨";
                 }
                 for (int i = 0; i < wellpoints.Length; i++)
                 {

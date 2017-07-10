@@ -135,12 +135,12 @@ namespace 数模建模.SIMB
         public double[] readDzFromFgrid(string filepath, int[] tablesize)
         {
             double[] dzs = new double[tablesize[0] * tablesize[1] * tablesize[2]];
-
+            double[] grid24 = new double[24];
             Boolean startFlag = false;
-            ArrayList arrlist = new ArrayList();
-
+            int dzCount = 0;
+            //ArrayList arrlist = new ArrayList();
             StreamReader sr = new StreamReader(filepath, Encoding.Default);
-            String line;
+            String line="";
             while ((line = sr.ReadLine()) != null)
             {
                 // if (line.Trim() != "")
@@ -173,9 +173,13 @@ namespace 数模建模.SIMB
                                     nextline = nextline.Replace("  -", "*");//负值是错的都出国了
                                     nextline = nextline.Substring(1, nextline.Length - 1);
                                     string[] sArray = nextline.Split('*');//取出空间八点坐标
-                                    foreach (string a in sArray)
+                                    int grid24Count = 0;
+                                    foreach (string onePoint in sArray)
                                     {
-                                        arrlist.Add(a);
+                                        //Console.WriteLine(grid24Count + 4 * (pointCount - 1));
+                                        grid24[grid24Count + 4*(pointCount-1)] = Convert.ToDouble(onePoint);
+                                        //arrlist.Add(a);
+                                        grid24Count++;
                                     }
                                 }
                                 else// 下一个方格
@@ -184,6 +188,13 @@ namespace 数模建模.SIMB
                                 }
                                 if (6 == pointCount)//防止少读一行 COORDS
                                 {
+                                    double dz1 = grid24[14]- grid24[2];
+                                    double dz2 = grid24[17] - grid24[5];
+                                    double dz3 = grid24[20] - grid24[8];
+                                    double dz4 = grid24[23] - grid24[11];
+                                    // 2017年7月10日 11:33:23 dz
+                                    dzs[dzCount] = (dz1 + dz2 + dz3 + dz4) / 4;
+                                    dzCount++;
                                     break;
                                 }
                             }
@@ -194,17 +205,17 @@ namespace 数模建模.SIMB
                 }
             }
             sr.Close();
-            int dzCount = 0;
-            for (int startNum = 0; startNum < arrlist.Count - 23; startNum = startNum + 24)
-            {
-                double dz1 = Convert.ToDouble(arrlist[startNum + 14]) - Convert.ToDouble(arrlist[startNum + 2]);
-                double dz2 = Convert.ToDouble(arrlist[startNum + 17]) - Convert.ToDouble(arrlist[startNum + 5]);
-                double dz3 = Convert.ToDouble(arrlist[startNum + 20]) - Convert.ToDouble(arrlist[startNum + 8]);
-                double dz4 = Convert.ToDouble(arrlist[startNum + 23]) - Convert.ToDouble(arrlist[startNum + 11]);
-                // 2017年7月10日 11:33:23 dz
-                dzs[dzCount] = (dz1 + dz2 + dz3 + dz4) / 4;
-                dzCount++;
-            }
+            
+           // for (int startNum = 0; startNum < arrlist.Count - 23; startNum = startNum + 24)
+           // {
+           // double dz1 = Convert.ToDouble(arrlist[startNum + 14]) - Convert.ToDouble(arrlist[startNum + 2]);
+          //  double dz2 = Convert.ToDouble(arrlist[startNum + 17]) - Convert.ToDouble(arrlist[startNum + 5]);
+          //  double dz3 = Convert.ToDouble(arrlist[startNum + 20]) - Convert.ToDouble(arrlist[startNum + 8]);
+          //  double dz4 = Convert.ToDouble(arrlist[startNum + 23]) - Convert.ToDouble(arrlist[startNum + 11]);
+            // 2017年7月10日 11:33:23 dz
+          //  dzs[dzCount] = (dz1 + dz2 + dz3 + dz4) / 4;
+          //  dzCount++;
+            //}
             return dzs;
         }
     }
