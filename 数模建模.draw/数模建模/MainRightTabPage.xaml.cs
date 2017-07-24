@@ -59,7 +59,7 @@ namespace 数模建模
         List<String> soiltimeList = new List<string>();//时间簿
         Boolean noDzAlert = true;
         double[] dzs = null;
-
+        string nowCh = null;
 
         public MainRightTabPage()
         {
@@ -205,6 +205,13 @@ namespace 数模建模
             columnNTG.ColumnName = "NTG";
             canvesGrid.Columns.Add(columnNTG);
 
+            // 剩余油类型存储
+            // 2017年7月24日 17:56:28
+            DataColumn columnRemainType = new DataColumn();
+            columnRemainType.DataType = System.Type.GetType("System.Int32");
+            columnRemainType.ColumnName = "RemainType";
+            canvesGrid.Columns.Add(columnRemainType);
+
             //可修改ksbEditDT
             DataColumn columnEXcount = new DataColumn();
             columnEXcount.DataType = System.Type.GetType("System.Int32");
@@ -288,7 +295,9 @@ namespace 数模建模
                                     myPointCollection2.Add(point2);
                                     //myPolygon2.Stroke = System.Windows.Media.Brushes.Black;
                                     myPolygon2.StrokeThickness = 0.00;
-                                    SolidColorBrush myBrush = scb;
+                                    SolidColorBrush myBrush = scb;// 剩余油染色
+                                    row3["RemainType"] = scbType;
+
                                     myPolygon2.Fill = myBrush;
                                     myPolygon2.Points = myPointCollection2;
                                     this.canvesprt.Children.Add(myPolygon2);
@@ -976,6 +985,8 @@ namespace 数模建模
             ReservorDraw.EreaseLine(canvesprt, e);
         }
         SolidColorBrush scb = System.Windows.Media.Brushes.Black;//Red;
+        // 2017年7月24日 18:02:01
+        int scbType = 0;
         private void prtchangeColor1(object sender, RoutedEventArgs e)
         {
 
@@ -983,6 +994,7 @@ namespace 数模建模
             //{
             //    case 1:
             scb = System.Windows.Media.Brushes.RoyalBlue;
+            scbType = 601;
             //        break;
             //    default:
             //        scb = System.Windows.Media.Brushes.Red;
@@ -993,51 +1005,61 @@ namespace 数模建模
         private void prtchangeColor2(object sender, RoutedEventArgs e)
         {
             scb = System.Windows.Media.Brushes.Violet;
+            scbType = 602;
             switchClickMode = "染色";
         }
         private void prtchangeColor3(object sender, RoutedEventArgs e)
         {
             scb = System.Windows.Media.Brushes.YellowGreen;
+            scbType = 603;
             switchClickMode = "染色";
         }
         private void prtchangeColor4(object sender, RoutedEventArgs e)
         {
             scb = System.Windows.Media.Brushes.SlateBlue;
+            scbType = 604;
             switchClickMode = "染色";
         }
         private void prtchangeColor5(object sender, RoutedEventArgs e)
         {
             scb = System.Windows.Media.Brushes.PaleGoldenrod;
+            scbType = 605;
             switchClickMode = "染色";
         }
         private void prtchangeColor6(object sender, RoutedEventArgs e)
         {
             scb = System.Windows.Media.Brushes.Yellow;
+            scbType = 606;
             switchClickMode = "染色";
         }
         private void prtchangeColor7(object sender, RoutedEventArgs e)
         {
             scb = System.Windows.Media.Brushes.Tomato;
+            scbType = 607;
             switchClickMode = "染色";
         }
         private void prtchangeColor8(object sender, RoutedEventArgs e)
         {
             scb = System.Windows.Media.Brushes.Sienna;
+            scbType = 608;
             switchClickMode = "染色";
         }
         private void prtchangeColor9(object sender, RoutedEventArgs e)
         {
             scb = System.Windows.Media.Brushes.Silver;
+            scbType = 609;
             switchClickMode = "染色";
         }
         private void prtchangeColor10(object sender, RoutedEventArgs e)
         {
             scb = System.Windows.Media.Brushes.Black;
+            scbType = 610;
             switchClickMode = "染色";
         }
         private void prtchangeColor11(object sender, RoutedEventArgs e)
         {
             scb = System.Windows.Media.Brushes.SpringGreen;
+            scbType = 611;
             switchClickMode = "染色";
         }
         private void switch2move(object sender, RoutedEventArgs e)
@@ -1168,21 +1190,21 @@ namespace 数模建模
         private delegate void UpdateProgressBarDelegate(System.Windows.DependencyProperty dp, Object value);
 
 
-      /*  private void readIndex_Click(object sender, EventArgs e)
-        {
-            progressBar1.Maximum = 100;
-            progressBar1.Value = 0;
+        /*  private void readIndex_Click(object sender, EventArgs e)
+          {
+              progressBar1.Maximum = 100;
+              progressBar1.Value = 0;
 
-            UpdateProgressBarDelegate updatePbDelegate = new UpdateProgressBarDelegate(progressBar1.SetValue);
+              UpdateProgressBarDelegate updatePbDelegate = new UpdateProgressBarDelegate(progressBar1.SetValue);
 
-            for (int i = 0; i < 100; i++)
-            {
-                Dispatcher.Invoke(updatePbDelegate, System.Windows.Threading.DispatcherPriority.Background, new object[] {
-                    System.Windows.Controls.ProgressBar.ValueProperty, Convert.ToDouble(i + 1) 
-                });
-            }
-        }  */
-       
+              for (int i = 0; i < 100; i++)
+              {
+                  Dispatcher.Invoke(updatePbDelegate, System.Windows.Threading.DispatcherPriority.Background, new object[] {
+                      System.Windows.Controls.ProgressBar.ValueProperty, Convert.ToDouble(i + 1) 
+                  });
+              }
+          }  */
+
         /**
          * 饱和度和断层
          * 2016-7-2 11:33:06
@@ -1220,6 +1242,7 @@ namespace 数模建模
             string gproPath = helper.GetXMLDocument("GPRO");
             string finitPath = helper.GetXMLDocument("FINIT");
             string ch = this.ComboBoxCH.Text;
+            nowCh = ch;
             drawTypeStr = this.drawtype.Text;
             if (allCh != null)
             {
@@ -1444,7 +1467,7 @@ namespace 数模建模
                     double dzval = 3;
                     dzval = dzs[hadC + hady + prtXCount];
 
-                   // noDzAlert = true;//该提示dz0值
+                    // noDzAlert = true;//该提示dz0值
                     /*if (DBNull.Value != dzDt.Rows[prtYCount][prtXCount])// 2017年5月10日 14:29:41缺失关键字
                     {
                         dzval = Convert.ToDouble(dzDt.Rows[prtYCount][prtXCount]);
@@ -1460,8 +1483,8 @@ namespace 数模建模
                     //全局储量
                     if (val > 0 && poro[hadC + hady + prtXCount] > 0 && b0 > 0)
                     {
-                       // Console.WriteLine("dzNUM:" + (hadC + hady + prtXCount));
-                     //   Console.WriteLine("dz:" + dzval);
+                        // Console.WriteLine("dzNUM:" + (hadC + hady + prtXCount));
+                        //   Console.WriteLine("dz:" + dzval);
                         hasDraw = true;
                         if (0 == dzval)
                         {
@@ -1492,7 +1515,49 @@ namespace 数模建模
                             inVal = (valTop - valBottom) / 4;//渐变级别//1 1.8   
                             Color myColor = barsaColor(facies[hadC + hady + prtXCount]);
                             SolidColorBrush myBrush = new SolidColorBrush(myColor);
+
                             myPolygon2.Fill = myBrush;
+                        }
+                        // 2017年7月24日 19:14:52
+                        else if (onefacies > 600 && null == allCh)
+                        {
+                            switch (onefacies)
+                            {
+                                default: break;
+                                case 601:
+                                    myPolygon2.Fill = System.Windows.Media.Brushes.RoyalBlue;
+                                    break;
+                                case 602:
+                                    myPolygon2.Fill = System.Windows.Media.Brushes.Violet;
+                                    break;
+                                case 603:
+                                    myPolygon2.Fill = System.Windows.Media.Brushes.YellowGreen;
+                                    break;
+                                case 604:
+                                    myPolygon2.Fill = System.Windows.Media.Brushes.SlateBlue;
+                                    break;
+                                case 605:
+                                    myPolygon2.Fill = System.Windows.Media.Brushes.PaleGoldenrod;
+                                    break;
+                                case 606:
+                                    myPolygon2.Fill = System.Windows.Media.Brushes.Yellow;
+                                    break;
+                                case 607:
+                                    myPolygon2.Fill = System.Windows.Media.Brushes.Tomato;
+                                    break;
+                                case 608:
+                                    myPolygon2.Fill = System.Windows.Media.Brushes.Sienna;
+                                    break;
+                                case 609:
+                                    myPolygon2.Fill = System.Windows.Media.Brushes.Silver;
+                                    break;
+                                case 610:
+                                    myPolygon2.Fill = System.Windows.Media.Brushes.Black;
+                                    break;
+                                case 611:
+                                    myPolygon2.Fill = System.Windows.Media.Brushes.SpringGreen;
+                                    break;
+                            }
                         }
                     }
                     else if (val > 0 || permx[hadC + hady + prtXCount] > 0 || poro[hadC + hady + prtXCount] > 0)
@@ -1668,7 +1733,7 @@ namespace 数模建模
                 });
                 if (noDzAlert && hasDraw)
                 {
-                    MessageBox.Show("厚度Dz值为0");                
+                    MessageBox.Show("厚度Dz值为0");
                 }
                 //System.Console.WriteLine("allVol:" + allVol);
                 if (allVol > 0)
@@ -1927,7 +1992,7 @@ namespace 数模建模
             ObservableCollection<Fgrid_ch> imgs = new ObservableCollection<Fgrid_ch>();
             数模建模.SIMB.FgridPrt fgridPrt = new 数模建模.SIMB.FgridPrt();
             // 解析文件
-            
+
             int[] tablesize = fgridPrt.readFGRID(filepath);
             Console.WriteLine("Size解析完成");
             maxCh = tablesize[2];
@@ -2189,6 +2254,7 @@ namespace 数模建模
                                     myPointCollection2.Add(p2);
                                     myPolygon2.Points = myPointCollection2;
                                     myPolygon2.Fill = Brushes.Gray;
+                                    canvesRow["RemainType"] = 610;
                                     if (null == allCh)
                                     {
                                         this.canvesprt.Children.Add(myPolygon2);
@@ -2438,6 +2504,7 @@ namespace 数模建模
                                 myPointCollection2.Add(p2);
                                 myPolygon2.Points = myPointCollection2;
                                 myPolygon2.Fill = Brushes.SpringGreen;// DarkOrange;
+                                canvesRow["RemainType"] = 611;
                                 if (null == allCh)
                                 {
                                     this.canvesprt.Children.Add(myPolygon2);
@@ -2674,7 +2741,7 @@ namespace 数模建模
         ///井控范围
         ///
         List<List<Point>> wellCtrlList = new List<List<Point>>();//存储排过序的井控范围点
-        
+
         private void drawWellCtrl(object sender, RoutedEventArgs e)
         {
             double a = 0;
@@ -2801,6 +2868,7 @@ namespace 数模建模
                                 SolidColorBrush myBrush = new SolidColorBrush(Colors.RoyalBlue);
                                 myPolygon2.Fill = myBrush;
                                 myPolygon2.Points = myPointCollection2;
+                                row1["RemainType"] = 601;
                                 this.canvesprt.Children.Add(myPolygon2);
                             }
                         }
@@ -3083,6 +3151,7 @@ namespace 数模建模
                                     SolidColorBrush myBrush = new SolidColorBrush(Colors.Sienna);//Tomato
                                     myPolygon2.Fill = myBrush;
                                     myPolygon2.Points = myPointCollection2;
+                                    row3["RemainType"] = 608;
                                     if (null == allCh)
                                     {
                                         this.canvesprt.Children.Add(myPolygon2);
@@ -3298,6 +3367,7 @@ namespace 数模建模
                                     SolidColorBrush myBrush = new SolidColorBrush(Colors.Tomato);//Sienna
                                     myPolygon2.Fill = myBrush;
                                     myPolygon2.Points = myPointCollection2;
+                                    row3["RemainType"] = 607;
                                     if (null == allCh)
                                     {
                                         this.canvesprt.Children.Add(myPolygon2);
@@ -3415,6 +3485,7 @@ namespace 数模建模
                                         SolidColorBrush myBrush = new SolidColorBrush(Colors.Violet);//.PaleGoldenrod);
                                         myPolygon2.Fill = myBrush;
                                         myPolygon2.Points = myPointCollection2;
+                                        row3["RemainType"] = 602;
                                         this.canvesprt.Children.Add(myPolygon2);
                                     }
                                 }
@@ -3440,6 +3511,7 @@ namespace 数模建模
                                 myPolygon2.StrokeThickness = 0.00;
                                 SolidColorBrush myBrush = new SolidColorBrush(Colors.Violet);//.PaleGoldenrod);
                                 myPolygon2.Fill = myBrush;
+                                row3["RemainType"] = 602;
                                 myPolygon2.Points = myPointCollection2;
                                 this.canvesprt.Children.Add(myPolygon2);
                             }
@@ -3553,8 +3625,8 @@ namespace 数模建模
                             if ((pointD <= a || pointD <= b) // 注采完善
                             && (
                             yxhd >= 1//射开有效厚度大于1m的层;
-                                     //|| (chCount <= 4 && avgDicengXishu / maxDicengXishu < obFactorD)
-                                     // || (chCount >= 5 && avgDicengXishu / maxDicengXishu < notObFactorD)
+                                //|| (chCount <= 4 && avgDicengXishu / maxDicengXishu < obFactorD)
+                                // || (chCount >= 5 && avgDicengXishu / maxDicengXishu < notObFactorD)
                             ))
                             {
                                 hasInj = true;
@@ -3942,8 +4014,8 @@ namespace 数模建模
                             if ((pointD <= a || pointD <= b) // 注采完善
                             && (
                             yxhd < 1//射开有效厚度大于1m的层;
-                                    //|| (chCount <= 4 && avgDicengXishu / maxDicengXishu < obFactorD)
-                                    // || (chCount >= 5 && avgDicengXishu / maxDicengXishu < notObFactorD)
+                                //|| (chCount <= 4 && avgDicengXishu / maxDicengXishu < obFactorD)
+                                // || (chCount >= 5 && avgDicengXishu / maxDicengXishu < notObFactorD)
                             ))
                             {
                                 hasInj = true;
@@ -4114,8 +4186,8 @@ namespace 数模建模
                             string faciesInj2 = row2["facies"].ToString();
                             if ((pointD <= a || pointD <= b) // 注采完善
                             && (yxhd >= 1//射开有效厚度大于1m的层;
-                                         //|| (chCount <= 4 && avgDicengXishu / maxDicengXishu < obFactorD)
-                                         // || (chCount >= 5 && avgDicengXishu / maxDicengXishu < notObFactorD)
+                                //|| (chCount <= 4 && avgDicengXishu / maxDicengXishu < obFactorD)
+                                // || (chCount >= 5 && avgDicengXishu / maxDicengXishu < notObFactorD)
                             ))
                             {
                                 hasInj = true;
@@ -4150,6 +4222,7 @@ namespace 数模建模
                                         myPolygon2.Points = myPointCollection2;
                                         //this.canvesprt.Children.Add(myPolygon2);
                                         polygonList.Add(myPolygon2);
+                                        row3["RemainType"] = 605;
                                         //储量
                                         Point rawp1 = new Point((double)row3["rawx0"], (double)row3["rawy0"]);
                                         Point rawp2 = new Point((double)row3["rawx1"], (double)row3["rawy1"]);
@@ -4218,6 +4291,7 @@ namespace 数模建模
                                 myPolygon2.Points = myPointCollection2;
                                 //this.canvesprt.Children.Add(myPolygon2);
                                 polygonList.Add(myPolygon2);
+                                row3["RemainType"] = 605;
                                 //储量
                                 Point rawp1 = new Point((double)row3["rawx0"], (double)row3["rawy0"]);
                                 Point rawp2 = new Point((double)row3["rawx1"], (double)row3["rawy1"]);
@@ -4444,8 +4518,8 @@ namespace 数模建模
                             string faciesInj2 = row2["facies"].ToString();
                             if ((pointD <= a || pointD <= b) // 注采完善
                             && (yxhd >= 1//射开有效厚度大于1m的层;
-                                         //|| (chCount <= 4 && avgDicengXishu / maxDicengXishu < obFactorD)
-                                         // || (chCount >= 5 && avgDicengXishu / maxDicengXishu < notObFactorD)
+                                //|| (chCount <= 4 && avgDicengXishu / maxDicengXishu < obFactorD)
+                                // || (chCount >= 5 && avgDicengXishu / maxDicengXishu < notObFactorD)
                             ))
                             {
                                 hasInj = true;
@@ -4478,6 +4552,7 @@ namespace 数模建模
                                         SolidColorBrush myBrush = new SolidColorBrush(Colors.YellowGreen);//.PaleGoldenrod);
                                         myPolygon2.Fill = myBrush;
                                         myPolygon2.Points = myPointCollection2;
+                                        row3["RemainType"] = 603;
                                         //this.canvesprt.Children.Add(myPolygon2);
                                         polygonList.Add(myPolygon2);
                                         //储量
@@ -4546,6 +4621,7 @@ namespace 数模建模
                                 SolidColorBrush myBrush = new SolidColorBrush(Colors.YellowGreen);//.PaleGoldenrod);
                                 myPolygon2.Fill = myBrush;
                                 myPolygon2.Points = myPointCollection2;
+                                row3["RemainType"] = 603;
                                 //this.canvesprt.Children.Add(myPolygon2);
                                 polygonList.Add(myPolygon2);
                                 //储量
@@ -4709,8 +4785,8 @@ namespace 数模建模
                             if ((pointD <= a || pointD <= b) // 注采完善
                             && (
                             yxhd < 1//射开有效厚度大于1m的层;
-                                    //|| (chCount <= 4 && avgDicengXishu / maxDicengXishu < obFactorD)
-                                    // || (chCount >= 5 && avgDicengXishu / maxDicengXishu < notObFactorD)
+                                //|| (chCount <= 4 && avgDicengXishu / maxDicengXishu < obFactorD)
+                                // || (chCount >= 5 && avgDicengXishu / maxDicengXishu < notObFactorD)
                             ))
                             {
                                 hasInj = true;
@@ -4732,6 +4808,7 @@ namespace 数模建模
                                         SolidColorBrush myBrush = new SolidColorBrush(Colors.SlateBlue);//.PaleGoldenrod);
                                         myPolygon2.Fill = myBrush;
                                         myPolygon2.Points = myPointCollection2;
+                                        row3["RemainType"] = 604;
                                         if (null == allCh)
                                         {
                                             this.canvesprt.Children.Add(myPolygon2);
@@ -4741,20 +4818,23 @@ namespace 数模建模
                                         Point rawp2 = new Point((double)row3["rawx1"], (double)row3["rawy1"]);
                                         Point rawp3 = new Point((double)row3["rawx2"], (double)row3["rawy2"]);
                                         Point rawp4 = new Point((double)row3["rawx3"], (double)row3["rawy3"]);
-                                        List<Point> points = new List<Point>();
-                                        hasColorPoints.Add(rawp1);
-                                        points.Add(rawp1);
-                                        points.Add(rawp2);
-                                        points.Add(rawp4);
-                                        points.Add(rawp3);
-                                        points.Add(rawp1);
-                                        s = Math.Abs(points.Take(points.Count - 1)
-                                           .Select((p, i) => (points[i + 1].X - p.X) * (points[i + 1].Y + p.Y))
-                                           .Sum() / 2 / 1000000);//据说计算面积
-                                        h = (double)row3["dz"];
-                                        if (h > 0)
+                                        if (!hasColorPoints.Contains(rawp1))
                                         {
-                                            resSum = resSum + ReservorDraw.Cal_Capacity(s, h, (double)row3["poro"], (double)row3["barsa"], ro, b0);
+                                            List<Point> points = new List<Point>();
+                                            hasColorPoints.Add(rawp1);
+                                            points.Add(rawp1);
+                                            points.Add(rawp2);
+                                            points.Add(rawp4);
+                                            points.Add(rawp3);
+                                            points.Add(rawp1);
+                                            s = Math.Abs(points.Take(points.Count - 1)
+                                               .Select((p, i) => (points[i + 1].X - p.X) * (points[i + 1].Y + p.Y))
+                                               .Sum() / 2 / 1000000);//据说计算面积
+                                            h = (double)row3["dz"];
+                                            if (h > 0)
+                                            {
+                                                resSum = resSum + ReservorDraw.Cal_Capacity(s, h, (double)row3["poro"], (double)row3["barsa"], ro, b0);
+                                            }
                                         }
                                     }
                                 }
@@ -4781,6 +4861,7 @@ namespace 数模建模
                                 SolidColorBrush myBrush = new SolidColorBrush(Colors.SlateBlue);//.PaleGoldenrod);
                                 myPolygon2.Fill = myBrush;
                                 myPolygon2.Points = myPointCollection2;
+                                row3["RemainType"] = 604;
                                 if (null == allCh)
                                 {
                                     this.canvesprt.Children.Add(myPolygon2);
@@ -4792,6 +4873,7 @@ namespace 数模建模
                                 Point rawp4 = new Point((double)row3["rawx3"], (double)row3["rawy3"]);
                                 if (!hasColorPoints.Contains(rawp1))
                                 {
+                                    hasColorPoints.Add(rawp1);
                                     List<Point> points = new List<Point>();
                                     points.Add(rawp1);
                                     points.Add(rawp2);
@@ -4920,6 +5002,7 @@ namespace 数模建模
                                     myPointCollection2.Add(p2);
                                     myPolygon2.Points = myPointCollection2;
                                     myPolygon2.Fill = Brushes.Gray;
+                                    canvesRow["RemainType"] = 610;
                                     if (null == allCh)
                                     { this.canvesprt.Children.Add(myPolygon2); }
 
@@ -4991,6 +5074,7 @@ namespace 数模建模
 
         private void newWinEachRes(object sender, RoutedEventArgs e)
         {
+            saveColor(sender, e);
             String comboCh = ComboBoxCH.Text;
             String oldDrawTypeStr = this.ComboBoxCH.Text;
             int oldSoil = combo_soiltime.SelectedIndex;
@@ -5025,109 +5109,205 @@ namespace 数模建模
                 allCh = comboCh;
                 combo_soiltime.SelectedIndex = 0;
                 findDc(sender, e);//
+                string tmpVal = "0.0000";
                 //砂体
                 DataRow rowSand = allResDt.NewRow();
-                drawSandBorder(sender, e);
+                //drawSandBorder(sender, e);
                 rowSand["剩余油类型"] = "砂体边部";
-                rowSand[headTime] = tmpVol4EachRes;
+                tmpVal = "" + resByColor(611);
+                if ("0.0000".Equals(tmpVal))
+                {
+                    drawSandBorder(sender, e);
+                    tmpVal = tmpVol4EachRes;
+                }
+                rowSand[headTime] = tmpVal;
                 allResDt.Rows.Add(rowSand);
                 //
                 DataRow rowFaultBorder = allResDt.NewRow();
-                drawFaultBorder(sender, e);
+                //drawFaultBorder(sender, e);
+                tmpVal = drawBorderOutCtrlByColor(sender, e, true);
+                if ("0.0000".Equals(tmpVal))
+                {
+                    drawFaultBorder(sender, e);
+                    tmpVal = tmpVol4EachRes;
+                }
                 rowFaultBorder["剩余油类型"] = "断层(井控)";
-                rowFaultBorder[headTime] = tmpVol4EachRes;
+                rowFaultBorder[headTime] = tmpVal;
                 allResDt.Rows.Add(rowFaultBorder);
                 //
                 DataRow rowFaultBorderOutCtr = allResDt.NewRow();
-                drawFaultBorderOutCtrl(sender, e);
+                //drawFaultBorderOutCtrl(sender, e);
+                tmpVal = drawBorderOutCtrlByColor(sender, e, false);
+                if ("0.0000".Equals(tmpVal))
+                {
+                    drawFaultBorderOutCtrl(sender, e);
+                    tmpVal = tmpVol4EachRes;
+                }
                 rowFaultBorderOutCtr["剩余油类型"] = "断层(非井控)";
-                rowFaultBorderOutCtr[headTime] = tmpVol4EachRes;
+                rowFaultBorderOutCtr[headTime] = tmpVal;
                 allResDt.Rows.Add(rowFaultBorderOutCtr);
                 //
                 DataRow rowInjWithoutOil = allResDt.NewRow();
-                drawInjWithoutOil(sender, e);
+                //drawInjWithoutOil(sender, e);
                 rowInjWithoutOil["剩余油类型"] = "有注无采";
-                rowInjWithoutOil[headTime] = tmpVol4EachRes;
+                tmpVal = "" + resByColor(607);
+                if ("0.0000".Equals(tmpVal))
+                {
+                    drawInjWithoutOil(sender, e);
+                    tmpVal = tmpVol4EachRes;
+                }
+                rowInjWithoutOil[headTime] = tmpVal;
                 allResDt.Rows.Add(rowInjWithoutOil);
                 //
                 DataRow rowOilWithoutInj = allResDt.NewRow();
-                drawOilWithoutInj(sender, e);
+                //drawOilWithoutInj(sender, e);
                 rowOilWithoutInj["剩余油类型"] = "有采无注";
-                rowOilWithoutInj[headTime] = tmpVol4EachRes;
+                tmpVal = "" + resByColor(608);
+                if ("0.0000".Equals(tmpVal))
+                {
+                    drawOilWithoutInj(sender, e);
+                    tmpVal = tmpVol4EachRes;
+                }
+                rowOilWithoutInj[headTime] = tmpVal;
                 allResDt.Rows.Add(rowOilWithoutInj);
                 //
                 DataRow rowPlane = allResDt.NewRow();
-                drawPlane(sender, e);
+                //drawPlane(sender, e);
                 rowPlane["剩余油类型"] = "平面干扰";
-                rowPlane[headTime] = tmpVol4EachRes;
+                tmpVal = "" + resByColor(603);
+                if ("0.0000".Equals(tmpVal))
+                {
+                    drawPlane(sender, e);
+                    tmpVal = tmpVol4EachRes;
+                }
+                rowPlane[headTime] = tmpVal;
                 allResDt.Rows.Add(rowPlane);
                 //
                 DataRow rowInterLayer = allResDt.NewRow();
-                drawInterLayer(sender, e);
+                //drawInterLayer(sender, e);
                 rowInterLayer["剩余油类型"] = "层间干扰";
-                rowInterLayer[headTime] = tmpVol4EachRes;
+                tmpVal = "" + resByColor(604);
+                if ("0.0000".Equals(tmpVal))
+                {
+                    drawInterLayer(sender, e);
+                    tmpVal = tmpVol4EachRes;
+                }
+                rowInterLayer[headTime] = tmpVal;
                 allResDt.Rows.Add(rowInterLayer);
                 //
                 DataRow rowInLayer = allResDt.NewRow();
-                drawInLayer(sender, e);
+                //drawInLayer(sender, e);
                 rowInLayer["剩余油类型"] = "层内干扰";
-                rowInLayer[headTime] = tmpVol4EachRes;
+                tmpVal = "" + resByColor(605);
+                if ("0.0000".Equals(tmpVal))
+                {
+                    drawInLayer(sender, e);
+                    tmpVal = tmpVol4EachRes;
+                }
+                rowInLayer[headTime] = tmpVal;
                 allResDt.Rows.Add(rowInLayer);
                 //最近的时间
                 combo_soiltime.SelectedIndex = soiltimeList.Count() - 1;
                 findDc(sender, e);
                 //
-                drawSandBorder(sender, e);
+                //drawSandBorder(sender, e);
                 DataRow rowSand2 = allResDt.Rows[0];
                 rowSand2.BeginEdit();
-                rowSand2[endTime] = tmpVol4EachRes; ;
+                tmpVal = "" + resByColor(611);
+                if ("0.0000".Equals(tmpVal))
+                {
+                    drawSandBorder(sender, e);
+                    tmpVal = tmpVol4EachRes;
+                }
+                rowSand2[endTime] = tmpVal;
                 rowSand2.EndEdit();
                 //
-                drawFaultBorder(sender, e);
+                //drawFaultBorder(sender, e);
+                tmpVal = drawBorderOutCtrlByColor(sender, e, true);
+                if ("0.0000".Equals(tmpVal))
+                {
+                    drawFaultBorder(sender, e);
+                    tmpVal = tmpVol4EachRes;
+                }
                 DataRow rowFaultBorder2 = allResDt.Rows[1];
                 rowFaultBorder2.BeginEdit();
-                rowFaultBorder2[endTime] = tmpVol4EachRes; ;
+                rowFaultBorder2[endTime] = tmpVal;
                 rowFaultBorder2.EndEdit();
                 //
-                drawFaultBorderOutCtrl(sender, e);
+                //drawFaultBorderOutCtrl(sender, e);
+                tmpVal = drawBorderOutCtrlByColor(sender, e, false);
+                if ("0.0000".Equals(tmpVal))
+                {
+                    drawFaultBorderOutCtrl(sender, e);
+                    tmpVal = tmpVol4EachRes;
+                }
                 DataRow rowFaultBorderOutCtr2 = allResDt.Rows[2];
                 rowFaultBorderOutCtr2.BeginEdit();
-                rowFaultBorderOutCtr2[endTime] = tmpVol4EachRes; ;
+                rowFaultBorderOutCtr2[endTime] = tmpVal;
                 rowFaultBorderOutCtr2.EndEdit();
                 //
-                drawInjWithoutOil(sender, e);
+                //drawInjWithoutOil(sender, e);
                 DataRow rowInjWithoutOil2 = allResDt.Rows[3];
                 rowInjWithoutOil2.BeginEdit();
-                rowInjWithoutOil2[endTime] = tmpVol4EachRes; ;
+                tmpVal = "" + resByColor(607);
+                if ("0.0000".Equals(tmpVal))
+                {
+                    drawInjWithoutOil(sender, e);
+                    tmpVal = tmpVol4EachRes;
+                }
+                rowInjWithoutOil2[endTime] = tmpVal;
                 rowInjWithoutOil2.EndEdit();
                 //
-                drawOilWithoutInj(sender, e);
+                //drawOilWithoutInj(sender, e);
                 DataRow rowOilWithoutInj2 = allResDt.Rows[4];
                 rowOilWithoutInj2.BeginEdit();
-                rowOilWithoutInj2[endTime] = tmpVol4EachRes; ;
+                tmpVal = "" + resByColor(608);
+                if ("0.0000".Equals(tmpVal))
+                {
+                    drawOilWithoutInj(sender, e);
+                    tmpVal = tmpVol4EachRes;
+                }
+                rowOilWithoutInj2[endTime] = tmpVal;
                 rowOilWithoutInj2.EndEdit();
                 //
-                drawPlane(sender, e);
+                // drawPlane(sender, e);
                 DataRow rowPlane2 = allResDt.Rows[5];
                 rowPlane2.BeginEdit();
-                rowPlane2[endTime] = tmpVol4EachRes; ;
+                tmpVal = "" + resByColor(603);
+                if ("0.0000".Equals(tmpVal))
+                {
+                    drawPlane(sender, e);
+                    tmpVal = tmpVol4EachRes;
+                }
+                rowPlane2[endTime] = tmpVal;
                 rowPlane2.EndEdit();
                 //
-                drawInterLayer(sender, e);
+                //drawInterLayer(sender, e);
                 DataRow rowInterLayer2 = allResDt.Rows[6];
                 rowInterLayer2.BeginEdit();
-                rowInterLayer2[endTime] = tmpVol4EachRes; ;
+                tmpVal = "" + resByColor(604);
+                if ("0.0000".Equals(tmpVal))
+                {
+                    drawInterLayer(sender, e);
+                    tmpVal = tmpVol4EachRes;
+                }
+                rowInterLayer2[endTime] = tmpVal;
                 rowInterLayer2.EndEdit();
                 //
-                drawInLayer(sender, e);
+                //drawInLayer(sender, e);
                 DataRow rowInLayer2 = allResDt.Rows[7];
                 rowInLayer2.BeginEdit();
-                rowInLayer2[endTime] = tmpVol4EachRes; ;
+                tmpVal = "" + resByColor(605);
+                if ("0.0000".Equals(tmpVal))
+                {
+                    drawInLayer(sender, e);
+                    tmpVal = tmpVol4EachRes;
+                }
+                rowInLayer2[endTime] = tmpVal;
                 rowInLayer2.EndEdit();
 
                 AllChResContainer draw = new AllChResContainer("储量", allResDt);
                 draw.Show();
-
             }
             allCh = null;
             ComboBoxCH.Text = comboCh;
@@ -5254,11 +5434,11 @@ namespace 数模建模
                 DataTable dzDt = fgridPrt.dzDt;//厚度 
                 facies = fgridPrt.readFacies(faciesPath); // 新版变成旧版了 2017年5月23日 14:31:11 变新
                 // 、、facies = 2017年5月23日 14:31:46 变旧
-               // 、、facies = fgridPrt.readRegInc(faciesPath); // 原旧版 重新启用 2017年5月8日 21:02:39
+                // 、、facies = fgridPrt.readRegInc(faciesPath); // 原旧版 重新启用 2017年5月8日 21:02:39
                 ntgs = fgridPrt.readNTG(gproPath);// 净毛比 2017年5月8日 20:43:53
                 poro = fgridPrt.poro;// 孔隙度 2017年5月8日 20:44:06
                 permx = fgridPrt.permx;// 渗透率 2017年5月8日 20:44:08
-               // dzs = fgridPrt.readDz(finitPath); // 新DZ 2017年5月23日 14:24:35
+                // dzs = fgridPrt.readDz(finitPath); // 新DZ 2017年5月23日 14:24:35
                 dzs = fgridNew.readDzFromFgrid(fgridpath, tablesize);// fgrid dz 2017年7月10日 11:38:57
                 System.Console.WriteLine("开始求极值:" + ((DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds - timed));
                 //求极值
@@ -5739,6 +5919,212 @@ namespace 数模建模
             draw.Show();
             allCh = null;
         }
+        // 输出文件 保存剩余油类型
+        // 2017年7月24日 18:15:12
+        private void saveColor(object sender, RoutedEventArgs e)
+        {
+            string filename = "faciesColorSaved" + nowCh + "_" + DateTime.Now.ToString().Replace(" ", "_").Replace(":", "").Replace("/", "_") + ".txt";
+            FileStream fs = new FileStream(filename, FileMode.Create);
+            StreamWriter sw = new StreamWriter(fs);
+            sw.Write("FACIES\r");
+            sw.Write("-- faciesColorSaved:AppVer.20170724");
+            //facies tablesize int[]
+            int counti = 0;
+            if (!"1".Equals(nowCh))
+            {
+                foreach (int facies1 in facies)
+                {
+                    //开始写入
+                    if (0 == counti % 20)
+                    {
+                        sw.Write("\r  " + facies1);
+                    }
+                    else
+                    {
+                        sw.Write(" " + facies1);
+                    }
+                    counti++;
+                    if ((Convert.ToInt32(nowCh) - 1) * tablesize[0] * tablesize[1] == counti)
+                    {
+                        break;
+                    }
+                }
+            }
 
+            // 本层
+            foreach (DataRow canvesRow in canvesGrid.Rows)
+            {
+                int remainOil = 0;
+                if (DBNull.Value != canvesRow["RemainType"])//&& !"".Equals((string)canvesRow["RemainType"])
+                {
+                    remainOil = (int)canvesRow["RemainType"];
+                }
+                else// (remainOil < 0)
+                {
+                    remainOil = (int)canvesRow["facies"];
+                }
+                //开始写入
+                if (0 == counti % 20)
+                {
+                    sw.Write("\r  " + remainOil);
+                }
+                else
+                {
+                    sw.Write(" " + remainOil);
+                }
+                counti++;
+            }
+            // 后几层
+            counti = 0;
+            foreach (int facies1 in facies)
+            {
+                if ((Convert.ToInt32(nowCh) - 0) * tablesize[0] * tablesize[1] <= counti)
+                {
+                    //开始写入
+                    if (0 == counti % 20)
+                    {
+                        sw.Write("\r  " + facies1);
+                    }
+                    else
+                    {
+                        sw.Write(" " + facies1);
+                    }
+                }
+                counti++;
+            }
+            //清空缓冲区
+            sw.Flush();
+            //关闭流
+            sw.Close();
+            fs.Close();
+            XmlHelper helper = new XmlHelper();
+            helper.EditXMLDocument("FACIES", filename);
+            MessageBox.Show("保存成功:" + filename);
+        }
+        /// 2017年7月24日 20:03:28
+        /// 通过颜色计算剩余油
+        private string resByColor(int resType)
+        {
+            double ro = 0;
+            double b0 = 0;
+            double resSum = 0;
+            try
+            {
+                ro = Convert.ToDouble(this.res_density.Text);
+                b0 = Convert.ToDouble(this.res_vol.Text);
+            }
+            catch
+            {
+                MessageBox.Show("格式错误");
+            }
+            foreach (DataRow canvesRow in canvesGrid.Rows)
+            {
+                if ((DBNull.Value != canvesRow["RemainType"] && resType == (int)canvesRow["RemainType"]) || resType == (int)canvesRow["facies"])
+                {
+                    double h = 0;
+                    double s = 0;
+                    Point rawp1 = new Point((double)canvesRow["rawx0"], (double)canvesRow["rawy0"]);
+                    Point rawp2 = new Point((double)canvesRow["rawx1"], (double)canvesRow["rawy1"]);
+                    Point rawp3 = new Point((double)canvesRow["rawx2"], (double)canvesRow["rawy2"]);
+                    Point rawp4 = new Point((double)canvesRow["rawx3"], (double)canvesRow["rawy3"]);
+                    List<Point> points = new List<Point>();
+                    points.Add(rawp1);
+                    points.Add(rawp2);
+                    points.Add(rawp4);
+                    points.Add(rawp3);
+                    points.Add(rawp1);
+                    s = Math.Abs(points.Take(points.Count - 1)
+                        .Select((p, i) => (points[i + 1].X - p.X) * (points[i + 1].Y + p.Y))
+                        .Sum() / 2 / 1000000);//据说计算面积
+                    h = (double)canvesRow["dz"];
+                    if (h > 0)
+                    {
+                        resSum = resSum + ReservorDraw.Cal_Capacity(s, h, (double)canvesRow["poro"], (double)canvesRow["barsa"], ro, b0);
+                    }
+                }
+            }
+            return resSum.ToString("0.0000");
+        }
+        /// <summary>
+        /// 非井控断层边部
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private string drawBorderOutCtrlByColor(object sender, RoutedEventArgs e, bool isInCtrl)
+        {
+            drawWellCtrlFlag = false;
+            drawWellCtrl(sender, e);//寻找井控范围
+            drawWellCtrlFlag = true;
+            List<Point> otherSidePoint = new List<Point>();
+            List<Point> oneSidePoint = faultPointsAll;
+            String textdcRange = this.textdcRange.Text;
+            double textdcRangeD = 0.0;
+            double h = 0;// 
+            double s = 0;
+            double ro = 0;
+            double b0 = 0;
+            double resSum = 0;
+            //画井点用的
+            List<Ellipse> wellPoints = new List<Ellipse>();
+            List<TextBlock> wellNames = new List<TextBlock>();
+            //System.Console.WriteLine("选中的list:"+ReservorDraw.pointList.Count());
+            try
+            {
+                if (textdcRangeOutCtrl != null && !"".Equals(textdcRangeOutCtrl.Text))
+                {
+                    textdcRangeD = Convert.ToDouble(this.textdcRangeOutCtrl.Text) * m_d_zoomfactor2;
+                }
+                ro = Convert.ToDouble(this.res_density.Text);
+                b0 = Convert.ToDouble(this.res_vol.Text);
+            }
+            catch
+            {
+                System.Console.WriteLine("textdcRangeD格式错误");
+            }
+            // System.Console.WriteLine("textdcRangeD:" + textdcRangeD);
+            if (b0 > 0)
+            {
+                foreach (DataRow canvesRow in canvesGrid.Rows)
+                {
+                    if ((DBNull.Value != canvesRow["RemainType"] && 610 == (int)canvesRow["RemainType"]) || 610 == (int)canvesRow["facies"])
+                    {
+                        bool inWellCtrlFlag = false;
+                        foreach (List<Point> oneWellCtrl in wellCtrlList)
+                        {
+                            Point point0 = new Point((double)canvesRow["x0"], (double)canvesRow["y0"]);
+                            if (ReservorDraw.isInRegion(point0, oneWellCtrl))
+                            {
+                                inWellCtrlFlag = true;
+                                break;
+                            }
+                        }
+                        if (isInCtrl == inWellCtrlFlag)
+                        {
+                            Point rawp1 = new Point((double)canvesRow["rawx0"], (double)canvesRow["rawy0"]);
+                            Point rawp2 = new Point((double)canvesRow["rawx1"], (double)canvesRow["rawy1"]);
+                            Point rawp3 = new Point((double)canvesRow["rawx2"], (double)canvesRow["rawy2"]);
+                            Point rawp4 = new Point((double)canvesRow["rawx3"], (double)canvesRow["rawy3"]);
+
+                            List<Point> points = new List<Point>();
+                            points.Add(rawp1);
+                            points.Add(rawp2);
+                            points.Add(rawp4);
+                            points.Add(rawp3);
+                            points.Add(rawp1);
+                            s = Math.Abs(points.Take(points.Count - 1)
+                             .Select((p, i) => (points[i + 1].X - p.X) * (points[i + 1].Y + p.Y))
+                             .Sum() / 2 / 1000000);//据说计算面积
+                            h = (double)canvesRow["dz"];
+                            if (h > 0)
+                            {
+                                resSum = resSum + ReservorDraw.Cal_Capacity(s, h, (double)canvesRow["poro"], (double)canvesRow["barsa"], ro, b0);
+                            }
+                        }
+                    }
+
+                }
+            }
+            return resSum.ToString("0.0000");
+        }
     }
 }
