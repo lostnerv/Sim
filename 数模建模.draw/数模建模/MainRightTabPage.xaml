@@ -160,7 +160,7 @@
                         <Button Content="非井控范围"  Name="btnColor9"   Width="120" Height="23" Click="prtchangeColor9" HorizontalAlignment="Left" Background="Silver" ></Button>
                         <Button Content="断层边部"  Name="btnColor10"   Width="120" Height="23" Click="prtchangeColor10" HorizontalAlignment="Left" Background="Gray" Foreground="Cornsilk"></Button>
                         <Button Content="砂体边部"  Name="btnColor11"   Width="120" Height="23" Click="prtchangeColor11" HorizontalAlignment="Left" Background="SpringGreen" ></Button>
-                        <Button Content="保存颜色" Margin="0,5,0,0"   Width="120" Height="23" Click="saveColor" HorizontalAlignment="Left"  ></Button>
+                        <Button Content="保存本层成果" Margin="0,5,0,0"   Width="120" Height="23" Click="saveColor" HorizontalAlignment="Left"  ></Button>
                         <Button Content="鼠标：图像拖动" Margin="0,10,0,0"   Width="120" Height="23" Click="switch2move" HorizontalAlignment="Left"  ></Button>
                         <Button Content="鼠标：多点圈选" Margin="0,0,0,0"   Width="120" Height="23" Click="switch2select" HorizontalAlignment="Left"  ></Button>
                         <Button Content="圈选：储量计算" Margin="0,0,0,0"   Width="120" Height="23" Click="cal_res" HorizontalAlignment="Left"  ></Button>

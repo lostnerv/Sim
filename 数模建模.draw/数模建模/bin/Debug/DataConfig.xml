@@ -17,11 +17,11 @@
   <Node name="paller" path="D:\采油八厂\数据平台建模数据格式1\断层\zhao5_fault.fault_data.txt" />
   <Node name="simboutput" path="D:\用户目录\Desktop\新建文件夹 (6)" />
   <Node name="sandvalue" path="" />
-  <Node name="FGRID" path="E:\workspace\VS\cy8\剩余油文件\SYYCS_E100.FGRID" />
-  <Node name="PRTINC" path="E:\workspace\VS\cy8\剩余油文件\SYYCS_E100.PRT" />
-  <Node name="SCH" path="E:\workspace\VS\cy8\剩余油文件\SYYCS_SCH.INC" />
-  <Node name="GOTH" path="E:\workspace\VS\cy8\剩余油文件\SYYCS_GOTH.INC" />
-  <Node name="FACIES" path="faciesColorSaved4_7_24_2017_101015_PM.txt" />
-  <Node name="GPRO" path="E:\workspace\VS\cy8\剩余油文件\SYYCS_GPRO.INC" />
-  <Node name="FINIT" path="E:\workspace\VS\cy8\剩余油文件\SYYCS_E100.FINIT" />
+  <Node name="FGRID" path="F:\Workspace\VS_Workspace\Sim-master\剩余油文件\SYYCS_E100.FGRID" />
+  <Node name="PRTINC" path="F:\Workspace\VS_Workspace\Sim-master\剩余油文件\SYYCS_E100.PRT" />
+  <Node name="SCH" path="F:\Workspace\VS_Workspace\Sim-master\剩余油文件\SYYCS_SCH.INC" />
+  <Node name="GOTH" path="F:\Workspace\VS_Workspace\Sim-master\剩余油文件\SYYCS_GOTH.INC" />
+  <Node name="FACIES" path="save\faciesColor4_2017-07-25_星期二_085455.txt" />
+  <Node name="GPRO" path="F:\Workspace\VS_Workspace\Sim-master\剩余油文件\SYYCS_GPRO.INC" />
+  <Node name="FINIT" path="F:\Workspace\VS_Workspace\Sim-master\剩余油文件\SYYCS_E100.FINIT" />
 </DataPath>

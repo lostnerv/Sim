@@ -5923,8 +5923,12 @@ namespace 数模建模
         // 2017年7月24日 18:15:12
         private void saveColor(object sender, RoutedEventArgs e)
         {
-            string filename = "faciesColorSaved" + nowCh + "_" + DateTime.Now.ToString().Replace(" ", "_").Replace(":", "").Replace("/", "_") + ".txt";
-            FileStream fs = new FileStream(filename, FileMode.Create);
+            if (!Directory.Exists("save"))
+            {
+                Directory.CreateDirectory("save");
+            }
+            string filename = "save\\faciesColor" + nowCh + "_" + DateTime.Now.ToString().Replace(" ", "_").Replace(":", "").Replace("/", "_") + ".txt";
+            FileStream fs = new FileStream(filename, FileMode.OpenOrCreate);
             StreamWriter sw = new StreamWriter(fs);
             sw.Write("FACIES\r");
             sw.Write("-- faciesColorSaved:AppVer.20170724");
