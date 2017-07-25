@@ -956,6 +956,73 @@ namespace 数模建模.SIMB
             sr.Close();
             return dzs;
         }
-
+        /// <summary>
+        /// 读取分区文件
+        /// </summary>
+        /// <param name="filepath"></param>
+        /// <returns></returns>
+        public int[] readPartFacies(string filepath)
+        {
+            if (filepath == null || "".Equals(filepath))
+            {
+                return null;
+            }
+            else
+            {
+                int[] partfacies = new int[x * y * z];
+                StreamReader sr = new StreamReader(filepath, Encoding.Default);
+                String line;
+                while ((line = sr.ReadLine()) != null)
+                {
+                    if (line.Trim() != "")
+                    {
+                        if (line.Contains("FACIES"))//相图
+                        {
+                            int fipnumCount = 0;
+                            while ((line = sr.ReadLine()) != null)
+                            {
+                                if ("".Equals(line))
+                                {
+                                    break;
+                                }
+                                else if (line.Contains("--"))
+                                {
+                                    continue;
+                                }
+                                else
+                                {
+                                    string[] fipnumOneline = line.Split(' ');
+                                    foreach (string onefipnum in fipnumOneline)
+                                    {
+                                        if ("/".Equals(onefipnum))
+                                        {
+                                            break;
+                                        }
+                                        else if (onefipnum != null && onefipnum.Contains("*"))
+                                        {//解压缩
+                                            string[] manys = onefipnum.Split('*');
+                                            for (int i = 0; i < Convert.ToInt32(manys[0]); i++)
+                                            {
+                                                partfacies[fipnumCount] = Convert.ToInt32(manys[1]);
+                                                fipnumCount++;
+                                            }
+                                        }
+                                        else if (onefipnum != null && !"".Equals(onefipnum))
+                                        {
+                                            partfacies[fipnumCount] = (int)Convert.ToDouble(onefipnum);
+                                            fipnumCount++;
+                                        }
+                                    }
+                                }
+                            }
+                            //System.Console.WriteLine("dd:" + fipnumCount);
+                        }
+                    }
+                }
+                sr.Close();
+                return partfacies;
+            }
+           
+        }
     }
 }

@@ -60,6 +60,7 @@ namespace 数模建模
         Boolean noDzAlert = true;
         double[] dzs = null;
         string nowCh = null;
+        int[] partfacies = null;
 
         public MainRightTabPage()
         {
@@ -1241,6 +1242,7 @@ namespace 数模建模
             //  净毛比、孔隙度、渗透率关键字分别为NTG、PORO、PERMX
             string gproPath = helper.GetXMLDocument("GPRO");
             string finitPath = helper.GetXMLDocument("FINIT");
+            string partPath = helper.GetXMLDocument("partinc");
             string ch = this.ComboBoxCH.Text;
             nowCh = ch;
             drawTypeStr = this.drawtype.Text;
@@ -1259,7 +1261,7 @@ namespace 数模建模
             double ro = 0;
             double b0 = 0;
             int onefacies = 0;
-
+            int onepartfacies = 19;
             canvesGrid.Clear();
             perfectPoints.Clear();//注采完善区域
             if (ch != null && !"".Equals(ch))//选中层号之后才开始
@@ -1410,6 +1412,7 @@ namespace 数模建模
                     facies = fgridPrt.readFacies(faciesPath); // 新版变成旧版了 2017年5月23日 14:29:04变成新版 FACIES
                     // 2017年5月23日 14:29:20变成旧版
                     //facies = fgridPrt.readRegInc(faciesPath); // 原旧版 重新启用 2017年5月8日 21:02:39 FIPNUM 
+                    partfacies = fgridPrt.readPartFacies(partPath); 
                 }
                 //ntgs=fgridPrt.readNTG(gproPath);// 净毛比 2017年5月8日 20:43:53
                 // poro = fgridPrt.poro;// 孔隙度 2017年5月8日 20:44:06
@@ -1466,7 +1469,13 @@ namespace 数模建模
                     double val = Convert.ToDouble(dtprt.Rows[prtYCount][prtXCount]);//饱和度
                     double dzval = 3;
                     dzval = dzs[hadC + hady + prtXCount];
-
+                    // 2017年7月25日 13:51:55
+                    // 分区
+                    if (partfacies != null) { onepartfacies = partfacies[hadC + hady + prtXCount]; }
+                    if (onepartfacies < 10) {
+                        val = 0;
+                        dzval = 0;
+                    }
                     // noDzAlert = true;//该提示dz0值
                     /*if (DBNull.Value != dzDt.Rows[prtYCount][prtXCount])// 2017年5月10日 14:29:41缺失关键字
                     {
@@ -1507,8 +1516,9 @@ namespace 数模建模
                     }
                     if ("相图".Equals(drawTypeStr))
                     {
+                       
                         onefacies = facies[hadC + hady + prtXCount];
-                        if (onefacies > 0 && onefacies < 11 && null == allCh)
+                        if (onefacies > 0 && onefacies < 11 && null == allCh && onepartfacies>10)
                         {
                             valBottom = 1;//低级颜色113
                             valTop = 10;//顶级颜色
@@ -1519,7 +1529,7 @@ namespace 数模建模
                             myPolygon2.Fill = myBrush;
                         }
                         // 2017年7月24日 19:14:52
-                        else if (onefacies > 600 && null == allCh)
+                        else if (onefacies > 600 && null == allCh && onepartfacies > 10)
                         {
                             switch (onefacies)
                             {

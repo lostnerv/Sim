@@ -29,6 +29,7 @@ namespace 数模建模
             this.gothinc.filePath.Text = helper.GetXMLDocument("GOTH");
             this.faciesinc.filePath.Text = helper.GetXMLDocument("FACIES");
             this.gproinc.filePath.Text = helper.GetXMLDocument("GPRO");
+            this.partinc.filePath.Text = helper.GetXMLDocument("partinc");
             //this.finitinc.filePath.Text = helper.GetXMLDocument("FINIT");
         }
 
@@ -98,6 +99,15 @@ namespace 数模建模
             {
                 helper.EditXMLDocument("FINIT", this.finitinc.filePath.Text);
             }*/
+            // 2017年7月25日 09:47:40
+            if (helper.GetXMLDocument("partinc") == null)
+            {
+                helper.AddXMLDocument("partinc", this.partinc.filePath.Text);
+            }
+            else
+            {
+                helper.EditXMLDocument("partinc", this.partinc.filePath.Text);
+            }
             MessageBox.Show("保存成功");
         }
     }

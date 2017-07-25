@@ -21,7 +21,8 @@
   <Node name="PRTINC" path="F:\Workspace\VS_Workspace\Sim-master\剩余油文件\SYYCS_E100.PRT" />
   <Node name="SCH" path="F:\Workspace\VS_Workspace\Sim-master\剩余油文件\SYYCS_SCH.INC" />
   <Node name="GOTH" path="F:\Workspace\VS_Workspace\Sim-master\剩余油文件\SYYCS_GOTH.INC" />
-  <Node name="FACIES" path="save\faciesColor4_2017-07-25_星期二_085455.txt" />
+  <Node name="FACIES" path="save\faciesColor4_2017-07-25_星期二_135246.txt" />
   <Node name="GPRO" path="F:\Workspace\VS_Workspace\Sim-master\剩余油文件\SYYCS_GPRO.INC" />
   <Node name="FINIT" path="F:\Workspace\VS_Workspace\Sim-master\剩余油文件\SYYCS_E100.FINIT" />
+  <Node name="partinc" path="F:\Workspace\VS_Workspace\Sim-master\分区.txt" />
 </DataPath>
