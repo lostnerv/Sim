@@ -212,6 +212,10 @@ namespace 数模建模
             columnRemainType.DataType = System.Type.GetType("System.Int32");
             columnRemainType.ColumnName = "RemainType";
             canvesGrid.Columns.Add(columnRemainType);
+            DataColumn columnJHinCh = new DataColumn();
+            columnJHinCh.DataType = System.Type.GetType("System.Int32");
+            columnJHinCh.ColumnName = "JHinCh";
+            canvesGrid.Columns.Add(columnJHinCh);
 
             //可修改ksbEditDT
             DataColumn columnEXcount = new DataColumn();
@@ -250,6 +254,26 @@ namespace 数模建模
                 DataGridToExcel.OutDataToExcel2(Data_Result.result_temp_zhongzhuan, saveFileDialog.FileName);
             }
         }
+        private void canvas_up(object sender, MouseButtonEventArgs e)
+        {
+            //画井点用的0
+            List<Ellipse> wellPoints = new List<Ellipse>();
+            List<TextBlock> wellNames = new List<TextBlock>();
+            foreach (DataRow row3 in canvesGrid.Rows)
+            {
+                //画井点1
+                drawWells(row3, wellPoints, wellNames);
+            }
+            //画井点2
+            for (int i = 0; i < wellPoints.Count; i++)
+            {
+                if (wellPoints[i] != null)
+                {
+                    this.canvesprt.Children.Add(wellPoints[i]);
+                    this.canvesprt.Children.Add(wellNames[i]);
+                }
+            }
+        }
 
         double lastMoveX = 0;
         double lastMoveY = 0;
@@ -267,15 +291,15 @@ namespace 数模建模
                         double addX = Math.Abs(e.GetPosition(leftCanvas).X - lastMoveX);
                         double addY = Math.Abs(e.GetPosition(leftCanvas).Y - lastMoveY);
                         //画井点用的
-                        List<Ellipse> wellPoints = new List<Ellipse>();
-                        List<TextBlock> wellNames = new List<TextBlock>();
+                       // List<Ellipse> wellPoints = new List<Ellipse>();
+                       // List<TextBlock> wellNames = new List<TextBlock>();
                         // 每移动15m 开始着色
                         if (addX > 15 * m_d_zoomfactor2 || addY > 15 * m_d_zoomfactor2)
                         {
                             foreach (DataRow row3 in canvesGrid.Rows)
                             {
                                 //画井点
-                                drawWells(row3, wellPoints, wellNames);
+                                //drawWells(row3, wellPoints, wellNames);
                                 double soil = (double)row3["barsa"];
                                 Point point0 = new Point((double)row3["x0"], (double)row3["y0"]);
                                 Point point1 = new Point((double)row3["x1"], (double)row3["y1"]);
@@ -309,14 +333,14 @@ namespace 数模建模
                             lastMoveX = e.GetPosition(leftCanvas).X;
                             lastMoveY = e.GetPosition(leftCanvas).Y;
                             //画井点
-                            for (int i = 0; i < wellPoints.Count; i++)
+                            /*for (int i = 0; i < wellPoints.Count; i++)
                             {
                                 if (wellPoints[i] != null)
                                 {
                                     this.canvesprt.Children.Add(wellPoints[i]);
                                     this.canvesprt.Children.Add(wellNames[i]);
                                 }
-                            }
+                            }*/
                         }
 
                     }
@@ -1674,6 +1698,9 @@ namespace 数模建模
                     canvesGridRow["rawy2"] = rawy2;
                     canvesGridRow["rawx3"] = rawx3;
                     canvesGridRow["rawy3"] = rawy3;
+                    // 2017年7月26日 10:04:45
+                    if (onefacies>600 )
+                    canvesGridRow["RemainType"] = onefacies;
                     //画井点
                     int ellipseWidth = 3;
                     foreach (DataRow row in wellCoord.Rows)
@@ -1720,8 +1747,30 @@ namespace 数模建模
                             // canvesptr.Children.Add(wellborder);
                             wellborders[jhCount] = wellborder;
                             TextBlock t1 = new TextBlock();
-                            t1.Text = jh;
+                          
                             t1.FontSize = 6;//井号字体
+                            // 2017年7月26日 14:07:25
+                            bool isInch=false;
+                            foreach (DataRow rowCh in wellCoordTrueEnd.Rows)
+                            {
+                                //Console.WriteLine(rowCh["jh"].ToString());
+                                if (ch.Equals(rowCh["z"].ToString())
+                                    &&jh.Equals(rowCh["jh"].ToString())
+                                    )//&& prtXCount.Equals(row["x"]) && prtYCount.Equals(row["y"])
+                                {
+                                    t1.Text = jh;
+                                    //t1.Inlines.Add(new Run(jh) { Foreground = Brushes.Purple });
+                                    isInch = true;
+                                    canvesGridRow["JHinCh"] = 1;
+                                    break;
+                                }
+                            }
+                           
+                            if (!isInch)
+                            {
+                                t1.Inlines.Add(new Run(jh) { Foreground = Brushes.LightGray });
+                            }
+                           
                             Canvas.SetLeft(t1, x0);
                             Canvas.SetTop(t1, y0);
                             TextNames[jhCount] = t1;
@@ -2865,7 +2914,8 @@ namespace 数模建模
                             double soil = (double)row1["barsa"];
                             Point point0 = new Point((double)row1["x0"], (double)row1["y0"]);
                             //井控范围
-                            if (soil > 0 && ReservorDraw.isInRegion(point0, pointList))
+                            // soil > 0  2017年7月25日 15:04:48去掉
+                            if ( ReservorDraw.isInRegion(point0, pointList))
                             {
                                 Polygon myPolygon2 = new Polygon();
                                 PointCollection myPointCollection2 = new PointCollection();
@@ -2938,7 +2988,15 @@ namespace 数模建模
                             // wellBorders.Add(wellborder);
 
                             TextBlock t1 = new TextBlock();
-                            t1.Text = jh;
+                            String jhinch=  row1["JHinCh"].ToString();
+                            if ("1".Equals(jhinch))
+                            {
+                                t1.Text = jh;
+                            }
+                            else
+                            {
+                                t1.Inlines.Add(new Run(jh) { Foreground = Brushes.LightGray });
+                            }
                             t1.FontSize = 6;//井号字体
                             Canvas.SetLeft(t1, (double)row1["x0"]);
                             Canvas.SetTop(t1, (double)row1["y0"]);
@@ -3072,7 +3130,8 @@ namespace 数模建模
                                     double soil = (double)row3["barsa"];
                                     Point point0 = new Point((double)row3["x0"], (double)row3["y0"]);
                                     double pointI0D = pointl(injp, point0);
-                                    if (soil > 0 && pointI0D <= b)
+                                    // soil > 0 && 2017年7月26日 08:54:06
+                                    if (  pointI0D <= b)
                                     {
                                         perfectPoints.Add(new System.Windows.Point((double)row3["x0"], (double)row3["y0"]));
                                     }
@@ -3094,7 +3153,8 @@ namespace 数模建模
                             double soil = (double)row3["barsa"];
                             Point point0 = new Point((double)row3["x0"], (double)row3["y0"]);
                             double pointD = pointl(pordPerfectp, point0);
-                            if (soil > 0 && pointD <= a)
+                            // soil > 0 && 2017年7月26日 08:54:27
+                            if ( pointD <= a)
                             {
                                 perfectPoints.Add(new System.Windows.Point((double)row3["x0"], (double)row3["y0"]));
                             }
@@ -3136,7 +3196,8 @@ namespace 数模建模
                             double soil = (double)row3["barsa"];
                             Point point0 = new Point((double)row3["x0"], (double)row3["y0"]);
                             double pointD = pointl(pordp, point0);
-                            if (soil > 0 && pointD <= wlength)
+                            // soil > 0 && 2017年7月26日 09:05:17
+                            if ( pointD <= wlength)
                             {
                                 //不在注采完善区
                                 foreach (Point onePerfect in perfectPoints)
@@ -3284,7 +3345,8 @@ namespace 数模建模
                                     double soil = (double)row3["barsa"];
                                     Point point0 = new Point((double)row3["x0"], (double)row3["y0"]);
                                     double pointI0D = pointl(injp, point0);
-                                    if (soil > 0 && pointI0D <= b)
+                                    // soil > 0 && 2017年7月26日 08:53:35
+                                    if (pointI0D <= b)
                                     {
                                         perfectPoints.Add(new System.Windows.Point((double)row3["x0"], (double)row3["y0"]));
                                     }
@@ -3306,7 +3368,8 @@ namespace 数模建模
                             double soil = (double)row3["barsa"];
                             Point point0 = new Point((double)row3["x0"], (double)row3["y0"]);
                             double pointD = pointl(pordPerfectp, point0);
-                            if (soil > 0 && pointD <= a)
+                            // soil > 0 && 2017年7月26日 08:53:10
+                            if ( pointD <= a)
                             {
                                 perfectPoints.Add(new System.Windows.Point((double)row3["x0"], (double)row3["y0"]));
                             }
@@ -3352,7 +3415,8 @@ namespace 数模建模
                             double soil = (double)row3["barsa"];
                             Point point0 = new Point((double)row3["x0"], (double)row3["y0"]);
                             double pointD = pointl(pordp, point0);
-                            if (soil > 0 && pointD <= wlength)
+                            //2017年7月26日 09:04:32 soil > 0 && 
+                            if (pointD <= wlength)
                             {
                                 //不在注采完善区
                                 foreach (Point onePerfect in perfectPoints)
@@ -3446,14 +3510,20 @@ namespace 数模建模
             double b = 0;
             try
             {
-                if (this.textProja != null && !"".Equals(textProja))
+                /*if (this.textProja != null && !"".Equals(textProja))
                 {
                     a = Convert.ToDouble(this.textProja.Text) * m_d_zoomfactor2;
                 }
                 if (this.textInjb != null && !"".Equals(textInjb))
                 {
                     b = Convert.ToDouble(this.textInjb.Text) * m_d_zoomfactor2;
-                }
+                }*/
+                // 2017年7月26日 15:13:18
+                if (this.withOutIP != null && !"".Equals(withOutIP))
+                {
+                    a=Convert.ToDouble(this.withOutIP.Text) * m_d_zoomfactor2;
+                    b = Convert.ToDouble(this.withOutIP.Text) * m_d_zoomfactor2;
+                 }
             }
             catch
             {
@@ -3482,7 +3552,8 @@ namespace 数模建模
                                     double soil = (double)row3["barsa"];
                                     Point point0 = new Point((double)row3["x0"], (double)row3["y0"]);
                                     double pointI0D = pointl(injp, point0);
-                                    if (soil > 0 && pointI0D <= b)
+                                    // soil > 0 && 2017年7月25日 15:05:13 去掉
+                                    if ( pointI0D <= b)
                                     {
                                         Polygon myPolygon2 = new Polygon();
                                         PointCollection myPointCollection2 = new PointCollection();
@@ -3509,7 +3580,8 @@ namespace 数模建模
                             double soil = (double)row3["barsa"];
                             Point point0 = new Point((double)row3["x0"], (double)row3["y0"]);
                             double pointD = pointl(pordp, point0);
-                            if (soil > 0 && pointD <= a)
+                            // soil > 0 && 2017年7月25日 15:05:13 去掉
+                            if ( pointD <= a)
                             {
                                 Polygon myPolygon2 = new Polygon();
                                 PointCollection myPointCollection2 = new PointCollection();
@@ -3891,7 +3963,15 @@ namespace 数模建模
                 wellPoints.Add(wellpoint);
 
                 TextBlock t1 = new TextBlock();
-                t1.Text = jh;
+                String jhinch = row1["JHinCh"].ToString();
+                if ("1".Equals(jhinch))
+                {
+                    t1.Text = jh;
+                }
+                else
+                {
+                    t1.Inlines.Add(new Run(jh) { Foreground = Brushes.LightGray });
+                }
                 t1.FontSize = 6;//井号字体
                 Canvas.SetLeft(t1, (double)row1["x0"]);
                 Canvas.SetTop(t1, (double)row1["y0"]);
@@ -6013,7 +6093,7 @@ namespace 数模建模
             fs.Close();
             XmlHelper helper = new XmlHelper();
             helper.EditXMLDocument("FACIES", filename);
-            MessageBox.Show("保存成功:" + filename);
+            MessageBox.Show("保存到:" + filename);
         }
         /// 2017年7月24日 20:03:28
         /// 通过颜色计算剩余油
@@ -6140,5 +6220,256 @@ namespace 数模建模
             }
             return resSum.ToString("0.0000");
         }
+        /// <summary>
+        /// 2017年7月25日 14:36:00
+        /// 分类型量化剩余油分布
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void remainGrid(object sender, RoutedEventArgs e)
+        {
+            saveColor(sender, e);
+            String comboCh = ComboBoxCH.Text;
+            String oldDrawTypeStr = this.ComboBoxCH.Text;
+            int oldSoil = combo_soiltime.SelectedIndex;
+            if (null == comboCh || "".Equals(comboCh))
+            {
+                Console.WriteLine("newWinEachRes读取文件");
+                findDc(sender, e);//读取文件
+                Console.WriteLine("读取文件");
+            }
+            else
+            {
+                string headTime = soiltimeList[0];
+                string endTime = soiltimeList[soiltimeList.Count() - 1];
+                DataTable allResDt = new DataTable();
+
+                DataColumn column = new DataColumn();
+                column.DataType = System.Type.GetType("System.String");
+                column.ColumnName = "剩余油类型";
+                allResDt.Columns.Add(column);
+
+                DataColumn column1 = new DataColumn();
+                column1.DataType = System.Type.GetType("System.String");
+                column1.ColumnName = headTime;
+                allResDt.Columns.Add(column1);
+
+                DataColumn column2 = new DataColumn();
+                column2.DataType = System.Type.GetType("System.String");
+                column2.ColumnName = endTime;
+                allResDt.Columns.Add(column2);
+
+                comboCh = ComboBoxCH.Text;
+                allCh = comboCh;
+                combo_soiltime.SelectedIndex = 0;
+                findDc(sender, e);//
+                string tmpVal = "0.0000";
+                //砂体
+                DataRow rowSand = allResDt.NewRow();
+                //drawSandBorder(sender, e);
+                rowSand["剩余油类型"] = "砂体边部";
+                tmpVal = "" + resByColor(611);
+                if ("0.0000".Equals(tmpVal))
+                {
+                    drawSandBorder(sender, e);
+                    tmpVal = tmpVol4EachRes;
+                }
+                rowSand[headTime] = tmpVal;
+                allResDt.Rows.Add(rowSand);
+                //
+                DataRow rowFaultBorder = allResDt.NewRow();
+                //drawFaultBorder(sender, e);
+                tmpVal = drawBorderOutCtrlByColor(sender, e, true);
+                if ("0.0000".Equals(tmpVal))
+                {
+                    drawFaultBorder(sender, e);
+                    tmpVal = tmpVol4EachRes;
+                }
+                rowFaultBorder["剩余油类型"] = "断层(井控)";
+                rowFaultBorder[headTime] = tmpVal;
+                allResDt.Rows.Add(rowFaultBorder);
+                //
+                DataRow rowFaultBorderOutCtr = allResDt.NewRow();
+                //drawFaultBorderOutCtrl(sender, e);
+                tmpVal = drawBorderOutCtrlByColor(sender, e, false);
+                if ("0.0000".Equals(tmpVal))
+                {
+                    drawFaultBorderOutCtrl(sender, e);
+                    tmpVal = tmpVol4EachRes;
+                }
+                rowFaultBorderOutCtr["剩余油类型"] = "断层(非井控)";
+                rowFaultBorderOutCtr[headTime] = tmpVal;
+                allResDt.Rows.Add(rowFaultBorderOutCtr);
+                //
+                DataRow rowInjWithoutOil = allResDt.NewRow();
+                //drawInjWithoutOil(sender, e);
+                rowInjWithoutOil["剩余油类型"] = "有注无采";
+                tmpVal = "" + resByColor(607);
+                if ("0.0000".Equals(tmpVal))
+                {
+                    drawInjWithoutOil(sender, e);
+                    tmpVal = tmpVol4EachRes;
+                }
+                rowInjWithoutOil[headTime] = tmpVal;
+                allResDt.Rows.Add(rowInjWithoutOil);
+                //
+                DataRow rowOilWithoutInj = allResDt.NewRow();
+                //drawOilWithoutInj(sender, e);
+                rowOilWithoutInj["剩余油类型"] = "有采无注";
+                tmpVal = "" + resByColor(608);
+                if ("0.0000".Equals(tmpVal))
+                {
+                    drawOilWithoutInj(sender, e);
+                    tmpVal = tmpVol4EachRes;
+                }
+                rowOilWithoutInj[headTime] = tmpVal;
+                allResDt.Rows.Add(rowOilWithoutInj);
+                //
+                DataRow rowPlane = allResDt.NewRow();
+                //drawPlane(sender, e);
+                rowPlane["剩余油类型"] = "平面干扰";
+                tmpVal = "" + resByColor(603);
+                if ("0.0000".Equals(tmpVal))
+                {
+                    drawPlane(sender, e);
+                    tmpVal = tmpVol4EachRes;
+                }
+                rowPlane[headTime] = tmpVal;
+                allResDt.Rows.Add(rowPlane);
+                //
+                DataRow rowInterLayer = allResDt.NewRow();
+                //drawInterLayer(sender, e);
+                rowInterLayer["剩余油类型"] = "层间干扰";
+                tmpVal = "" + resByColor(604);
+                if ("0.0000".Equals(tmpVal))
+                {
+                    drawInterLayer(sender, e);
+                    tmpVal = tmpVol4EachRes;
+                }
+                rowInterLayer[headTime] = tmpVal;
+                allResDt.Rows.Add(rowInterLayer);
+                //
+                DataRow rowInLayer = allResDt.NewRow();
+                //drawInLayer(sender, e);
+                rowInLayer["剩余油类型"] = "层内干扰";
+                tmpVal = "" + resByColor(605);
+                if ("0.0000".Equals(tmpVal))
+                {
+                    drawInLayer(sender, e);
+                    tmpVal = tmpVol4EachRes;
+                }
+                rowInLayer[headTime] = tmpVal;
+                allResDt.Rows.Add(rowInLayer);
+                //最近的时间
+                combo_soiltime.SelectedIndex = soiltimeList.Count() - 1;
+                findDc(sender, e);
+                //
+                //drawSandBorder(sender, e);
+                DataRow rowSand2 = allResDt.Rows[0];
+                rowSand2.BeginEdit();
+                tmpVal = "" + resByColor(611);
+                if ("0.0000".Equals(tmpVal))
+                {
+                    drawSandBorder(sender, e);
+                    tmpVal = tmpVol4EachRes;
+                }
+                rowSand2[endTime] = tmpVal;
+                rowSand2.EndEdit();
+                //
+                //drawFaultBorder(sender, e);
+                tmpVal = drawBorderOutCtrlByColor(sender, e, true);
+                if ("0.0000".Equals(tmpVal))
+                {
+                    drawFaultBorder(sender, e);
+                    tmpVal = tmpVol4EachRes;
+                }
+                DataRow rowFaultBorder2 = allResDt.Rows[1];
+                rowFaultBorder2.BeginEdit();
+                rowFaultBorder2[endTime] = tmpVal;
+                rowFaultBorder2.EndEdit();
+                //
+                //drawFaultBorderOutCtrl(sender, e);
+                tmpVal = drawBorderOutCtrlByColor(sender, e, false);
+                if ("0.0000".Equals(tmpVal))
+                {
+                    drawFaultBorderOutCtrl(sender, e);
+                    tmpVal = tmpVol4EachRes;
+                }
+                DataRow rowFaultBorderOutCtr2 = allResDt.Rows[2];
+                rowFaultBorderOutCtr2.BeginEdit();
+                rowFaultBorderOutCtr2[endTime] = tmpVal;
+                rowFaultBorderOutCtr2.EndEdit();
+                //
+                //drawInjWithoutOil(sender, e);
+                DataRow rowInjWithoutOil2 = allResDt.Rows[3];
+                rowInjWithoutOil2.BeginEdit();
+                tmpVal = "" + resByColor(607);
+                if ("0.0000".Equals(tmpVal))
+                {
+                    drawInjWithoutOil(sender, e);
+                    tmpVal = tmpVol4EachRes;
+                }
+                rowInjWithoutOil2[endTime] = tmpVal;
+                rowInjWithoutOil2.EndEdit();
+                //
+                //drawOilWithoutInj(sender, e);
+                DataRow rowOilWithoutInj2 = allResDt.Rows[4];
+                rowOilWithoutInj2.BeginEdit();
+                tmpVal = "" + resByColor(608);
+                if ("0.0000".Equals(tmpVal))
+                {
+                    drawOilWithoutInj(sender, e);
+                    tmpVal = tmpVol4EachRes;
+                }
+                rowOilWithoutInj2[endTime] = tmpVal;
+                rowOilWithoutInj2.EndEdit();
+                //
+                // drawPlane(sender, e);
+                DataRow rowPlane2 = allResDt.Rows[5];
+                rowPlane2.BeginEdit();
+                tmpVal = "" + resByColor(603);
+                if ("0.0000".Equals(tmpVal))
+                {
+                    drawPlane(sender, e);
+                    tmpVal = tmpVol4EachRes;
+                }
+                rowPlane2[endTime] = tmpVal;
+                rowPlane2.EndEdit();
+                //
+                //drawInterLayer(sender, e);
+                DataRow rowInterLayer2 = allResDt.Rows[6];
+                rowInterLayer2.BeginEdit();
+                tmpVal = "" + resByColor(604);
+                if ("0.0000".Equals(tmpVal))
+                {
+                    drawInterLayer(sender, e);
+                    tmpVal = tmpVol4EachRes;
+                }
+                rowInterLayer2[endTime] = tmpVal;
+                rowInterLayer2.EndEdit();
+                //
+                //drawInLayer(sender, e);
+                DataRow rowInLayer2 = allResDt.Rows[7];
+                rowInLayer2.BeginEdit();
+                tmpVal = "" + resByColor(605);
+                if ("0.0000".Equals(tmpVal))
+                {
+                    drawInLayer(sender, e);
+                    tmpVal = tmpVol4EachRes;
+                }
+                rowInLayer2[endTime] = tmpVal;
+                rowInLayer2.EndEdit();
+
+                AllChResContainer draw = new AllChResContainer("储量", allResDt);
+                draw.Show();
+            }
+            allCh = null;
+            ComboBoxCH.Text = comboCh;
+            this.ComboBoxCH.Text = oldDrawTypeStr;
+            combo_soiltime.SelectedIndex = oldSoil;
+            findDc(sender, e);
+        }
+
+       
     }
 }
