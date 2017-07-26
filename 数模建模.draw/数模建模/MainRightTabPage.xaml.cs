@@ -254,6 +254,12 @@ namespace 数模建模
                 DataGridToExcel.OutDataToExcel2(Data_Result.result_temp_zhongzhuan, saveFileDialog.FileName);
             }
         }
+        /// <summary>
+        /// 2017年7月26日 16:05:25
+        /// mouse_up
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void canvas_up(object sender, MouseButtonEventArgs e)
         {
             //画井点用的0
@@ -291,8 +297,8 @@ namespace 数模建模
                         double addX = Math.Abs(e.GetPosition(leftCanvas).X - lastMoveX);
                         double addY = Math.Abs(e.GetPosition(leftCanvas).Y - lastMoveY);
                         //画井点用的
-                       // List<Ellipse> wellPoints = new List<Ellipse>();
-                       // List<TextBlock> wellNames = new List<TextBlock>();
+                        // List<Ellipse> wellPoints = new List<Ellipse>();
+                        // List<TextBlock> wellNames = new List<TextBlock>();
                         // 每移动15m 开始着色
                         if (addX > 15 * m_d_zoomfactor2 || addY > 15 * m_d_zoomfactor2)
                         {
@@ -1436,7 +1442,7 @@ namespace 数模建模
                     facies = fgridPrt.readFacies(faciesPath); // 新版变成旧版了 2017年5月23日 14:29:04变成新版 FACIES
                     // 2017年5月23日 14:29:20变成旧版
                     //facies = fgridPrt.readRegInc(faciesPath); // 原旧版 重新启用 2017年5月8日 21:02:39 FIPNUM 
-                    partfacies = fgridPrt.readPartFacies(partPath); 
+                    partfacies = fgridPrt.readPartFacies(partPath);
                 }
                 //ntgs=fgridPrt.readNTG(gproPath);// 净毛比 2017年5月8日 20:43:53
                 // poro = fgridPrt.poro;// 孔隙度 2017年5月8日 20:44:06
@@ -1496,7 +1502,8 @@ namespace 数模建模
                     // 2017年7月25日 13:51:55
                     // 分区
                     if (partfacies != null) { onepartfacies = partfacies[hadC + hady + prtXCount]; }
-                    if (onepartfacies < 10) {
+                    if (onepartfacies < 10)
+                    {
                         val = 0;
                         dzval = 0;
                     }
@@ -1540,9 +1547,9 @@ namespace 数模建模
                     }
                     if ("相图".Equals(drawTypeStr))
                     {
-                       
+
                         onefacies = facies[hadC + hady + prtXCount];
-                        if (onefacies > 0 && onefacies < 11 && null == allCh && onepartfacies>10)
+                        if (onefacies > 0 && onefacies < 11 && null == allCh && onepartfacies > 10)
                         {
                             valBottom = 1;//低级颜色113
                             valTop = 10;//顶级颜色
@@ -1699,8 +1706,8 @@ namespace 数模建模
                     canvesGridRow["rawx3"] = rawx3;
                     canvesGridRow["rawy3"] = rawy3;
                     // 2017年7月26日 10:04:45
-                    if (onefacies>600 )
-                    canvesGridRow["RemainType"] = onefacies;
+                    if (onefacies > 600)
+                        canvesGridRow["RemainType"] = onefacies;
                     //画井点
                     int ellipseWidth = 3;
                     foreach (DataRow row in wellCoord.Rows)
@@ -1747,15 +1754,15 @@ namespace 数模建模
                             // canvesptr.Children.Add(wellborder);
                             wellborders[jhCount] = wellborder;
                             TextBlock t1 = new TextBlock();
-                          
+
                             t1.FontSize = 6;//井号字体
                             // 2017年7月26日 14:07:25
-                            bool isInch=false;
+                            bool isInch = false;
                             foreach (DataRow rowCh in wellCoordTrueEnd.Rows)
                             {
                                 //Console.WriteLine(rowCh["jh"].ToString());
                                 if (ch.Equals(rowCh["z"].ToString())
-                                    &&jh.Equals(rowCh["jh"].ToString())
+                                    && jh.Equals(rowCh["jh"].ToString())
                                     )//&& prtXCount.Equals(row["x"]) && prtYCount.Equals(row["y"])
                                 {
                                     t1.Text = jh;
@@ -1765,12 +1772,12 @@ namespace 数模建模
                                     break;
                                 }
                             }
-                           
+
                             if (!isInch)
                             {
                                 t1.Inlines.Add(new Run(jh) { Foreground = Brushes.LightGray });
                             }
-                           
+
                             Canvas.SetLeft(t1, x0);
                             Canvas.SetTop(t1, y0);
                             TextNames[jhCount] = t1;
@@ -2909,27 +2916,48 @@ namespace 数模建模
                     wellCtrlList.Add(pointList);
                     if (drawWellCtrlFlag)
                     {
+                        double maxab;
+                        if (a > b) maxab = a;
+                        else maxab = b;
                         foreach (DataRow row1 in canvesGrid.Rows)
                         {
                             double soil = (double)row1["barsa"];
                             Point point0 = new Point((double)row1["x0"], (double)row1["y0"]);
                             //井控范围
                             // soil > 0  2017年7月25日 15:04:48去掉
-                            if ( ReservorDraw.isInRegion(point0, pointList))
+                            if (ReservorDraw.isInRegion(point0, pointList))
                             {
-                                Polygon myPolygon2 = new Polygon();
-                                PointCollection myPointCollection2 = new PointCollection();
-                                myPointCollection2.Add(new System.Windows.Point((double)row1["x0"], (double)row1["y0"]));
-                                myPointCollection2.Add(new System.Windows.Point((double)row1["x1"], (double)row1["y1"]));
-                                myPointCollection2.Add(new System.Windows.Point((double)row1["x3"], (double)row1["y3"]));
-                                myPointCollection2.Add(new System.Windows.Point((double)row1["x2"], (double)row1["y2"]));
-                                //myPolygon2.Stroke = System.Windows.Media.Brushes.Black;
-                                myPolygon2.StrokeThickness = 0.00;
-                                SolidColorBrush myBrush = new SolidColorBrush(Colors.RoyalBlue);
-                                myPolygon2.Fill = myBrush;
-                                myPolygon2.Points = myPointCollection2;
-                                row1["RemainType"] = 601;
-                                this.canvesprt.Children.Add(myPolygon2);
+                                //2017年7月26日 16:19:43
+                                bool canDraw = false;
+                                foreach (DataRow findJhRow in canvesGrid.Rows)
+                                {
+                                    string jh = findJhRow["jh"].ToString();
+                                    if (jh != null && !"".Equals(jh))
+                                    {
+                                        Point jhPoint = new Point((double)findJhRow["x0"], (double)findJhRow["y0"]);
+                                        if (pointl(point0, jhPoint) < maxab)
+                                        {
+                                            canDraw = true;
+                                            break;
+                                        }
+                                    }
+                                }
+                                if (canDraw)
+                                {
+                                    Polygon myPolygon2 = new Polygon();
+                                    PointCollection myPointCollection2 = new PointCollection();
+                                    myPointCollection2.Add(new System.Windows.Point((double)row1["x0"], (double)row1["y0"]));
+                                    myPointCollection2.Add(new System.Windows.Point((double)row1["x1"], (double)row1["y1"]));
+                                    myPointCollection2.Add(new System.Windows.Point((double)row1["x3"], (double)row1["y3"]));
+                                    myPointCollection2.Add(new System.Windows.Point((double)row1["x2"], (double)row1["y2"]));
+                                    //myPolygon2.Stroke = System.Windows.Media.Brushes.Black;
+                                    myPolygon2.StrokeThickness = 0.00;
+                                    SolidColorBrush myBrush = new SolidColorBrush(Colors.RoyalBlue);
+                                    myPolygon2.Fill = myBrush;
+                                    myPolygon2.Points = myPointCollection2;
+                                    row1["RemainType"] = 601;
+                                    this.canvesprt.Children.Add(myPolygon2);
+                                }
                             }
                         }
                     }
@@ -2988,7 +3016,7 @@ namespace 数模建模
                             // wellBorders.Add(wellborder);
 
                             TextBlock t1 = new TextBlock();
-                            String jhinch=  row1["JHinCh"].ToString();
+                            String jhinch = row1["JHinCh"].ToString();
                             if ("1".Equals(jhinch))
                             {
                                 t1.Text = jh;
@@ -3131,7 +3159,7 @@ namespace 数模建模
                                     Point point0 = new Point((double)row3["x0"], (double)row3["y0"]);
                                     double pointI0D = pointl(injp, point0);
                                     // soil > 0 && 2017年7月26日 08:54:06
-                                    if (  pointI0D <= b)
+                                    if (pointI0D <= b)
                                     {
                                         perfectPoints.Add(new System.Windows.Point((double)row3["x0"], (double)row3["y0"]));
                                     }
@@ -3154,7 +3182,7 @@ namespace 数模建模
                             Point point0 = new Point((double)row3["x0"], (double)row3["y0"]);
                             double pointD = pointl(pordPerfectp, point0);
                             // soil > 0 && 2017年7月26日 08:54:27
-                            if ( pointD <= a)
+                            if (pointD <= a)
                             {
                                 perfectPoints.Add(new System.Windows.Point((double)row3["x0"], (double)row3["y0"]));
                             }
@@ -3197,7 +3225,7 @@ namespace 数模建模
                             Point point0 = new Point((double)row3["x0"], (double)row3["y0"]);
                             double pointD = pointl(pordp, point0);
                             // soil > 0 && 2017年7月26日 09:05:17
-                            if ( pointD <= wlength)
+                            if (pointD <= wlength)
                             {
                                 //不在注采完善区
                                 foreach (Point onePerfect in perfectPoints)
@@ -3369,7 +3397,7 @@ namespace 数模建模
                             Point point0 = new Point((double)row3["x0"], (double)row3["y0"]);
                             double pointD = pointl(pordPerfectp, point0);
                             // soil > 0 && 2017年7月26日 08:53:10
-                            if ( pointD <= a)
+                            if (pointD <= a)
                             {
                                 perfectPoints.Add(new System.Windows.Point((double)row3["x0"], (double)row3["y0"]));
                             }
@@ -3521,9 +3549,9 @@ namespace 数模建模
                 // 2017年7月26日 15:13:18
                 if (this.withOutIP != null && !"".Equals(withOutIP))
                 {
-                    a=Convert.ToDouble(this.withOutIP.Text) * m_d_zoomfactor2;
+                    a = Convert.ToDouble(this.withOutIP.Text) * m_d_zoomfactor2;
                     b = Convert.ToDouble(this.withOutIP.Text) * m_d_zoomfactor2;
-                 }
+                }
             }
             catch
             {
@@ -3553,7 +3581,7 @@ namespace 数模建模
                                     Point point0 = new Point((double)row3["x0"], (double)row3["y0"]);
                                     double pointI0D = pointl(injp, point0);
                                     // soil > 0 && 2017年7月25日 15:05:13 去掉
-                                    if ( pointI0D <= b)
+                                    if (pointI0D <= b)
                                     {
                                         Polygon myPolygon2 = new Polygon();
                                         PointCollection myPointCollection2 = new PointCollection();
@@ -3581,7 +3609,7 @@ namespace 数模建模
                             Point point0 = new Point((double)row3["x0"], (double)row3["y0"]);
                             double pointD = pointl(pordp, point0);
                             // soil > 0 && 2017年7月25日 15:05:13 去掉
-                            if ( pointD <= a)
+                            if (pointD <= a)
                             {
                                 Polygon myPolygon2 = new Polygon();
                                 PointCollection myPointCollection2 = new PointCollection();
@@ -3842,7 +3870,7 @@ namespace 数模建模
                         if (ch.Equals(wellRow["z"].ToString()))
                         {
                             yxhd = Convert.ToDouble(wellRow["地层系数"]) / permx;// 计算有效厚度 
-                            Console.WriteLine(dz + "=" + yxhd + "=" + permx + "=" + Convert.ToDouble(wellRow["地层系数"]));
+                            //Console.WriteLine(dz + "=" + yxhd + "=" + permx + "=" + Convert.ToDouble(wellRow["地层系数"]));
                         }
 
                     }
@@ -6470,6 +6498,6 @@ namespace 数模建模
             findDc(sender, e);
         }
 
-       
+
     }
 }
