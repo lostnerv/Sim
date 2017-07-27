@@ -214,7 +214,7 @@ namespace 数模建模
             canvesGrid.Columns.Add(columnRemainType);
             DataColumn columnJHinCh = new DataColumn();
             columnJHinCh.DataType = System.Type.GetType("System.Int32");
-            columnJHinCh.ColumnName = "JHinCh";
+            columnJHinCh.ColumnName = "JHinCh"; // =1 =in
             canvesGrid.Columns.Add(columnJHinCh);
 
             //可修改ksbEditDT
@@ -1460,6 +1460,9 @@ namespace 数模建模
 
                 for (int i = 0; i < dtfgridNew.Rows.Count - 3; i = i + 4)
                 {
+                    if(0==i%50000)
+                     Dispatcher.Invoke(updatePbDelegate, System.Windows.Threading.DispatcherPriority.Background, new object[] {
+                    System.Windows.Controls.ProgressBar.ValueProperty, Convert.ToDouble(50+29*i/dtfgridNew.Rows.Count)   });
                     //if (i >100) break;
                     Polygon myPolygon2 = new Polygon();
                     PointCollection myPointCollection2 = new PointCollection();
@@ -2844,6 +2847,7 @@ namespace 数模建模
             {
                 //取出所有井号信息
                 List<JhCluster> allJh = new List<JhCluster>();
+
                 foreach (DataRow row1 in canvesGrid.Rows)
                 {
                     if ("OIL".Equals(row1["stat"]) || "WATER".Equals(row1["stat"]))
@@ -2856,6 +2860,8 @@ namespace 数模建模
                         allJh.Add(jhCluster);
                     }
                 }
+                List<JhCluster> allJh4Draw = new List<JhCluster>(allJh.ToArray());// 2017年7月27日 10:01:02 复制内容不是地址
+
                 //依据井距maxWelldistance分聚类
                 List<List<JhCluster>> convexCluster = new List<List<JhCluster>>();
                 while (allJh.Count > 0)
@@ -2916,31 +2922,43 @@ namespace 数模建模
                     wellCtrlList.Add(pointList);
                     if (drawWellCtrlFlag)
                     {
-                        double maxab;
-                        if (a > b) maxab = a;
-                        else maxab = b;
+                        // double maxab;
+                        //  if (a > b) maxab = a;
+                        //  else maxab = b;
                         foreach (DataRow row1 in canvesGrid.Rows)
                         {
                             double soil = (double)row1["barsa"];
                             Point point0 = new Point((double)row1["x0"], (double)row1["y0"]);
                             //井控范围
-                            // soil > 0  2017年7月25日 15:04:48去掉
-                            if (ReservorDraw.isInRegion(point0, pointList))
+                            // soil > 0  2017年7月25日 15:04:48去掉 想看情况 不是正式结果修改 早特么说啊 单独给你个版本啊
+                            if (soil > 0 && ReservorDraw.isInRegion(point0, pointList))
                             {
                                 //2017年7月26日 16:19:43
                                 bool canDraw = false;
-                                foreach (DataRow findJhRow in canvesGrid.Rows)
+                                foreach (JhCluster findJhRow in allJh4Draw)
                                 {
-                                    string jh = findJhRow["jh"].ToString();
-                                    if (jh != null && !"".Equals(jh))
+                                    string jh = findJhRow.pjh;
+                                    // if (jh != null && !"".Equals(jh))
+                                    // {
+                                    Point jhPoint = new Point((double)findJhRow.px, (double)findJhRow.py);
+                                    if ("WATER".Equals(findJhRow.pstatus))
                                     {
-                                        Point jhPoint = new Point((double)findJhRow["x0"], (double)findJhRow["y0"]);
-                                        if (pointl(point0, jhPoint) < maxab)
+                                        if (pointl(point0, jhPoint) < b)
                                         {
                                             canDraw = true;
                                             break;
                                         }
                                     }
+                                    else
+                                    {
+                                        if (pointl(point0, jhPoint) < a)
+                                        {
+                                            canDraw = true;
+                                            break;
+                                        }
+                                    }
+
+                                    //}
                                 }
                                 if (canDraw)
                                 {
@@ -3159,7 +3177,7 @@ namespace 数模建模
                                     Point point0 = new Point((double)row3["x0"], (double)row3["y0"]);
                                     double pointI0D = pointl(injp, point0);
                                     // soil > 0 && 2017年7月26日 08:54:06
-                                    if (pointI0D <= b)
+                                    if (soil > 0 && pointI0D <= b)
                                     {
                                         perfectPoints.Add(new System.Windows.Point((double)row3["x0"], (double)row3["y0"]));
                                     }
@@ -3182,7 +3200,7 @@ namespace 数模建模
                             Point point0 = new Point((double)row3["x0"], (double)row3["y0"]);
                             double pointD = pointl(pordPerfectp, point0);
                             // soil > 0 && 2017年7月26日 08:54:27
-                            if (pointD <= a)
+                            if (soil > 0 && pointD <= a)
                             {
                                 perfectPoints.Add(new System.Windows.Point((double)row3["x0"], (double)row3["y0"]));
                             }
@@ -3225,7 +3243,7 @@ namespace 数模建模
                             Point point0 = new Point((double)row3["x0"], (double)row3["y0"]);
                             double pointD = pointl(pordp, point0);
                             // soil > 0 && 2017年7月26日 09:05:17
-                            if (pointD <= wlength)
+                            if (soil > 0 && pointD <= wlength)
                             {
                                 //不在注采完善区
                                 foreach (Point onePerfect in perfectPoints)
@@ -3374,7 +3392,7 @@ namespace 数模建模
                                     Point point0 = new Point((double)row3["x0"], (double)row3["y0"]);
                                     double pointI0D = pointl(injp, point0);
                                     // soil > 0 && 2017年7月26日 08:53:35
-                                    if (pointI0D <= b)
+                                    if (soil > 0 && pointI0D <= b)
                                     {
                                         perfectPoints.Add(new System.Windows.Point((double)row3["x0"], (double)row3["y0"]));
                                     }
@@ -3397,7 +3415,7 @@ namespace 数模建模
                             Point point0 = new Point((double)row3["x0"], (double)row3["y0"]);
                             double pointD = pointl(pordPerfectp, point0);
                             // soil > 0 && 2017年7月26日 08:53:10
-                            if (pointD <= a)
+                            if (soil > 0 && pointD <= a)
                             {
                                 perfectPoints.Add(new System.Windows.Point((double)row3["x0"], (double)row3["y0"]));
                             }
@@ -3581,7 +3599,7 @@ namespace 数模建模
                                     Point point0 = new Point((double)row3["x0"], (double)row3["y0"]);
                                     double pointI0D = pointl(injp, point0);
                                     // soil > 0 && 2017年7月25日 15:05:13 去掉
-                                    if (pointI0D <= b)
+                                    if (soil > 0 && pointI0D <= b)
                                     {
                                         Polygon myPolygon2 = new Polygon();
                                         PointCollection myPointCollection2 = new PointCollection();
@@ -3609,7 +3627,7 @@ namespace 数模建模
                             Point point0 = new Point((double)row3["x0"], (double)row3["y0"]);
                             double pointD = pointl(pordp, point0);
                             // soil > 0 && 2017年7月25日 15:05:13 去掉
-                            if (pointD <= a)
+                            if (soil > 0 && pointD <= a)
                             {
                                 Polygon myPolygon2 = new Polygon();
                                 PointCollection myPointCollection2 = new PointCollection();
@@ -4282,7 +4300,6 @@ namespace 数模建模
                             yxhd = Convert.ToDouble(wellRow["地层系数"]) / permx;// 计算有效厚度 
                             // Console.WriteLine(dz + "=" + yxhd + "=" + permx + "=" + Convert.ToDouble(wellRow["地层系数"]));
                         }
-
                     }
 
                     int chCount = chList.Count;
@@ -4327,6 +4344,10 @@ namespace 数模建模
                                         {
                                             isSameFacies = false;
                                         }
+                                        else //2017年7月27日 16:49:36
+                                        {
+                                        row3["RemainType"] = 605;
+                                        }
                                         Polygon myPolygon2 = new Polygon();
                                         PointCollection myPointCollection2 = new PointCollection();
                                         myPointCollection2.Add(new System.Windows.Point((double)row3["x0"], (double)row3["y0"]));
@@ -4340,7 +4361,7 @@ namespace 数模建模
                                         myPolygon2.Points = myPointCollection2;
                                         //this.canvesprt.Children.Add(myPolygon2);
                                         polygonList.Add(myPolygon2);
-                                        row3["RemainType"] = 605;
+                                        //row3["RemainType"] = 605;
                                         //储量
                                         Point rawp1 = new Point((double)row3["rawx0"], (double)row3["rawy0"]);
                                         Point rawp2 = new Point((double)row3["rawx1"], (double)row3["rawy1"]);
@@ -4367,6 +4388,7 @@ namespace 数模建模
                                 {
                                     foreach (Polygon myPolygon in polygonList)
                                     {
+                                     //  row3["RemainType"] = 605;
                                         if (null == allCh)
                                         {
                                             this.canvesprt.Children.Add(myPolygon);
@@ -4396,6 +4418,10 @@ namespace 数模建模
                                 {
                                     isSameFacies = false;
                                 }
+                                else //2017年7月27日 16:49:36
+                                {
+                                    row3["RemainType"] = 605;
+                                }
                                 Polygon myPolygon2 = new Polygon();
                                 PointCollection myPointCollection2 = new PointCollection();
                                 myPointCollection2.Add(new System.Windows.Point((double)row3["x0"], (double)row3["y0"]));
@@ -4409,7 +4435,7 @@ namespace 数模建模
                                 myPolygon2.Points = myPointCollection2;
                                 //this.canvesprt.Children.Add(myPolygon2);
                                 polygonList.Add(myPolygon2);
-                                row3["RemainType"] = 605;
+                              //  row3["RemainType"] = 605;
                                 //储量
                                 Point rawp1 = new Point((double)row3["rawx0"], (double)row3["rawy0"]);
                                 Point rawp2 = new Point((double)row3["rawx1"], (double)row3["rawy1"]);
@@ -4658,6 +4684,7 @@ namespace 数模建模
                                         if (!faciesInjS.Equals(faciesInj2))//不同相带
                                         {
                                             isSameFacies = false;
+                                            row3["RemainType"] = 603;
                                         }
                                         Polygon myPolygon2 = new Polygon();
                                         PointCollection myPointCollection2 = new PointCollection();
@@ -4670,7 +4697,7 @@ namespace 数模建模
                                         SolidColorBrush myBrush = new SolidColorBrush(Colors.YellowGreen);//.PaleGoldenrod);
                                         myPolygon2.Fill = myBrush;
                                         myPolygon2.Points = myPointCollection2;
-                                        row3["RemainType"] = 603;
+                                        
                                         //this.canvesprt.Children.Add(myPolygon2);
                                         polygonList.Add(myPolygon2);
                                         //储量
@@ -4727,6 +4754,7 @@ namespace 数模建模
                                 if (!faciesProdS.Equals(faciesProd))
                                 {
                                     isSameFacies = false;
+                                    row3["RemainType"] = 603;//2017年7月27日 16:51:48
                                 }
                                 Polygon myPolygon2 = new Polygon();
                                 PointCollection myPointCollection2 = new PointCollection();
@@ -4739,7 +4767,7 @@ namespace 数模建模
                                 SolidColorBrush myBrush = new SolidColorBrush(Colors.YellowGreen);//.PaleGoldenrod);
                                 myPolygon2.Fill = myBrush;
                                 myPolygon2.Points = myPointCollection2;
-                                row3["RemainType"] = 603;
+                              
                                 //this.canvesprt.Children.Add(myPolygon2);
                                 polygonList.Add(myPolygon2);
                                 //储量
@@ -4929,7 +4957,7 @@ namespace 数模建模
                                         row3["RemainType"] = 604;
                                         if (null == allCh)
                                         {
-                                            this.canvesprt.Children.Add(myPolygon2);
+                                            this.canvesprt.Children.Add(myPolygon2);//画图图
                                         }
                                         //储量
                                         Point rawp1 = new Point((double)row3["rawx0"], (double)row3["rawy0"]);
@@ -4948,6 +4976,7 @@ namespace 数模建模
                                             s = Math.Abs(points.Take(points.Count - 1)
                                                .Select((p, i) => (points[i + 1].X - p.X) * (points[i + 1].Y + p.Y))
                                                .Sum() / 2 / 1000000);//据说计算面积
+                                            // row3["RemainType"] = 604;
                                             h = (double)row3["dz"];
                                             if (h > 0)
                                             {
@@ -4955,6 +4984,8 @@ namespace 数模建模
                                             }
                                         }
                                     }
+                                    // string remainType = row3["RemainType"].ToString();
+                                    //if (remainType != null && !"".Equals(remainType)) Console.WriteLine(remainType);
                                 }
                             }
                         }
@@ -6211,6 +6242,7 @@ namespace 数模建模
                     if ((DBNull.Value != canvesRow["RemainType"] && 610 == (int)canvesRow["RemainType"]) || 610 == (int)canvesRow["facies"])
                     {
                         bool inWellCtrlFlag = false;
+
                         foreach (List<Point> oneWellCtrl in wellCtrlList)
                         {
                             Point point0 = new Point((double)canvesRow["x0"], (double)canvesRow["y0"]);
@@ -6220,6 +6252,7 @@ namespace 数模建模
                                 break;
                             }
                         }
+                        canvesRow["RemainType"] = "610";// 2017年7月27日 10:52:03
                         if (isInCtrl == inWellCtrlFlag)
                         {
                             Point rawp1 = new Point((double)canvesRow["rawx0"], (double)canvesRow["rawy0"]);
@@ -6256,40 +6289,70 @@ namespace 数模建模
         /// <param name="e"></param>
         private void remainGrid(object sender, RoutedEventArgs e)
         {
-            saveColor(sender, e);
+            //saveColor(sender, e);
             String comboCh = ComboBoxCH.Text;
             String oldDrawTypeStr = this.ComboBoxCH.Text;
             int oldSoil = combo_soiltime.SelectedIndex;
-            if (null == comboCh || "".Equals(comboCh))
+            int maxch = tablesize[2];
+            DataTable allResDt = new DataTable();
+            DataColumn column = new DataColumn();
+            column.DataType = System.Type.GetType("System.String");
+            column.ColumnName = "剩余油类型";
+            allResDt.Columns.Add(column);
+            DataColumn column2 = new DataColumn();
+            column2.DataType = System.Type.GetType("System.String");
+            column2.ColumnName = "储量";
+            allResDt.Columns.Add(column2);
+            DataColumn column3 = new DataColumn();
+            column3.DataType = System.Type.GetType("System.String");
+            column3.ColumnName = "砂岩厚度";
+            allResDt.Columns.Add(column3);
+            DataColumn column4 = new DataColumn();
+            column4.DataType = System.Type.GetType("System.String");
+            column4.ColumnName = "有效厚度";
+            allResDt.Columns.Add(column4);
+            DataColumn column5 = new DataColumn();
+            column5.DataType = System.Type.GetType("System.String");
+            column5.ColumnName = "层数";
+            allResDt.Columns.Add(column5);
+            DataTable jhDt = new DataTable();// 独立井号DT
+            DataColumn jhColumn = new DataColumn();
+            jhColumn.DataType = System.Type.GetType("System.String");
+            jhColumn.ColumnName = "jh";
+            jhDt.Columns.Add(jhColumn);
+            DataColumn jhColumn2 = new DataColumn();
+            jhColumn2.DataType = System.Type.GetType("System.String");
+            jhColumn2.ColumnName = "RemainType";
+            jhDt.Columns.Add(jhColumn2);
+            DataColumn jhColumn3 = new DataColumn();
+            jhColumn3.DataType = System.Type.GetType("System.String");
+            jhColumn3.ColumnName = "dz";
+            jhDt.Columns.Add(jhColumn3);
+            DataColumn jhColumn4 = new DataColumn();
+            jhColumn4.DataType = System.Type.GetType("System.String");
+            jhColumn4.ColumnName = "NTG";
+            jhDt.Columns.Add(jhColumn4);
+            double[] lastSYHD = new double[7];
+            double[] lastYXHD = new double[7];
+            int[] lastCs = new int[7];
+            double[] lastRes = new double[7];
+            for (int chcount = 1; chcount <= maxch; chcount++)//
             {
-                Console.WriteLine("newWinEachRes读取文件");
-                findDc(sender, e);//读取文件
-                Console.WriteLine("读取文件");
-            }
-            else
-            {
-                string headTime = soiltimeList[0];
-                string endTime = soiltimeList[soiltimeList.Count() - 1];
-                DataTable allResDt = new DataTable();
 
-                DataColumn column = new DataColumn();
-                column.DataType = System.Type.GetType("System.String");
-                column.ColumnName = "剩余油类型";
-                allResDt.Columns.Add(column);
-
-                DataColumn column1 = new DataColumn();
-                column1.DataType = System.Type.GetType("System.String");
-                column1.ColumnName = headTime;
-                allResDt.Columns.Add(column1);
-
-                DataColumn column2 = new DataColumn();
-                column2.DataType = System.Type.GetType("System.String");
-                column2.ColumnName = endTime;
-                allResDt.Columns.Add(column2);
-
-                comboCh = ComboBoxCH.Text;
-                allCh = comboCh;
-                combo_soiltime.SelectedIndex = 0;
+                if (allResDt.Rows.Count > 0)
+                {
+                    for (int i = 0; i < 7; i++)
+                    {
+                        lastSYHD[i] = Convert.ToDouble(((DataRow)allResDt.Rows[i])["砂岩厚度"].ToString());
+                        lastYXHD[i] = Convert.ToDouble(((DataRow)allResDt.Rows[i])["有效厚度"].ToString());
+                        lastCs[i] = Convert.ToInt32(((DataRow)allResDt.Rows[i])["层数"].ToString());
+                        lastRes[i] = Convert.ToDouble(((DataRow)allResDt.Rows[i])["储量"].ToString());
+                    }
+                    allResDt.Clear();
+                }
+                jhDt.Clear();
+                //comboCh = ComboBoxCH.Text;
+                allCh = chcount + "";
                 findDc(sender, e);//
                 string tmpVal = "0.0000";
                 //砂体
@@ -6302,7 +6365,7 @@ namespace 数模建模
                     drawSandBorder(sender, e);
                     tmpVal = tmpVol4EachRes;
                 }
-                rowSand[headTime] = tmpVal;
+                rowSand["储量"] = (Convert.ToDouble(tmpVal) + lastRes[0]);
                 allResDt.Rows.Add(rowSand);
                 //
                 DataRow rowFaultBorder = allResDt.NewRow();
@@ -6313,9 +6376,10 @@ namespace 数模建模
                     drawFaultBorder(sender, e);
                     tmpVal = tmpVol4EachRes;
                 }
-                rowFaultBorder["剩余油类型"] = "断层(井控)";
-                rowFaultBorder[headTime] = tmpVal;
-                allResDt.Rows.Add(rowFaultBorder);
+                //rowFaultBorder["剩余油类型"] = "断层(井控)";
+                //rowFaultBorder["储量"] = tmpVal;
+                //allResDt.Rows.Add(rowFaultBorder);
+                double tmpBorInCtr = Convert.ToDouble(tmpVal);
                 //
                 DataRow rowFaultBorderOutCtr = allResDt.NewRow();
                 //drawFaultBorderOutCtrl(sender, e);
@@ -6325,8 +6389,9 @@ namespace 数模建模
                     drawFaultBorderOutCtrl(sender, e);
                     tmpVal = tmpVol4EachRes;
                 }
-                rowFaultBorderOutCtr["剩余油类型"] = "断层(非井控)";
-                rowFaultBorderOutCtr[headTime] = tmpVal;
+                rowFaultBorderOutCtr["剩余油类型"] = "断层";//(非井控)
+                double tmpBorInCtr2 = Convert.ToDouble(tmpVal);
+                rowFaultBorderOutCtr["储量"] = ((tmpBorInCtr + tmpBorInCtr2) + lastRes[1]);
                 allResDt.Rows.Add(rowFaultBorderOutCtr);
                 //
                 DataRow rowInjWithoutOil = allResDt.NewRow();
@@ -6338,7 +6403,7 @@ namespace 数模建模
                     drawInjWithoutOil(sender, e);
                     tmpVal = tmpVol4EachRes;
                 }
-                rowInjWithoutOil[headTime] = tmpVal;
+                rowInjWithoutOil["储量"] = (Convert.ToDouble(tmpVal) + lastRes[2]);
                 allResDt.Rows.Add(rowInjWithoutOil);
                 //
                 DataRow rowOilWithoutInj = allResDt.NewRow();
@@ -6350,7 +6415,7 @@ namespace 数模建模
                     drawOilWithoutInj(sender, e);
                     tmpVal = tmpVol4EachRes;
                 }
-                rowOilWithoutInj[headTime] = tmpVal;
+                rowOilWithoutInj["储量"] = (Convert.ToDouble(tmpVal) + lastRes[3]);
                 allResDt.Rows.Add(rowOilWithoutInj);
                 //
                 DataRow rowPlane = allResDt.NewRow();
@@ -6362,8 +6427,24 @@ namespace 数模建模
                     drawPlane(sender, e);
                     tmpVal = tmpVol4EachRes;
                 }
-                rowPlane[headTime] = tmpVal;
+                rowPlane["储量"] = (Convert.ToDouble(tmpVal) + lastRes[4]);
                 allResDt.Rows.Add(rowPlane);
+                // 取平面井号 否则覆盖
+               /* foreach (DataRow bigRow in canvesGrid.Rows)
+                {
+                    string jh = bigRow["jh"].ToString();
+                    string jHinCh = bigRow["JHinCh"].ToString();
+                    string remainType = bigRow["RemainType"].ToString();
+                    if (jh != null && !"".Equals(jh) && "1".Equals(jHinCh) && "603".Equals(remainType))
+                    {
+                        DataRow rowJH = jhDt.NewRow();
+                        rowJH["jh"] = jh;
+                        rowJH["RemainType"] = remainType;
+                        rowJH["dz"] = bigRow["dz"];
+                        rowJH["NTG"] = bigRow["NTG"];
+                        jhDt.Rows.Add(rowJH);
+                    }
+                }*/
                 //
                 DataRow rowInterLayer = allResDt.NewRow();
                 //drawInterLayer(sender, e);
@@ -6374,8 +6455,9 @@ namespace 数模建模
                     drawInterLayer(sender, e);
                     tmpVal = tmpVol4EachRes;
                 }
-                rowInterLayer[headTime] = tmpVal;
+                rowInterLayer["储量"] = (Convert.ToDouble(tmpVal) + lastRes[5]);
                 allResDt.Rows.Add(rowInterLayer);
+
                 //
                 DataRow rowInLayer = allResDt.NewRow();
                 //drawInLayer(sender, e);
@@ -6386,111 +6468,282 @@ namespace 数模建模
                     drawInLayer(sender, e);
                     tmpVal = tmpVol4EachRes;
                 }
-                rowInLayer[headTime] = tmpVal;
+                rowInLayer["储量"] = (Convert.ToDouble(tmpVal) + lastRes[6]);
                 allResDt.Rows.Add(rowInLayer);
-                //最近的时间
-                combo_soiltime.SelectedIndex = soiltimeList.Count() - 1;
-                findDc(sender, e);
-                //
-                //drawSandBorder(sender, e);
-                DataRow rowSand2 = allResDt.Rows[0];
-                rowSand2.BeginEdit();
-                tmpVal = "" + resByColor(611);
-                if ("0.0000".Equals(tmpVal))
+                // 取带标记的井号
+                DataRow[] jhbigRows = canvesGrid.Select("JHinCh='1'"); // 2017年7月27日 16:55:17+
+                foreach (DataRow bigRow in jhbigRows)
                 {
-                    drawSandBorder(sender, e);
-                    tmpVal = tmpVol4EachRes;
+                    string jh = bigRow["jh"].ToString();
+                    string jHinCh = bigRow["JHinCh"].ToString();
+                    string remainType = bigRow["RemainType"].ToString();
+                    if (jh != null && !"".Equals(jh) && "1".Equals(jHinCh))//&& !"603".Equals(remainType)
+                    {
+                        DataRow rowJH = jhDt.NewRow();
+                        rowJH["jh"] = jh;
+                        rowJH["RemainType"] = remainType;
+                        rowJH["dz"] = bigRow["dz"];
+                        rowJH["NTG"] = bigRow["NTG"];
+                        jhDt.Rows.Add(rowJH);
+                    }
                 }
-                rowSand2[endTime] = tmpVal;
-                rowSand2.EndEdit();
-                //
-                //drawFaultBorder(sender, e);
-                tmpVal = drawBorderOutCtrlByColor(sender, e, true);
-                if ("0.0000".Equals(tmpVal))
+                // foreach (DataRow bigRow in canvesGrid.Rows)
+                // {
+                //     string remainType = bigRow["RemainType"].ToString();
+                //     if (remainType != null && !"".Equals(remainType)) Console.WriteLine(remainType);
+                // }
+                // 井号走起
+                int[] jhCount = new int[11];
+                double[] dzSum = new double[11];
+                double[] ntgSum = new double[11];
+                foreach (DataRow jhRow in jhDt.Rows)
                 {
-                    drawFaultBorder(sender, e);
-                    tmpVal = tmpVol4EachRes;
+                    string remainType = jhRow["RemainType"].ToString();
+                    double dz = 0;
+                    try { dz = Convert.ToDouble(jhRow["dz"].ToString()); }
+                    catch { }
+                    double ntg = 0;
+                    try { ntg = Convert.ToDouble(jhRow["NTG"].ToString()); }
+                    catch { }
+                    //if (remainType != null && !"".Equals(remainType)) Console.WriteLine(remainType);
+                    switch (remainType)
+                    {
+                        default: break;
+                        case "601": // 井控
+                            //myPolygon2.Fill = System.Windows.Media.Brushes.RoyalBlue;
+                            //jhCount[0]++;
+                            // dzSum[0] += dz;
+                            // ntgSum[0] += ntg*dz;
+                            break;
+                        case "602": // 完善
+                            // myPolygon2.Fill = System.Windows.Media.Brushes.Violet;
+                            // jhCount[1]++;
+                            //  dzSum[1] += dz;
+                            //  ntgSum[1] += ntg;
+                            break;
+                        case "603": // 平面
+                            //myPolygon2.Fill = System.Windows.Media.Brushes.YellowGreen;
+                            jhCount[4]++;
+                            dzSum[4] += dz;
+                            ntgSum[4] += ntg * dz;
+                            break;
+                        case "604": // 层间
+                            //myPolygon2.Fill = System.Windows.Media.Brushes.SlateBlue;
+                            jhCount[5]++;
+                            dzSum[5] += dz;
+                            ntgSum[5] += ntg * dz;
+                            break;
+                        case "605": // 层内
+                            //myPolygon2.Fill = System.Windows.Media.Brushes.PaleGoldenrod;
+                            jhCount[6]++;
+                            dzSum[6] += dz;
+                            ntgSum[6] += ntg * dz;
+                            break;
+                        case "606": // 注采不玩
+                            // myPolygon2.Fill = System.Windows.Media.Brushes.Yellow;
+                            //jhCount[5]++;
+                            //dzSum[5] += dz;
+                            //ntgSum[5] += ntg;
+                            break;
+                        case "607": // 有注
+                            //myPolygon2.Fill = System.Windows.Media.Brushes.Tomato;
+                            jhCount[2]++;
+                            dzSum[2] += dz;
+                            ntgSum[2] += ntg * dz;
+                            break;
+                        case "608": // 有采
+                            //myPolygon2.Fill = System.Windows.Media.Brushes.Sienna;
+                            jhCount[3]++;
+                            dzSum[3] += dz;
+                            ntgSum[3] += ntg * dz;
+                            break;
+                        case "609": // 非井控
+                            //myPolygon2.Fill = System.Windows.Media.Brushes.Silver;
+                            // jhCount[8]++;
+                            // dzSum[8] += dz;
+                            //  ntgSum[8] += ntg;
+                            break;
+                        case "610": // 断层
+                            //myPolygon2.Fill = System.Windows.Media.Brushes.Black;
+                            jhCount[1]++;
+                            dzSum[1] += dz;
+                            ntgSum[1] += ntg * dz;
+                            break;
+                        case "611":// 砂体
+                            //  myPolygon2.Fill = System.Windows.Media.Brushes.SpringGreen;
+                            jhCount[0]++;
+                            dzSum[0] += dz;
+                            ntgSum[0] += ntg * dz;
+                            break;
+                    }
                 }
-                DataRow rowFaultBorder2 = allResDt.Rows[1];
-                rowFaultBorder2.BeginEdit();
-                rowFaultBorder2[endTime] = tmpVal;
-                rowFaultBorder2.EndEdit();
-                //
-                //drawFaultBorderOutCtrl(sender, e);
-                tmpVal = drawBorderOutCtrlByColor(sender, e, false);
-                if ("0.0000".Equals(tmpVal))
+                for (int i = 0; i < 7; i++)
                 {
-                    drawFaultBorderOutCtrl(sender, e);
-                    tmpVal = tmpVol4EachRes;
-                }
-                DataRow rowFaultBorderOutCtr2 = allResDt.Rows[2];
-                rowFaultBorderOutCtr2.BeginEdit();
-                rowFaultBorderOutCtr2[endTime] = tmpVal;
-                rowFaultBorderOutCtr2.EndEdit();
-                //
-                //drawInjWithoutOil(sender, e);
-                DataRow rowInjWithoutOil2 = allResDt.Rows[3];
-                rowInjWithoutOil2.BeginEdit();
-                tmpVal = "" + resByColor(607);
-                if ("0.0000".Equals(tmpVal))
-                {
-                    drawInjWithoutOil(sender, e);
-                    tmpVal = tmpVol4EachRes;
-                }
-                rowInjWithoutOil2[endTime] = tmpVal;
-                rowInjWithoutOil2.EndEdit();
-                //
-                //drawOilWithoutInj(sender, e);
-                DataRow rowOilWithoutInj2 = allResDt.Rows[4];
-                rowOilWithoutInj2.BeginEdit();
-                tmpVal = "" + resByColor(608);
-                if ("0.0000".Equals(tmpVal))
-                {
-                    drawOilWithoutInj(sender, e);
-                    tmpVal = tmpVol4EachRes;
-                }
-                rowOilWithoutInj2[endTime] = tmpVal;
-                rowOilWithoutInj2.EndEdit();
-                //
-                // drawPlane(sender, e);
-                DataRow rowPlane2 = allResDt.Rows[5];
-                rowPlane2.BeginEdit();
-                tmpVal = "" + resByColor(603);
-                if ("0.0000".Equals(tmpVal))
-                {
-                    drawPlane(sender, e);
-                    tmpVal = tmpVol4EachRes;
-                }
-                rowPlane2[endTime] = tmpVal;
-                rowPlane2.EndEdit();
-                //
-                //drawInterLayer(sender, e);
-                DataRow rowInterLayer2 = allResDt.Rows[6];
-                rowInterLayer2.BeginEdit();
-                tmpVal = "" + resByColor(604);
-                if ("0.0000".Equals(tmpVal))
-                {
-                    drawInterLayer(sender, e);
-                    tmpVal = tmpVol4EachRes;
-                }
-                rowInterLayer2[endTime] = tmpVal;
-                rowInterLayer2.EndEdit();
-                //
-                //drawInLayer(sender, e);
-                DataRow rowInLayer2 = allResDt.Rows[7];
-                rowInLayer2.BeginEdit();
-                tmpVal = "" + resByColor(605);
-                if ("0.0000".Equals(tmpVal))
-                {
-                    drawInLayer(sender, e);
-                    tmpVal = tmpVol4EachRes;
-                }
-                rowInLayer2[endTime] = tmpVal;
-                rowInLayer2.EndEdit();
+                    DataRow rowSYHD = allResDt.Rows[i];
+                    rowSYHD.BeginEdit();
+                    rowSYHD["砂岩厚度"] = dzSum[i] + lastSYHD[i];
+                    rowSYHD.EndEdit();
 
-                AllChResContainer draw = new AllChResContainer("储量", allResDt);
-                draw.Show();
+                    DataRow rowYXHD = allResDt.Rows[i];
+                    rowYXHD.BeginEdit();
+                    rowYXHD["有效厚度"] = ntgSum[i] + lastYXHD[i];
+                    rowYXHD.EndEdit();
+
+                    DataRow rowCS = allResDt.Rows[i];
+                    rowCS.BeginEdit();
+                    rowCS["层数"] = jhCount[i] + lastCs[i];
+                    rowCS.EndEdit();
+                }
             }
+            DataTable finalDt = new DataTable();
+            DataColumn finalcolumn = new DataColumn();
+            finalcolumn.DataType = System.Type.GetType("System.String");
+            finalcolumn.ColumnName = "剩余油分类";
+            finalDt.Columns.Add(finalcolumn);
+            DataColumn finalcolumn2 = new DataColumn();
+            finalcolumn2.DataType = System.Type.GetType("System.String");
+            finalcolumn2.ColumnName = "砂岩厚度";
+            finalDt.Columns.Add(finalcolumn2);
+            DataColumn finalcolumn3 = new DataColumn();
+            finalcolumn3.DataType = System.Type.GetType("System.String");
+            finalcolumn3.ColumnName = "有效厚度";
+            finalDt.Columns.Add(finalcolumn3);
+            DataColumn finalcolumn4 = new DataColumn();
+            finalcolumn4.DataType = System.Type.GetType("System.String");
+            finalcolumn4.ColumnName = "层数";
+            finalDt.Columns.Add(finalcolumn4);
+            DataColumn finalcolumn5 = new DataColumn();
+            finalcolumn5.DataType = System.Type.GetType("System.String");
+            finalcolumn5.ColumnName = "层数比例";
+            finalDt.Columns.Add(finalcolumn5);
+            DataColumn finalcolumn6 = new DataColumn();
+            finalcolumn6.DataType = System.Type.GetType("System.String");
+            finalcolumn6.ColumnName = "剩余油储量";
+            finalDt.Columns.Add(finalcolumn6);
+            DataColumn finalcolumn7 = new DataColumn();
+            finalcolumn7.DataType = System.Type.GetType("System.String");
+            finalcolumn7.ColumnName = "剩余比例";
+            finalDt.Columns.Add(finalcolumn7);
+
+            double lastSYHDsum = 0;
+            double lastYXHDsum = 0;
+            int lastCsSum = 0;
+            double lastResSum = 0;
+
+            if (allResDt.Rows.Count > 0)
+            {
+                for (int i = 0; i < 7; i++)
+                {
+                    lastSYHD[i] = Convert.ToDouble(((DataRow)allResDt.Rows[i])["砂岩厚度"].ToString());
+                    lastYXHD[i] = Convert.ToDouble(((DataRow)allResDt.Rows[i])["有效厚度"].ToString());
+                    lastCs[i] = Convert.ToInt32(((DataRow)allResDt.Rows[i])["层数"].ToString());
+                    lastRes[i] = Convert.ToDouble(((DataRow)allResDt.Rows[i])["储量"].ToString());
+                    lastSYHDsum += lastSYHD[i];
+                    lastYXHDsum += lastYXHD[i];
+                    lastCsSum += lastCs[i];
+                    lastResSum += lastRes[i];
+                }
+                allResDt.Clear();
+            }
+            DataRow finalRow1 = finalDt.NewRow();
+            finalRow1["剩余油分类"] = "平面干扰";
+            finalRow1["砂岩厚度"] = lastSYHD[4].ToString("0.0");
+            finalRow1["有效厚度"] = lastYXHD[4].ToString("0.0");
+            finalRow1["层数"] = lastCs[4];
+            try { finalRow1["层数比例"] = (100 * lastCs[4] / lastCsSum).ToString("0.0"); }
+            catch { }
+            finalRow1["剩余油储量"] = lastRes[4].ToString("0.0");
+            try { finalRow1["剩余比例"] = (100 * lastRes[4] / lastResSum).ToString("0.0"); }
+            catch { }
+            finalDt.Rows.Add(finalRow1);
+
+            DataRow finalRow2 = finalDt.NewRow();
+            finalRow2["剩余油分类"] = "层间干扰";
+            finalRow2["砂岩厚度"] = lastSYHD[5].ToString("0.0");
+            finalRow2["有效厚度"] = lastYXHD[5].ToString("0.0");
+            finalRow2["层数"] = lastCs[5];
+            try { finalRow2["层数比例"] = (100 * lastCs[5] / lastCsSum).ToString("0.0"); }
+            catch { }
+            finalRow2["剩余油储量"] = lastRes[5].ToString("0.0");
+            try { finalRow2["剩余比例"] = (100 * lastRes[5] / lastResSum).ToString("0.0"); }
+            catch { }
+            finalDt.Rows.Add(finalRow2);
+
+            DataRow finalRow3 = finalDt.NewRow();
+            finalRow3["剩余油分类"] = "层内干扰";
+            finalRow3["砂岩厚度"] = lastSYHD[6].ToString("0.0");
+            finalRow3["有效厚度"] = lastYXHD[6].ToString("0.0");
+            finalRow3["层数"] = lastCs[6];
+            try { finalRow3["层数比例"] = (100 * lastCs[6] / lastCsSum).ToString("0.0"); }
+            catch { }
+            finalRow3["剩余油储量"] = lastRes[6].ToString("0.0");
+            try { finalRow3["剩余比例"] = (100 * lastRes[6] / lastResSum).ToString("0.0"); }
+            catch { }
+            finalDt.Rows.Add(finalRow3);
+
+            DataRow finalRow4 = finalDt.NewRow();
+            finalRow4["剩余油分类"] = "有注无采";
+            finalRow4["砂岩厚度"] = lastSYHD[2].ToString("0.0");
+            finalRow4["有效厚度"] = lastYXHD[2].ToString("0.0");
+            finalRow4["层数"] = lastCs[2];
+            try { finalRow4["层数比例"] = (100 * lastCs[2] / lastCsSum).ToString("0.0"); }
+            catch { }
+            finalRow4["剩余油储量"] = lastRes[2].ToString("0.0");
+            try { finalRow4["剩余比例"] = (100 * lastRes[2] / lastResSum).ToString("0.0"); }
+            catch { }
+            finalDt.Rows.Add(finalRow4);
+
+            DataRow finalRow5 = finalDt.NewRow();
+            finalRow5["剩余油分类"] = "有采无注";
+            finalRow5["砂岩厚度"] = lastSYHD[3].ToString("0.0");
+            finalRow5["有效厚度"] = lastYXHD[3].ToString("0.0");
+            finalRow5["层数"] = lastCs[3];
+            try { finalRow5["层数比例"] = (100 * lastCs[3] / lastCsSum).ToString("0.0"); }
+            catch { }
+            finalRow5["剩余油储量"] = lastRes[3].ToString("0.0");
+            try { finalRow5["剩余比例"] = (100 * lastRes[3] / lastResSum).ToString("0.0"); }
+            catch { }
+            finalDt.Rows.Add(finalRow5);
+
+            DataRow finalRow6 = finalDt.NewRow();
+            finalRow6["剩余油分类"] = "断层控制";
+            finalRow6["砂岩厚度"] = lastSYHD[1].ToString("0.0");
+            finalRow6["有效厚度"] = lastYXHD[1].ToString("0.0");
+            finalRow6["层数"] = lastCs[1];
+            try { finalRow6["层数比例"] = (100 * lastCs[1] / lastCsSum).ToString("0.0"); }
+            catch { }
+            finalRow6["剩余油储量"] = lastRes[1].ToString("0.0");
+            try { finalRow6["剩余比例"] = (100 * lastRes[1] / lastResSum).ToString("0.0"); }
+            catch { }
+            finalDt.Rows.Add(finalRow6);
+
+            DataRow finalRow7 = finalDt.NewRow();
+            finalRow7["剩余油分类"] = "砂体边部";
+            finalRow7["砂岩厚度"] = lastSYHD[0].ToString("0.0");
+            finalRow7["有效厚度"] = lastYXHD[0].ToString("0.0");
+            finalRow7["层数"] = lastCs[0];
+            try { finalRow7["层数比例"] = (100 * lastCs[0] / lastCsSum).ToString("0.0"); }
+            catch { }
+            finalRow7["剩余油储量"] = lastRes[0].ToString("0.0");
+            try { finalRow7["剩余比例"] = (100 * lastRes[0] / lastResSum).ToString("0.0"); }
+            catch { }
+            finalDt.Rows.Add(finalRow7);
+
+            DataRow finalRow8 = finalDt.NewRow();
+            finalRow8["剩余油分类"] = "合计";
+            finalRow8["砂岩厚度"] = lastSYHDsum.ToString("0.0");
+            finalRow8["有效厚度"] = lastYXHDsum.ToString("0.0");
+            finalRow8["层数"] = lastCsSum;
+            try { finalRow8["层数比例"] = 100; }
+            catch { }
+            finalRow8["剩余油储量"] = lastResSum.ToString("0.0");
+            try { finalRow8["剩余比例"] = 100; }
+            catch { }
+            finalDt.Rows.Add(finalRow8);
+
+            AllChResContainer draw = new AllChResContainer("分类型量化剩余油分布", finalDt);
+            draw.Show();
+
             allCh = null;
             ComboBoxCH.Text = comboCh;
             this.ComboBoxCH.Text = oldDrawTypeStr;
