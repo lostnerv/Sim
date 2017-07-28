@@ -216,8 +216,15 @@ namespace 数模建模
             columnJHinCh.DataType = System.Type.GetType("System.Int32");
             columnJHinCh.ColumnName = "JHinCh"; // =1 =in
             canvesGrid.Columns.Add(columnJHinCh);
+            // 剩余油类型存储 中间old 变量 装啥都行 临时存数
+            // 2017年7月28日 11:38:52
+            DataColumn columnRemainTypeTmp = new DataColumn();
+            columnRemainTypeTmp.DataType = System.Type.GetType("System.String");
+            columnRemainTypeTmp.ColumnName = "tmpType";
+            canvesGrid.Columns.Add(columnRemainTypeTmp);
 
-            //可修改ksbEditDT
+            // 
+            // 可修改ksbEditDT
             DataColumn columnEXcount = new DataColumn();
             columnEXcount.DataType = System.Type.GetType("System.Int32");
             columnEXcount.ColumnName = "xcount";
@@ -1460,8 +1467,8 @@ namespace 数模建模
 
                 for (int i = 0; i < dtfgridNew.Rows.Count - 3; i = i + 4)
                 {
-                    if(0==i%50000)
-                     Dispatcher.Invoke(updatePbDelegate, System.Windows.Threading.DispatcherPriority.Background, new object[] {
+                    if (0 == i % 50000)
+                        Dispatcher.Invoke(updatePbDelegate, System.Windows.Threading.DispatcherPriority.Background, new object[] {
                     System.Windows.Controls.ProgressBar.ValueProperty, Convert.ToDouble(50+29*i/dtfgridNew.Rows.Count)   });
                     //if (i >100) break;
                     Polygon myPolygon2 = new Polygon();
@@ -4279,15 +4286,16 @@ namespace 数模建模
                     string faciesProd = row1["facies"].ToString();
                     double dz = Convert.ToDouble(row1["dz"]);
                     double permx = Convert.ToDouble(row1["permx"]);
+                    double yxhd = -1;
+                    double maxDicengXishu = -1;
+                    double avgDicengXishu = -1;
+                    double sumDicengXishu = 0;
                     String jh = row1["jh"].ToString();
                     String ch = row1["ch"].ToString();
                     DataRow[] jhRows = wellCoordTrueEnd.Select("jh = '" + jh + "'");
                     List<string> chList = new List<string>();
                     List<double> dicengXishu = new List<double>();
-                    double yxhd = -1;
-                    double maxDicengXishu = -1;
-                    double avgDicengXishu = -1;
-                    double sumDicengXishu = 0;
+                   
                     foreach (DataRow wellRow in jhRows)
                     {
                         if (!chList.Contains(wellRow["z"].ToString()))
@@ -4325,8 +4333,8 @@ namespace 数模建模
                                 // || (chCount >= 5 && avgDicengXishu / maxDicengXishu < notObFactorD)
                             ))
                             {
-                                hasInj = true;
                                 //&& faciesInj2.Equals(faciesProd)//同相带
+                                hasInj = true;
                                 List<Polygon> polygonList = new List<Polygon>();
                                 bool isSameFacies = true;
                                 double tmpSumRes = 0;
@@ -4344,10 +4352,8 @@ namespace 数模建模
                                         {
                                             isSameFacies = false;
                                         }
-                                        else //2017年7月27日 16:49:36
-                                        {
-                                        row3["RemainType"] = 605;
-                                        }
+                                        /* else //2017年7月27日 16:49:36  {   }*/
+                                        row3["tmpType"] = 2605;// 2017年7月28日 10:40:26
                                         Polygon myPolygon2 = new Polygon();
                                         PointCollection myPointCollection2 = new PointCollection();
                                         myPointCollection2.Add(new System.Windows.Point((double)row3["x0"], (double)row3["y0"]));
@@ -4361,7 +4367,6 @@ namespace 数模建模
                                         myPolygon2.Points = myPointCollection2;
                                         //this.canvesprt.Children.Add(myPolygon2);
                                         polygonList.Add(myPolygon2);
-                                        //row3["RemainType"] = 605;
                                         //储量
                                         Point rawp1 = new Point((double)row3["rawx0"], (double)row3["rawy0"]);
                                         Point rawp2 = new Point((double)row3["rawx1"], (double)row3["rawy1"]);
@@ -4388,13 +4393,28 @@ namespace 数模建模
                                 {
                                     foreach (Polygon myPolygon in polygonList)
                                     {
-                                     //  row3["RemainType"] = 605;
+                                        //  row3["RemainType"] = 605;
                                         if (null == allCh)
                                         {
                                             this.canvesprt.Children.Add(myPolygon);
                                         }
                                     }
                                     resSum = tmpSumRes + resSum;
+                                    //2017年7月28日 10:41:34
+                                    DataRow[] jhbigRows = canvesGrid.Select("tmpType='2605'");
+                                    foreach (DataRow bigRow in jhbigRows)
+                                    {
+                                        bigRow["RemainType"] = 605;
+                                    }
+                                }
+                                else // RemainType 会毁掉其他类别
+                                {
+                                    // 2017年7月28日 10:26:42
+                                    DataRow[] jhbigRows = canvesGrid.Select("tmpType='2605'");
+                                    foreach (DataRow bigRow in jhbigRows)
+                                    {
+                                        bigRow["tmpType"] = DBNull.Value;
+                                    }
                                 }
                             }
                         }
@@ -4418,10 +4438,8 @@ namespace 数模建模
                                 {
                                     isSameFacies = false;
                                 }
-                                else //2017年7月27日 16:49:36
-                                {
-                                    row3["RemainType"] = 605;
-                                }
+                                // else //2017年7月27日 16:49:36 // {// }
+                                row3["tmpType"] = 2605;
                                 Polygon myPolygon2 = new Polygon();
                                 PointCollection myPointCollection2 = new PointCollection();
                                 myPointCollection2.Add(new System.Windows.Point((double)row3["x0"], (double)row3["y0"]));
@@ -4435,7 +4453,6 @@ namespace 数模建模
                                 myPolygon2.Points = myPointCollection2;
                                 //this.canvesprt.Children.Add(myPolygon2);
                                 polygonList.Add(myPolygon2);
-                              //  row3["RemainType"] = 605;
                                 //储量
                                 Point rawp1 = new Point((double)row3["rawx0"], (double)row3["rawy0"]);
                                 Point rawp2 = new Point((double)row3["rawx1"], (double)row3["rawy1"]);
@@ -4470,7 +4487,22 @@ namespace 数模建模
                                 }
                             }
                             resSum = tmpSumRes + resSum;
+                            //2017年7月28日 10:41:34
+                            DataRow[] jhbigRows = canvesGrid.Select("tmpType='2605'");
+                            foreach (DataRow bigRow in jhbigRows)
+                            {
+                                bigRow["RemainType"] = 605;
+                            }
                         }
+                         else
+                         {
+                             // 2017年7月28日 10:26:42
+                             DataRow[] jhbigRows = canvesGrid.Select("tmpType='2605'");
+                             foreach (DataRow bigRow in jhbigRows)
+                             {
+                                 bigRow["tmpType"] = DBNull.Value;
+                             }
+                         }
                     }
                 }
                 //画井点
@@ -4684,7 +4716,7 @@ namespace 数模建模
                                         if (!faciesInjS.Equals(faciesInj2))//不同相带
                                         {
                                             isSameFacies = false;
-                                            row3["RemainType"] = 603;
+
                                         }
                                         Polygon myPolygon2 = new Polygon();
                                         PointCollection myPointCollection2 = new PointCollection();
@@ -4697,9 +4729,10 @@ namespace 数模建模
                                         SolidColorBrush myBrush = new SolidColorBrush(Colors.YellowGreen);//.PaleGoldenrod);
                                         myPolygon2.Fill = myBrush;
                                         myPolygon2.Points = myPointCollection2;
-                                        
+
                                         //this.canvesprt.Children.Add(myPolygon2);
                                         polygonList.Add(myPolygon2);
+                                        row3["RemainType"] = 2603; // 2017年7月28日 10:23:04
                                         //储量
                                         Point rawp1 = new Point((double)row3["rawx0"], (double)row3["rawy0"]);
                                         Point rawp2 = new Point((double)row3["rawx1"], (double)row3["rawy1"]);
@@ -4732,7 +4765,22 @@ namespace 数模建模
                                         }
                                     }
                                     resSum = tmpSumRes + resSum;
+                                    // 2017年7月28日 10:26:42
+                                    DataRow[] jhbigRows = canvesGrid.Select("tmpType='2603'");
+                                    foreach (DataRow bigRow in jhbigRows)
+                                    {
+                                        bigRow["RemainType"] = 603;
+                                    }
                                 }
+                                else
+                                 {
+                                     // 2017年7月28日 10:26:42
+                                     DataRow[] jhbigRows = canvesGrid.Select("tmpType='2603'");
+                                     foreach (DataRow bigRow in jhbigRows)
+                                     {
+                                         bigRow["tmpType"] = DBNull.Value;
+                                     }
+                                 }
                             }
                         }
                     }
@@ -4754,7 +4802,7 @@ namespace 数模建模
                                 if (!faciesProdS.Equals(faciesProd))
                                 {
                                     isSameFacies = false;
-                                    row3["RemainType"] = 603;//2017年7月27日 16:51:48
+                                    // row3["RemainType"] = 603;//2017年7月27日 16:51:48
                                 }
                                 Polygon myPolygon2 = new Polygon();
                                 PointCollection myPointCollection2 = new PointCollection();
@@ -4767,9 +4815,10 @@ namespace 数模建模
                                 SolidColorBrush myBrush = new SolidColorBrush(Colors.YellowGreen);//.PaleGoldenrod);
                                 myPolygon2.Fill = myBrush;
                                 myPolygon2.Points = myPointCollection2;
-                              
+
                                 //this.canvesprt.Children.Add(myPolygon2);
                                 polygonList.Add(myPolygon2);
+                                row3["tmpType"] = 2603; // 2017年7月28日 10:23:04
                                 //储量
                                 Point rawp1 = new Point((double)row3["rawx0"], (double)row3["rawy0"]);
                                 Point rawp2 = new Point((double)row3["rawx1"], (double)row3["rawy1"]);
@@ -4804,7 +4853,22 @@ namespace 数模建模
                                 }
                             }
                             resSum = tmpSumRes + resSum;
+                            // 2017年7月28日 10:26:42
+                            DataRow[] jhbigRows = canvesGrid.Select("tmpType='2603'");
+                            foreach (DataRow bigRow in jhbigRows)
+                            {
+                                bigRow["RemainType"] = 603;
+                            }
                         }
+                        else
+                          {
+                              // 2017年7月28日 10:26:42
+                              DataRow[] jhbigRows = canvesGrid.Select("tmpType='2603'");
+                              foreach (DataRow bigRow in jhbigRows)
+                              {
+                                  bigRow["tmpType"] = DBNull.Value;
+                              }
+                          }
                     }
                 }
                 //画井点
@@ -6336,7 +6400,7 @@ namespace 数模建模
             double[] lastYXHD = new double[7];
             int[] lastCs = new int[7];
             double[] lastRes = new double[7];
-            for (int chcount = 1; chcount <= maxch; chcount++)//
+            for (int chcount = 1; chcount <= maxch; chcount++)//1maxch
             {
 
                 if (allResDt.Rows.Count > 0)
@@ -6351,125 +6415,151 @@ namespace 数模建模
                     allResDt.Clear();
                 }
                 jhDt.Clear();
+                // 开始分剩余油
                 //comboCh = ComboBoxCH.Text;
                 allCh = chcount + "";
-                findDc(sender, e);//
-                string tmpVal = "0.0000";
-                //砂体
-                DataRow rowSand = allResDt.NewRow();
-                //drawSandBorder(sender, e);
-                rowSand["剩余油类型"] = "砂体边部";
-                tmpVal = "" + resByColor(611);
-                if ("0.0000".Equals(tmpVal))
+                findDc(sender, e);// 
+
+                // 取平面井号 否则覆盖
+                /* foreach (DataRow bigRow in canvesGrid.Rows)
+                 {
+                     string jh = bigRow["jh"].ToString();
+                     string jHinCh = bigRow["JHinCh"].ToString();
+                     string remainType = bigRow["RemainType"].ToString();
+                     if (jh != null && !"".Equals(jh) && "1".Equals(jHinCh) && "603".Equals(remainType))
+                     {
+                         DataRow rowJH = jhDt.NewRow();
+                         rowJH["jh"] = jh;
+                         rowJH["RemainType"] = remainType;
+                         rowJH["dz"] = bigRow["dz"];
+                         rowJH["NTG"] = bigRow["NTG"];
+                         jhDt.Rows.Add(rowJH);
+                     }
+                 }*/
+                //注意顺序
+                
+
+                // 放后面 防止覆盖太多
+                // 层间干扰
+                string tmpVal604 = "0.0000";
+                DataRow rowInterLayer = allResDt.NewRow();
+                //drawInterLayer(sender, e);
+                rowInterLayer["剩余油类型"] = "层间干扰";
+                tmpVal604 = "" + resByColor(604);
+                if ("0.0000".Equals(tmpVal604))
                 {
-                    drawSandBorder(sender, e);
-                    tmpVal = tmpVol4EachRes;
+                    drawInterLayer(sender, e);
+                    tmpVal604 = tmpVol4EachRes;
                 }
-                rowSand["储量"] = (Convert.ToDouble(tmpVal) + lastRes[0]);
-                allResDt.Rows.Add(rowSand);
-                //
+                rowInterLayer["储量"] = (Convert.ToDouble(tmpVal604) + lastRes[5]);
+
+                // 平面干扰
+                // 放后面 防止覆盖太多
+                string tmpVal603 = "0.0000";
+                DataRow rowPlane = allResDt.NewRow();
+                //drawPlane(sender, e);
+                rowPlane["剩余油类型"] = "平面干扰";
+                tmpVal603 = "" + resByColor(603);
+                if ("0.0000".Equals(tmpVal603))
+                {
+                    drawPlane(sender, e);
+                    tmpVal603 = tmpVol4EachRes;
+                }
+                rowPlane["储量"] = (Convert.ToDouble(tmpVal603) + lastRes[4]);
+
+
+                // 层内干扰
+                // 层内放前面 防止覆盖太多
+                string tmpval605;
+
+                DataRow rowInLayer = allResDt.NewRow();
+                //drawInLayer(sender, e);
+                rowInLayer["剩余油类型"] = "层内干扰";
+                tmpval605 = "" + resByColor(605);
+                if ("0.0000".Equals(tmpval605))
+                {
+                    drawInLayer(sender, e);
+                    tmpval605 = tmpVol4EachRes;
+                }
+                rowInLayer["储量"] = (Convert.ToDouble(tmpval605) + lastRes[6]);
+
+                //有注无采
+                string tmpVal607 = "0.0000";
+                DataRow rowInjWithoutOil = allResDt.NewRow();
+                //drawInjWithoutOil(sender, e);
+                rowInjWithoutOil["剩余油类型"] = "有注无采";
+                tmpVal607 = "" + resByColor(607);
+                if ("0.0000".Equals(tmpVal607))
+                {
+                    drawInjWithoutOil(sender, e);
+                    tmpVal607 = tmpVol4EachRes;
+                }
+                rowInjWithoutOil["储量"] = (Convert.ToDouble(tmpVal607) + lastRes[2]);
+
+                //有采无注
+                string tmpVal608 = "0.0000";
+                DataRow rowOilWithoutInj = allResDt.NewRow();
+                //drawOilWithoutInj(sender, e);
+                rowOilWithoutInj["剩余油类型"] = "有采无注";
+                tmpVal608 = "" + resByColor(608);
+                if ("0.0000".Equals(tmpVal608))
+                {
+                    drawOilWithoutInj(sender, e);
+                    tmpVal608 = tmpVol4EachRes;
+                }
+                rowOilWithoutInj["储量"] = (Convert.ToDouble(tmpVal608) + lastRes[3]);
+
+                //断层
+                string tmpVal610 = "0.0000";
                 DataRow rowFaultBorder = allResDt.NewRow();
                 //drawFaultBorder(sender, e);
-                tmpVal = drawBorderOutCtrlByColor(sender, e, true);
-                if ("0.0000".Equals(tmpVal))
+                tmpVal610 = drawBorderOutCtrlByColor(sender, e, true);
+                if ("0.0000".Equals(tmpVal610))
                 {
                     drawFaultBorder(sender, e);
-                    tmpVal = tmpVol4EachRes;
+                    tmpVal610 = tmpVol4EachRes;
                 }
                 //rowFaultBorder["剩余油类型"] = "断层(井控)";
                 //rowFaultBorder["储量"] = tmpVal;
                 //allResDt.Rows.Add(rowFaultBorder);
-                double tmpBorInCtr = Convert.ToDouble(tmpVal);
+                double tmpBorInCtr = Convert.ToDouble(tmpVal610);
                 //
                 DataRow rowFaultBorderOutCtr = allResDt.NewRow();
                 //drawFaultBorderOutCtrl(sender, e);
-                tmpVal = drawBorderOutCtrlByColor(sender, e, false);
-                if ("0.0000".Equals(tmpVal))
+                tmpVal610 = drawBorderOutCtrlByColor(sender, e, false);
+                if ("0.0000".Equals(tmpVal610))
                 {
                     drawFaultBorderOutCtrl(sender, e);
-                    tmpVal = tmpVol4EachRes;
+                    tmpVal610 = tmpVol4EachRes;
                 }
                 rowFaultBorderOutCtr["剩余油类型"] = "断层";//(非井控)
-                double tmpBorInCtr2 = Convert.ToDouble(tmpVal);
+                double tmpBorInCtr2 = Convert.ToDouble(tmpVal610);
                 rowFaultBorderOutCtr["储量"] = ((tmpBorInCtr + tmpBorInCtr2) + lastRes[1]);
-                allResDt.Rows.Add(rowFaultBorderOutCtr);
-                //
-                DataRow rowInjWithoutOil = allResDt.NewRow();
-                //drawInjWithoutOil(sender, e);
-                rowInjWithoutOil["剩余油类型"] = "有注无采";
-                tmpVal = "" + resByColor(607);
-                if ("0.0000".Equals(tmpVal))
-                {
-                    drawInjWithoutOil(sender, e);
-                    tmpVal = tmpVol4EachRes;
-                }
-                rowInjWithoutOil["储量"] = (Convert.ToDouble(tmpVal) + lastRes[2]);
-                allResDt.Rows.Add(rowInjWithoutOil);
-                //
-                DataRow rowOilWithoutInj = allResDt.NewRow();
-                //drawOilWithoutInj(sender, e);
-                rowOilWithoutInj["剩余油类型"] = "有采无注";
-                tmpVal = "" + resByColor(608);
-                if ("0.0000".Equals(tmpVal))
-                {
-                    drawOilWithoutInj(sender, e);
-                    tmpVal = tmpVol4EachRes;
-                }
-                rowOilWithoutInj["储量"] = (Convert.ToDouble(tmpVal) + lastRes[3]);
-                allResDt.Rows.Add(rowOilWithoutInj);
-                //
-                DataRow rowPlane = allResDt.NewRow();
-                //drawPlane(sender, e);
-                rowPlane["剩余油类型"] = "平面干扰";
-                tmpVal = "" + resByColor(603);
-                if ("0.0000".Equals(tmpVal))
-                {
-                    drawPlane(sender, e);
-                    tmpVal = tmpVol4EachRes;
-                }
-                rowPlane["储量"] = (Convert.ToDouble(tmpVal) + lastRes[4]);
-                allResDt.Rows.Add(rowPlane);
-                // 取平面井号 否则覆盖
-               /* foreach (DataRow bigRow in canvesGrid.Rows)
-                {
-                    string jh = bigRow["jh"].ToString();
-                    string jHinCh = bigRow["JHinCh"].ToString();
-                    string remainType = bigRow["RemainType"].ToString();
-                    if (jh != null && !"".Equals(jh) && "1".Equals(jHinCh) && "603".Equals(remainType))
-                    {
-                        DataRow rowJH = jhDt.NewRow();
-                        rowJH["jh"] = jh;
-                        rowJH["RemainType"] = remainType;
-                        rowJH["dz"] = bigRow["dz"];
-                        rowJH["NTG"] = bigRow["NTG"];
-                        jhDt.Rows.Add(rowJH);
-                    }
-                }*/
-                //
-                DataRow rowInterLayer = allResDt.NewRow();
-                //drawInterLayer(sender, e);
-                rowInterLayer["剩余油类型"] = "层间干扰";
-                tmpVal = "" + resByColor(604);
-                if ("0.0000".Equals(tmpVal))
-                {
-                    drawInterLayer(sender, e);
-                    tmpVal = tmpVol4EachRes;
-                }
-                rowInterLayer["储量"] = (Convert.ToDouble(tmpVal) + lastRes[5]);
-                allResDt.Rows.Add(rowInterLayer);
+                
+                
 
-                //
-                DataRow rowInLayer = allResDt.NewRow();
-                //drawInLayer(sender, e);
-                rowInLayer["剩余油类型"] = "层内干扰";
-                tmpVal = "" + resByColor(605);
-                if ("0.0000".Equals(tmpVal))
+                //砂体
+                string tmpVal611 = "0.0000";
+                DataRow rowSand = allResDt.NewRow();
+                //drawSandBorder(sender, e);
+                rowSand["剩余油类型"] = "砂体边部";
+                tmpVal611 = "" + resByColor(611);
+                if ("0.0000".Equals(tmpVal611))
                 {
-                    drawInLayer(sender, e);
-                    tmpVal = tmpVol4EachRes;
+                    drawSandBorder(sender, e);
+                    tmpVal611 = tmpVol4EachRes;
                 }
-                rowInLayer["储量"] = (Convert.ToDouble(tmpVal) + lastRes[6]);
+                rowSand["储量"] = (Convert.ToDouble(tmpVal611) + lastRes[0]);
+
+                //注意顺序
+                allResDt.Rows.Add(rowSand);
+                allResDt.Rows.Add(rowFaultBorderOutCtr);
+                allResDt.Rows.Add(rowInjWithoutOil);
+                allResDt.Rows.Add(rowOilWithoutInj);
+                allResDt.Rows.Add(rowPlane);
+                allResDt.Rows.Add(rowInterLayer);
                 allResDt.Rows.Add(rowInLayer);
+
                 // 取带标记的井号
                 DataRow[] jhbigRows = canvesGrid.Select("JHinCh='1'"); // 2017年7月27日 16:55:17+
                 foreach (DataRow bigRow in jhbigRows)
