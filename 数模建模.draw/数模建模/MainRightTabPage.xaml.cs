@@ -216,6 +216,11 @@ namespace 数模建模
             columnJHinCh.DataType = System.Type.GetType("System.Int32");
             columnJHinCh.ColumnName = "JHinCh"; // =1 =in
             canvesGrid.Columns.Add(columnJHinCh);
+
+            DataColumn columnDC = new DataColumn();
+            columnDC.DataType = System.Type.GetType("System.Double");
+            columnDC.ColumnName = "地层系数";
+            canvesGrid.Columns.Add(columnDC);
             // 剩余油类型存储 中间old 变量 装啥都行 临时存数
             // 2017年7月28日 11:38:52
             DataColumn columnRemainTypeTmp = new DataColumn();
@@ -957,7 +962,7 @@ namespace 数模建模
                         // System.Console.WriteLine("cal..." + h);
                         // System.Console.WriteLine("cal..." + s);
                         if (h > 0)
-                            resSum = resSum + ReservorDraw.Cal_Capacity(s, h, (double)canvesRow["poro"], (double)canvesRow["barsa"], ro, b0);
+                            resSum = resSum + ReservorDraw.Cal_Capacity(s, h, (double)canvesRow["poro"],100* (double)canvesRow["barsa"], ro, b0);
                     }
                 }
                 res_result.Text = resSum.ToString("0.0000") + "万吨";
@@ -1007,7 +1012,7 @@ namespace 数模建模
                           .Sum() / 2 / 1000000);//据说计算面积
                         h = (double)canvesRow["dz"];
                         if (h > 0)
-                            resSum = resSum + ReservorDraw.Cal_Capacity(s, h, (double)canvesRow["poro"], (double)canvesRow["barsa"], ro, b0);
+                            resSum = resSum + ReservorDraw.Cal_Capacity(s, h, (double)canvesRow["poro"], 100*(double)canvesRow["barsa"], ro, b0);
                     }
                 }
                 res_result.Text = resSum.ToString("0.0000") + "万吨";
@@ -1553,7 +1558,9 @@ namespace 数模建模
                         double s = Math.Abs(points.Take(points.Count - 1)
                           .Select((p, si) => (points[si + 1].X - p.X) * (points[si + 1].Y + p.Y))
                           .Sum() / 2 / 1000000);//km2
-                        allVol = allVol + 100 * s * dzval * poro[hadC + hady + prtXCount] * val * ro / b0;
+                        
+                        allVol = allVol +  ReservorDraw.Cal_Capacity(s,dzval,poro[hadC + hady + prtXCount],100*val, ro, b0);
+                        //100 * s * dzval * poro[hadC + hady + prtXCount] * val * ro / b0;
                     }
                     if ("相图".Equals(drawTypeStr))
                     {
@@ -1658,7 +1665,7 @@ namespace 数模建模
                             case "丰度":
                                 if (poro[hadC + hady + prtXCount] > 0 && b0 > 0)
                                 {
-                                    double fd = 100 * dzval * poro[hadC + hady + prtXCount] * val * ro / b0;
+                                    double fd =  dzval * poro[hadC + hady + prtXCount] * val * ro / b0;
                                     //System.Console.WriteLine(fd);
                                     valBottom = 0;//  50/ 10000;//低级颜色113
                                     valTop = 100;// 300 / 10000;//顶级颜色
@@ -1770,6 +1777,7 @@ namespace 数模建模
                             bool isInch = false;
                             foreach (DataRow rowCh in wellCoordTrueEnd.Rows)
                             {
+                                canvesGridRow["地层系数"] = rowCh["地层系数"];
                                 //Console.WriteLine(rowCh["jh"].ToString());
                                 if (ch.Equals(rowCh["z"].ToString())
                                     && jh.Equals(rowCh["jh"].ToString())
@@ -1814,7 +1822,7 @@ namespace 数模建模
                 //System.Console.WriteLine("allVol:" + allVol);
                 if (allVol > 0)
                 {
-                    this.ch_res_all.Text = "本层储量" + allVol.ToString("0.0000") + "万吨";
+                    this.ch_res_all.Text = allCh+"本层储量" + allVol.ToString("0.0000") + "万吨";
                 }
                 else
                 {
@@ -2348,7 +2356,7 @@ namespace 数模建模
                                     h = (double)canvesRow["dz"];
                                     if (h > 0)
                                     {
-                                        resSum = resSum + ReservorDraw.Cal_Capacity(s, h, (double)canvesRow["poro"], (double)canvesRow["barsa"], ro, b0);
+                                        resSum = resSum + ReservorDraw.Cal_Capacity(s, h, (double)canvesRow["poro"], 100*(double)canvesRow["barsa"], ro, b0);
                                     }
                                 }
                             }
@@ -2597,7 +2605,7 @@ namespace 数模建模
                                 h = (double)canvesRow["dz"];
                                 if (h > 0)
                                 {
-                                    resSum = resSum + ReservorDraw.Cal_Capacity(s, h, (double)canvesRow["poro"], (double)canvesRow["barsa"], ro, b0);
+                                    resSum = resSum + ReservorDraw.Cal_Capacity(s, h, (double)canvesRow["poro"],100* (double)canvesRow["barsa"], ro, b0);
                                 }
                             }
                             break;//该点已画完了 找下一个点
@@ -2804,7 +2812,7 @@ namespace 数模建模
                           .Sum() / 2 / 1000000);//据说计算面积
                         h = (double)canvesRow["dz"];
                         if (h > 0)
-                            resSum = resSum + ReservorDraw.Cal_Capacity(s, h, (double)canvesRow["poro"], (double)canvesRow["barsa"], ro, b0);
+                            resSum = resSum + ReservorDraw.Cal_Capacity(s, h, (double)canvesRow["poro"],100* (double)canvesRow["barsa"], ro, b0);
                     }
                 }
                 res_result.Text = resSum.ToString("0.0000") + "万吨";
@@ -3297,7 +3305,7 @@ namespace 数模建模
                                     h = (double)row3["dz"];
                                     if (h > 0)
                                     {
-                                        resSum = resSum + ReservorDraw.Cal_Capacity(s, h, (double)row3["poro"], (double)row3["barsa"], ro, b0);
+                                        resSum = resSum + ReservorDraw.Cal_Capacity(s, h, (double)row3["poro"],100* (double)row3["barsa"], ro, b0);
                                     }
                                 }
                             }
@@ -3517,7 +3525,7 @@ namespace 数模建模
                                     h = (double)row3["dz"];
                                     if (h > 0)
                                     {
-                                        resSum = resSum + ReservorDraw.Cal_Capacity(s, h, (double)row3["poro"], (double)row3["barsa"], ro, b0);
+                                        resSum = resSum + ReservorDraw.Cal_Capacity(s, h, (double)row3["poro"], 100*(double)row3["barsa"], ro, b0);
                                     }
                                 }
                             }
@@ -4385,7 +4393,7 @@ namespace 数模建模
                                         h = (double)row3["dz"];
                                         if (h > 0)
                                         {
-                                            tmpSumRes = tmpSumRes + ReservorDraw.Cal_Capacity(s, h, (double)row3["poro"], (double)row3["barsa"], ro, b0);
+                                            tmpSumRes = tmpSumRes + ReservorDraw.Cal_Capacity(s, h, (double)row3["poro"], 100*(double)row3["barsa"], ro, b0);
                                         }
                                     }
                                 }
@@ -4472,7 +4480,7 @@ namespace 数模建模
                                     h = (double)row3["dz"];
                                     if (h > 0)
                                     {
-                                        tmpSumRes = tmpSumRes + ReservorDraw.Cal_Capacity(s, h, (double)row3["poro"], (double)row3["barsa"], ro, b0);
+                                        tmpSumRes = tmpSumRes + ReservorDraw.Cal_Capacity(s, h, (double)row3["poro"], 100*(double)row3["barsa"], ro, b0);
                                     }
                                 }
                             }
@@ -4672,7 +4680,6 @@ namespace 数模建模
                             yxhd = Convert.ToDouble(wellRow["地层系数"]) / permx;// 计算有效厚度 
                             // Console.WriteLine(dz + "=" + yxhd + "=" + permx + "=" + Convert.ToDouble(wellRow["地层系数"]));
                         }
-
                     }
 
                     int chCount = chList.Count;
@@ -4693,9 +4700,9 @@ namespace 数模建模
                             double pointD = pointl(pordp, injp);
                             string faciesInj2 = row2["facies"].ToString();
                             if ((pointD <= a || pointD <= b) // 注采完善
-                            && (yxhd >= 1//射开有效厚度大于1m的层;
-                                //|| (chCount <= 4 && avgDicengXishu / maxDicengXishu < obFactorD)
-                                // || (chCount >= 5 && avgDicengXishu / maxDicengXishu < notObFactorD)
+                            && (yxhd >= 1//true//射开有效厚度大于1m的层; 2017年7月28日 17:35:43下面两个注释取消，层间干扰也是
+                                || (chCount <= 4 && avgDicengXishu / maxDicengXishu < obFactorD)
+                                 || (chCount >= 5 && avgDicengXishu / maxDicengXishu < notObFactorD)
                             ))
                             {
                                 hasInj = true;
@@ -4751,7 +4758,7 @@ namespace 数模建模
                                         h = (double)row3["dz"];
                                         if (h > 0)
                                         {
-                                            tmpSumRes = tmpSumRes + ReservorDraw.Cal_Capacity(s, h, (double)row3["poro"], (double)row3["barsa"], ro, b0);
+                                            tmpSumRes = tmpSumRes + ReservorDraw.Cal_Capacity(s, h, (double)row3["poro"], 100*(double)row3["barsa"], ro, b0);
                                         }
                                     }
                                 }
@@ -4838,7 +4845,7 @@ namespace 数模建模
                                     h = (double)row3["dz"];
                                     if (h > 0)
                                     {
-                                        tmpSumRes = tmpSumRes + ReservorDraw.Cal_Capacity(s, h, (double)row3["poro"], (double)row3["barsa"], ro, b0);
+                                        tmpSumRes = tmpSumRes + ReservorDraw.Cal_Capacity(s, h, (double)row3["poro"],100* (double)row3["barsa"], ro, b0);
                                     }
                                 }
                             }
@@ -4995,8 +5002,8 @@ namespace 数模建模
                             if ((pointD <= a || pointD <= b) // 注采完善
                             && (
                             yxhd < 1//射开有效厚度大于1m的层;
-                                //|| (chCount <= 4 && avgDicengXishu / maxDicengXishu < obFactorD)
-                                // || (chCount >= 5 && avgDicengXishu / maxDicengXishu < notObFactorD)
+                                || (chCount <= 4 && avgDicengXishu / maxDicengXishu < obFactorD)
+                                 || (chCount >= 5 && avgDicengXishu / maxDicengXishu < notObFactorD)
                             ))
                             {
                                 hasInj = true;
@@ -5044,7 +5051,7 @@ namespace 数模建模
                                             h = (double)row3["dz"];
                                             if (h > 0)
                                             {
-                                                resSum = resSum + ReservorDraw.Cal_Capacity(s, h, (double)row3["poro"], (double)row3["barsa"], ro, b0);
+                                                resSum = resSum + ReservorDraw.Cal_Capacity(s, h, (double)row3["poro"],100* (double)row3["barsa"], ro, b0);
                                             }
                                         }
                                     }
@@ -5099,7 +5106,7 @@ namespace 数模建模
                                     h = (double)row3["dz"];
                                     if (h > 0)
                                     {
-                                        resSum = resSum + ReservorDraw.Cal_Capacity(s, h, (double)row3["poro"], (double)row3["barsa"], ro, b0);
+                                        resSum = resSum + ReservorDraw.Cal_Capacity(s, h, (double)row3["poro"], 100*(double)row3["barsa"], ro, b0);
                                     }
                                 }
                             }
@@ -5231,7 +5238,7 @@ namespace 数模建模
                                     h = (double)canvesRow["dz"];
                                     if (h > 0)
                                     {
-                                        resSum = resSum + ReservorDraw.Cal_Capacity(s, h, (double)canvesRow["poro"], (double)canvesRow["barsa"], ro, b0);
+                                        resSum = resSum + ReservorDraw.Cal_Capacity(s, h, (double)canvesRow["poro"],100* (double)canvesRow["barsa"], ro, b0);
                                     }
                                 }
                             }
@@ -5806,7 +5813,7 @@ namespace 数模建模
                                 double s = Math.Abs(points.Take(points.Count - 1)
                                   .Select((p, si) => (points[si + 1].X - p.X) * (points[si + 1].Y + p.Y))
                                   .Sum() / 2 / 1000000);//km2
-                                faciesNumRes[onefaciesi - 1] = faciesNumRes[onefaciesi - 1] + 100 * s * dzval * poro[hadC + hady + prtXCount] * val * ro / b0;
+                                faciesNumRes[onefaciesi - 1] = faciesNumRes[onefaciesi - 1] + ReservorDraw.Cal_Capacity(s, dzval, poro[hadC + hady + prtXCount], 100 * val, ro, b0);//100 * s * dzval * poro[hadC + hady + prtXCount] * val * ro / b0;
                             }
                         }
                     }
@@ -6256,7 +6263,7 @@ namespace 数模建模
                     h = (double)canvesRow["dz"];
                     if (h > 0)
                     {
-                        resSum = resSum + ReservorDraw.Cal_Capacity(s, h, (double)canvesRow["poro"], (double)canvesRow["barsa"], ro, b0);
+                        resSum = resSum + ReservorDraw.Cal_Capacity(s, h, (double)canvesRow["poro"], 100*(double)canvesRow["barsa"], ro, b0);
                     }
                 }
             }
@@ -6336,7 +6343,7 @@ namespace 数模建模
                             h = (double)canvesRow["dz"];
                             if (h > 0)
                             {
-                                resSum = resSum + ReservorDraw.Cal_Capacity(s, h, (double)canvesRow["poro"], (double)canvesRow["barsa"], ro, b0);
+                                resSum = resSum + ReservorDraw.Cal_Capacity(s, h, (double)canvesRow["poro"], 100*(double)canvesRow["barsa"], ro, b0);
                             }
                         }
                     }
@@ -6396,11 +6403,23 @@ namespace 数模建模
             jhColumn4.DataType = System.Type.GetType("System.String");
             jhColumn4.ColumnName = "NTG";
             jhDt.Columns.Add(jhColumn4);
+
+            DataColumn jhColumn5 = new DataColumn();
+            jhColumn5.DataType = System.Type.GetType("System.String");
+            jhColumn5.ColumnName = "地层系数";
+            jhDt.Columns.Add(jhColumn5);
+
+            DataColumn jhColumn6 = new DataColumn();
+            jhColumn6.DataType = System.Type.GetType("System.String");
+            jhColumn6.ColumnName = "permx";
+            jhDt.Columns.Add(jhColumn6);
+
             double[] lastSYHD = new double[7];
             double[] lastYXHD = new double[7];
             int[] lastCs = new int[7];
             double[] lastRes = new double[7];
-            for (int chcount = 1; chcount <= maxch; chcount++)//1maxch
+            ///////////////////////////////////////////////////////////
+            for (int chcount = 4; chcount <= 4; chcount++)//1maxch
             {
 
                 if (allResDt.Rows.Count > 0)
@@ -6437,21 +6456,6 @@ namespace 数模建模
                      }
                  }*/
                 //注意顺序
-                
-
-                // 放后面 防止覆盖太多
-                // 层间干扰
-                string tmpVal604 = "0.0000";
-                DataRow rowInterLayer = allResDt.NewRow();
-                //drawInterLayer(sender, e);
-                rowInterLayer["剩余油类型"] = "层间干扰";
-                tmpVal604 = "" + resByColor(604);
-                if ("0.0000".Equals(tmpVal604))
-                {
-                    drawInterLayer(sender, e);
-                    tmpVal604 = tmpVol4EachRes;
-                }
-                rowInterLayer["储量"] = (Convert.ToDouble(tmpVal604) + lastRes[5]);
 
                 // 平面干扰
                 // 放后面 防止覆盖太多
@@ -6466,6 +6470,21 @@ namespace 数模建模
                     tmpVal603 = tmpVol4EachRes;
                 }
                 rowPlane["储量"] = (Convert.ToDouble(tmpVal603) + lastRes[4]);
+                // 放后面 防止覆盖太多
+                // 层间干扰
+                string tmpVal604 = "0.0000";
+                DataRow rowInterLayer = allResDt.NewRow();
+                //drawInterLayer(sender, e);
+                rowInterLayer["剩余油类型"] = "层间干扰";
+                tmpVal604 = "" + resByColor(604);
+                if ("0.0000".Equals(tmpVal604))
+                {
+                    drawInterLayer(sender, e);
+                    tmpVal604 = tmpVol4EachRes;
+                }
+                rowInterLayer["储量"] = (Convert.ToDouble(tmpVal604) + lastRes[5]);
+
+                
 
 
                 // 层内干扰
@@ -6574,6 +6593,8 @@ namespace 数模建模
                         rowJH["RemainType"] = remainType;
                         rowJH["dz"] = bigRow["dz"];
                         rowJH["NTG"] = bigRow["NTG"];
+                        rowJH["地层系数"] = bigRow["地层系数"];
+                        rowJH["permx"] = bigRow["permx"];
                         jhDt.Rows.Add(rowJH);
                     }
                 }
@@ -6595,6 +6616,14 @@ namespace 数模建模
                     double ntg = 0;
                     try { ntg = Convert.ToDouble(jhRow["NTG"].ToString()); }
                     catch { }
+                   double dc= Convert.ToDouble(jhRow["地层系数"].ToString());
+                   double permx = Convert.ToDouble(jhRow["permx"].ToString());  
+                    double yxhd=0;
+                    double syhd=0;
+                      try { yxhd = dc/permx ; }
+                    catch { }
+                      try { syhd = dc/permx /ntg; }
+                    catch { }
                     //if (remainType != null && !"".Equals(remainType)) Console.WriteLine(remainType);
                     switch (remainType)
                     {
@@ -6614,20 +6643,20 @@ namespace 数模建模
                         case "603": // 平面
                             //myPolygon2.Fill = System.Windows.Media.Brushes.YellowGreen;
                             jhCount[4]++;
-                            dzSum[4] += dz;
-                            ntgSum[4] += ntg * dz;
+                            dzSum[4] += syhd;
+                            ntgSum[4] +=yxhd;
                             break;
                         case "604": // 层间
                             //myPolygon2.Fill = System.Windows.Media.Brushes.SlateBlue;
                             jhCount[5]++;
-                            dzSum[5] += dz;
-                            ntgSum[5] += ntg * dz;
+                            dzSum[5] += syhd;
+                            ntgSum[5] += yxhd;
                             break;
                         case "605": // 层内
                             //myPolygon2.Fill = System.Windows.Media.Brushes.PaleGoldenrod;
                             jhCount[6]++;
-                            dzSum[6] += dz;
-                            ntgSum[6] += ntg * dz;
+                            dzSum[6] += syhd;
+                            ntgSum[6] += yxhd;
                             break;
                         case "606": // 注采不玩
                             // myPolygon2.Fill = System.Windows.Media.Brushes.Yellow;
@@ -6638,14 +6667,14 @@ namespace 数模建模
                         case "607": // 有注
                             //myPolygon2.Fill = System.Windows.Media.Brushes.Tomato;
                             jhCount[2]++;
-                            dzSum[2] += dz;
-                            ntgSum[2] += ntg * dz;
+                            dzSum[2] += syhd;
+                            ntgSum[2] += yxhd;
                             break;
                         case "608": // 有采
                             //myPolygon2.Fill = System.Windows.Media.Brushes.Sienna;
                             jhCount[3]++;
-                            dzSum[3] += dz;
-                            ntgSum[3] += ntg * dz;
+                            dzSum[3] += syhd;
+                            ntgSum[3] += yxhd;
                             break;
                         case "609": // 非井控
                             //myPolygon2.Fill = System.Windows.Media.Brushes.Silver;
@@ -6656,14 +6685,14 @@ namespace 数模建模
                         case "610": // 断层
                             //myPolygon2.Fill = System.Windows.Media.Brushes.Black;
                             jhCount[1]++;
-                            dzSum[1] += dz;
-                            ntgSum[1] += ntg * dz;
+                            dzSum[1] += syhd;
+                            ntgSum[1] += yxhd;
                             break;
                         case "611":// 砂体
                             //  myPolygon2.Fill = System.Windows.Media.Brushes.SpringGreen;
                             jhCount[0]++;
-                            dzSum[0] += dz;
-                            ntgSum[0] += ntg * dz;
+                            dzSum[0] += syhd;
+                            ntgSum[0] += yxhd;
                             break;
                     }
                 }

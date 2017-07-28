@@ -720,7 +720,7 @@ namespace 数模建模.Drawer
         {
             //double A,
             double N = 0;
-            N = 100 * S * h * fai * s0 * (ro / B);
+            N = 0.01 * S * h * fai * s0 * (ro / B);// 100 是%%=0.01
             return N;
         }
 
