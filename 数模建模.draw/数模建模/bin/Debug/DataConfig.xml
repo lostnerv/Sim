@@ -17,12 +17,12 @@
   <Node name="paller" path="D:\采油八厂\数据平台建模数据格式1\断层\zhao5_fault.fault_data.txt" />
   <Node name="simboutput" path="D:\用户目录\Desktop\新建文件夹 (6)" />
   <Node name="sandvalue" path="" />
-  <Node name="FGRID" path="F:\Workspace\VS_Workspace\Sim-master\大区\F407_E100.FGRID" />
-  <Node name="PRTINC" path="F:\Workspace\VS_Workspace\Sim-master\大区\prt_part.txt" />
-  <Node name="SCH" path="F:\Workspace\VS_Workspace\Sim-master\大区\F407_SCH.INC" />
-  <Node name="GOTH" path="F:\Workspace\VS_Workspace\Sim-master\大区\F407_GOTH.INC" />
-  <Node name="FACIES" path="F:\Workspace\VS_Workspace\Sim-master\大区\F407_REG.INC" />
-  <Node name="GPRO" path="F:\Workspace\VS_Workspace\Sim-master\大区\F407_GPRO.INC" />
+  <Node name="FGRID" path="F:\Workspace\VS_Workspace\Sim-master\f14\F14_E100.FGRID" />
+  <Node name="PRTINC" path="F:\Workspace\VS_Workspace\Sim-master\f14\F14_E100.PRT" />
+  <Node name="SCH" path="F:\Workspace\VS_Workspace\Sim-master\f14\f14_sch.inc" />
+  <Node name="GOTH" path="F:\Workspace\VS_Workspace\Sim-master\f14\f14_goth.inc" />
+  <Node name="FACIES" path="F:\Workspace\VS_Workspace\Sim-master\f14\f14相分区.txt" />
+  <Node name="GPRO" path="F:\Workspace\VS_Workspace\Sim-master\f14\f14_gpro.inc" />
   <Node name="FINIT" path="F:\Workspace\VS_Workspace\Sim-master\剩余油文件\SYYCS_E100.FINIT" />
-  <Node name="partinc" path="" />
+  <Node name="partinc" path="F:\Workspace\VS_Workspace\Sim-master\f14\f14加密区块分区.txt" />
 </DataPath>

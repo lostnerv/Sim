@@ -665,15 +665,15 @@ namespace 数模建模.SIMB
                                     else if (onefipnum != null && onefipnum.Contains("*"))
                                     {//解压缩
                                         string[] manys = onefipnum.Split('*');
-                                        for (int i = 0; i < Convert.ToInt32(manys[0]); i++)
+                                        for (int i = 0; i < (int)Convert.ToDouble(manys[0]); i++)
                                         {
-                                            facies[fipnumCount] = Convert.ToInt32(manys[1]);
+                                            facies[fipnumCount] = (int)Convert.ToDouble(manys[1]);
                                             fipnumCount++;
                                         }
                                     }
                                     else if (onefipnum != null && !"".Equals(onefipnum))
                                     {
-                                        facies[fipnumCount] = Convert.ToInt32(onefipnum);
+                                        facies[fipnumCount] = (int)Convert.ToDouble(onefipnum);
                                         fipnumCount++;
                                     }
                                 }
