@@ -216,11 +216,11 @@ namespace 数模建模
             columnJHinCh.DataType = System.Type.GetType("System.Int32");
             columnJHinCh.ColumnName = "JHinCh"; // =1 =in
             canvesGrid.Columns.Add(columnJHinCh);
-
+           /*
             DataColumn columnDC = new DataColumn();
             columnDC.DataType = System.Type.GetType("System.Double");
             columnDC.ColumnName = "地层系数";
-            canvesGrid.Columns.Add(columnDC);
+            canvesGrid.Columns.Add(columnDC);*/
             // 剩余油类型存储 中间old 变量 装啥都行 临时存数
             // 2017年7月28日 11:38:52
             DataColumn columnRemainTypeTmp = new DataColumn();
@@ -1558,8 +1558,8 @@ namespace 数模建模
                         double s = Math.Abs(points.Take(points.Count - 1)
                           .Select((p, si) => (points[si + 1].X - p.X) * (points[si + 1].Y + p.Y))
                           .Sum() / 2 / 1000000);//km2
-                        
-                        allVol = allVol +  ReservorDraw.Cal_Capacity(s,dzval,poro[hadC + hady + prtXCount],100*val, ro, b0);
+                        // ntg 2017年7月31日 11:41:39
+                        allVol = allVol + ReservorDraw.Cal_Capacity(s, dzval * ntgs[hadC + hady + prtXCount], poro[hadC + hady + prtXCount], 100 * val, ro, b0);
                         //100 * s * dzval * poro[hadC + hady + prtXCount] * val * ro / b0;
                     }
                     if ("相图".Equals(drawTypeStr))
@@ -1664,8 +1664,8 @@ namespace 数模建模
                                 break;
                             case "丰度":
                                 if (poro[hadC + hady + prtXCount] > 0 && b0 > 0)
-                                {
-                                    double fd =  dzval * poro[hadC + hady + prtXCount] * val * ro / b0;
+                                {//2017年7月31日 11:41:11 加ntg
+                                    double fd = dzval * ntgs[hadC + hady + prtXCount] * poro[hadC + hady + prtXCount] * val * ro / b0;
                                     //System.Console.WriteLine(fd);
                                     valBottom = 0;//  50/ 10000;//低级颜色113
                                     valTop = 100;// 300 / 10000;//顶级颜色
@@ -1698,7 +1698,8 @@ namespace 数模建模
                     //准备点击事件孔渗饱等
                     DataRow canvesGridRow = canvesGrid.NewRow();
                     canvesGridRow["ch"] = ch;
-                    canvesGridRow["dz"] = dzval;
+                    //2017年7月31日 08:03:09 乘以ntg 变成有效厚度
+                    canvesGridRow["dz"] = dzval * ntgs[hadC + hady + prtXCount];
                     canvesGridRow["barsa"] = val;
                     canvesGridRow["x0"] = x0;
                     canvesGridRow["y0"] = y0;
@@ -1777,7 +1778,9 @@ namespace 数模建模
                             bool isInch = false;
                             foreach (DataRow rowCh in wellCoordTrueEnd.Rows)
                             {
-                                canvesGridRow["地层系数"] = rowCh["地层系数"];
+                                 // 2017年7月31日 08:54:01
+                                // canvesGridRow["地层系数"] = rowCh["地层系数"];
+                                
                                 //Console.WriteLine(rowCh["jh"].ToString());
                                 if (ch.Equals(rowCh["z"].ToString())
                                     && jh.Equals(rowCh["jh"].ToString())
@@ -1787,10 +1790,18 @@ namespace 数模建模
                                     //t1.Inlines.Add(new Run(jh) { Foreground = Brushes.Purple });
                                     isInch = true;
                                     canvesGridRow["JHinCh"] = 1;
-                                    break;
+                                   
+                                   // break;
+                                }
+                                //2017年7月31日 13:28:10
+                                if( jh.Equals(rowCh["jh"].ToString()))
+                                {
+                                 int skipdat = (Convert.ToInt32(rowCh["z"].ToString()) - 1) * tablesize[0] * tablesize[1];
+                                // 2017年7月31日 10:07:15
+                                 rowCh["地层系数"] = dzs[skipdat + hady + prtXCount] *ntgs[skipdat + hady + prtXCount] * permx[skipdat + hady + prtXCount];
+                                 rowCh["渗透率级差"] = permx[skipdat + hady + prtXCount];
                                 }
                             }
-
                             if (!isInch)
                             {
                                 t1.Inlines.Add(new Run(jh) { Foreground = Brushes.LightGray });
@@ -3715,8 +3726,8 @@ namespace 数模建模
             }
             catch { Console.WriteLine("格式错误"); }
 
-            //double maxpermx = (double)canvesGrid.Compute("max(permx)", "");
-            //Console.WriteLine(maxpermx);
+            // double maxpermx = (double)canvesGrid.Compute("max(permx)", "");
+            // Console.WriteLine(maxpermx);
             foreach (DataRow row1 in canvesGrid.Rows)
             {
                 if ("OIL".Equals(row1["stat"]))
@@ -3740,13 +3751,12 @@ namespace 数模建模
                         {
                             chList.Add(wellRow["z"].ToString());
                         }
-                        dicengXishu.Add(Convert.ToDouble(wellRow["地层系数"]));
+                       dicengXishu.Add(Convert.ToDouble(wellRow["地层系数"]));
                         if (ch.Equals(wellRow["z"].ToString()))
                         {
-                            yxhd = Convert.ToDouble(wellRow["地层系数"]) / permx;// 计算有效厚度 
+                            yxhd = dz;// Convert.ToDouble(wellRow["地层系数"]) / permx;// 计算有效厚度 
                             // Console.WriteLine(dz + "=" + yxhd + "=" + permx + "=" + Convert.ToDouble(wellRow["地层系数"]));
                         }
-
                     }
 
                     int chCount = chList.Count;
@@ -3767,9 +3777,9 @@ namespace 数模建模
                             double pointD = pointl(pordp, injp);
                             if ((pointD <= a || pointD <= b) // 注采完善
                             && (
-                            yxhd >= 1//射开有效厚度大于1m的层;
-                                //|| (chCount <= 4 && avgDicengXishu / maxDicengXishu < obFactorD)
-                                // || (chCount >= 5 && avgDicengXishu / maxDicengXishu < notObFactorD)
+                            yxhd >= 1//射开有效厚度大于1m的层;  //2017年7月31日 10:15:44 取消注释
+                            //    || (chCount <= 4 && avgDicengXishu / maxDicengXishu < obFactorD)
+                            //    || (chCount >= 5 && avgDicengXishu / maxDicengXishu < notObFactorD)
                             ))
                             {
                                 hasInj = true;
@@ -3902,7 +3912,7 @@ namespace 数模建模
                         dicengXishu.Add(Convert.ToDouble(wellRow["地层系数"]));
                         if (ch.Equals(wellRow["z"].ToString()))
                         {
-                            yxhd = Convert.ToDouble(wellRow["地层系数"]) / permx;// 计算有效厚度 
+                            yxhd = dz;//Convert.ToDouble(wellRow["地层系数"]) / permx;// 计算有效厚度 
                             //Console.WriteLine(dz + "=" + yxhd + "=" + permx + "=" + Convert.ToDouble(wellRow["地层系数"]));
                         }
 
@@ -3927,8 +3937,8 @@ namespace 数模建模
                             if ((pointD <= a || pointD <= b) // 注采完善
                             && (
                             yxhd >= 1//射开有效厚度大于1m的层;
-                            || (chCount <= 4 && avgDicengXishu / maxDicengXishu < obFactorD)
-                            || (chCount >= 5 && avgDicengXishu / maxDicengXishu < notObFactorD)
+                         //   || (chCount <= 4 && avgDicengXishu / maxDicengXishu < obFactorD)
+                          //  || (chCount >= 5 && avgDicengXishu / maxDicengXishu < notObFactorD)
                             ))
                             {
                                 hasInj = true;
@@ -4140,7 +4150,7 @@ namespace 数模建模
                         dicengXishu.Add(Convert.ToDouble(wellRow["地层系数"]));
                         if (ch.Equals(wellRow["z"].ToString()))
                         {
-                            yxhd = Convert.ToDouble(wellRow["地层系数"]) / permx;// 计算有效厚度 
+                            yxhd = dz;// Convert.ToDouble(wellRow["地层系数"]) / permx;// 计算有效厚度 
                             // Console.WriteLine(dz + "=" + yxhd + "=" + permx + "=" + Convert.ToDouble(wellRow["地层系数"]));
                         }
 
@@ -4164,9 +4174,9 @@ namespace 数模建模
                             double pointD = pointl(pordp, injp);
                             if ((pointD <= a || pointD <= b) // 注采完善
                             && (
-                            yxhd < 1//射开有效厚度大于1m的层;
-                                //|| (chCount <= 4 && avgDicengXishu / maxDicengXishu < obFactorD)
-                                // || (chCount >= 5 && avgDicengXishu / maxDicengXishu < notObFactorD)
+                            yxhd < 1//射开有效厚度大于1m的层; // 取消注释
+                             //   || (chCount <= 4 && avgDicengXishu / maxDicengXishu < obFactorD)
+                           //      || (chCount >= 5 && avgDicengXishu / maxDicengXishu < notObFactorD)
                             ))
                             {
                                 hasInj = true;
@@ -4313,7 +4323,7 @@ namespace 数模建模
                         dicengXishu.Add(Convert.ToDouble(wellRow["地层系数"]));
                         if (ch.Equals(wellRow["z"].ToString()))
                         {
-                            yxhd = Convert.ToDouble(wellRow["地层系数"]) / permx;// 计算有效厚度 
+                            yxhd = dz;// Convert.ToDouble(wellRow["地层系数"]) / permx;// 计算有效厚度 
                             // Console.WriteLine(dz + "=" + yxhd + "=" + permx + "=" + Convert.ToDouble(wellRow["地层系数"]));
                         }
                     }
@@ -4336,9 +4346,9 @@ namespace 数模建模
                             double pointD = pointl(pordp, injp);
                             string faciesInj2 = row2["facies"].ToString();
                             if ((pointD <= a || pointD <= b) // 注采完善
-                            && (yxhd >= 1//射开有效厚度大于1m的层;
-                                //|| (chCount <= 4 && avgDicengXishu / maxDicengXishu < obFactorD)
-                                // || (chCount >= 5 && avgDicengXishu / maxDicengXishu < notObFactorD)
+                            && (true//yxhd >= 1//射开有效厚度大于1m的层; //2017年7月31日 10:18:01 取消注释
+                              //  || (chCount <= 4 && avgDicengXishu / maxDicengXishu < obFactorD)
+                               //  || (chCount >= 5 && avgDicengXishu / maxDicengXishu < notObFactorD)
                             ))
                             {
                                 //&& faciesInj2.Equals(faciesProd)//同相带
@@ -4677,7 +4687,7 @@ namespace 数模建模
                         dicengXishu.Add(Convert.ToDouble(wellRow["地层系数"]));
                         if (ch.Equals(wellRow["z"].ToString()))
                         {
-                            yxhd = Convert.ToDouble(wellRow["地层系数"]) / permx;// 计算有效厚度 
+                            yxhd = dz;// Convert.ToDouble(wellRow["地层系数"]) / permx;// 计算有效厚度 
                             // Console.WriteLine(dz + "=" + yxhd + "=" + permx + "=" + Convert.ToDouble(wellRow["地层系数"]));
                         }
                     }
@@ -4700,9 +4710,9 @@ namespace 数模建模
                             double pointD = pointl(pordp, injp);
                             string faciesInj2 = row2["facies"].ToString();
                             if ((pointD <= a || pointD <= b) // 注采完善
-                            && (yxhd >= 1//true//射开有效厚度大于1m的层; 2017年7月28日 17:35:43下面两个注释取消，层间干扰也是
-                                || (chCount <= 4 && avgDicengXishu / maxDicengXishu < obFactorD)
-                                 || (chCount >= 5 && avgDicengXishu / maxDicengXishu < notObFactorD)
+                            && (yxhd >= 1//true////射开有效厚度大于1m的层; 2017年7月28日 17:35:43下面两个注释取消，层间干扰也是
+                            //    || (chCount <= 4 && avgDicengXishu / maxDicengXishu < obFactorD)
+                             //    || (chCount >= 5 && avgDicengXishu / maxDicengXishu < notObFactorD)
                             ))
                             {
                                 hasInj = true;
@@ -4964,20 +4974,28 @@ namespace 数模建模
                     DataRow[] jhRows = wellCoordTrueEnd.Select("jh = '" + jh + "'");
                     List<string> chList = new List<string>();
                     List<double> dicengXishu = new List<double>();
+                    
                     double yxhd = -1;
                     double maxDicengXishu = -1;
                     double avgDicengXishu = -1;
                     double sumDicengXishu = 0;
+                    List<double> permxJC = new List<double>();
+
                     foreach (DataRow wellRow in jhRows)
                     {
                         if (!chList.Contains(wellRow["z"].ToString()))
                         {
                             chList.Add(wellRow["z"].ToString());
                         }
-                        dicengXishu.Add(Convert.ToDouble(wellRow["地层系数"]));
+                        double tmpDc = Convert.ToDouble(wellRow["地层系数"].ToString());
+                        double tmpPermxJc = Convert.ToDouble(wellRow["渗透率级差"].ToString());
+                        if (tmpDc>0)
+                            dicengXishu.Add(tmpDc);
+                        if (tmpPermxJc > 0)
+                        permxJC.Add(tmpPermxJc);
                         if (ch.Equals(wellRow["z"].ToString()))
                         {
-                            yxhd = Convert.ToDouble(wellRow["地层系数"]) / permx;// 计算有效厚度 
+                            yxhd = dz;//Convert.ToDouble(wellRow["地层系数"]) / permx;// 计算有效厚度 
                             // Console.WriteLine(dz + "=" + yxhd + "=" + permx + "=" + Convert.ToDouble(wellRow["地层系数"]));
                         }
 
@@ -4993,6 +5011,14 @@ namespace 数模建模
                         sumDicengXishu += onedicengxishu;
                     }
                     avgDicengXishu = sumDicengXishu / dicengXishu.Count;
+                    // 2017年7月31日 13:20:36
+                    double maxPermxJc =1;
+                    try{maxPermxJc =permxJC.Max();}catch{}
+                    double minPermxJc = 1;
+                     try{minPermxJc =permxJC.Min();}catch{}
+                    double finalPermxJc = 1;
+                    try { finalPermxJc = maxPermxJc / minPermxJc; }
+                    catch { }
                     foreach (DataRow row2 in canvesGrid.Rows)// 扫描水井 
                     {
                         if ("WATER".Equals(row2["stat"]))
@@ -5002,9 +5028,11 @@ namespace 数模建模
                             if ((pointD <= a || pointD <= b) // 注采完善
                             && (
                             yxhd < 1//射开有效厚度大于1m的层;
-                                || (chCount <= 4 && avgDicengXishu / maxDicengXishu < obFactorD)
-                                 || (chCount >= 5 && avgDicengXishu / maxDicengXishu < notObFactorD)
-                            ))
+                             //   || (chCount <= 4 && avgDicengXishu / maxDicengXishu < obFactorD)
+                             //    || (chCount >= 5 && avgDicengXishu / maxDicengXishu < notObFactorD)
+                             //2017年7月31日 13:22:34
+                             // 层间渗透率差级大 是什么大
+                            ) && finalPermxJc > 5) //3多6少
                             {
                                 hasInj = true;
                                 foreach (DataRow row3 in canvesGrid.Rows)//画水井圆
@@ -5813,7 +5841,7 @@ namespace 数模建模
                                 double s = Math.Abs(points.Take(points.Count - 1)
                                   .Select((p, si) => (points[si + 1].X - p.X) * (points[si + 1].Y + p.Y))
                                   .Sum() / 2 / 1000000);//km2
-                                faciesNumRes[onefaciesi - 1] = faciesNumRes[onefaciesi - 1] + ReservorDraw.Cal_Capacity(s, dzval, poro[hadC + hady + prtXCount], 100 * val, ro, b0);//100 * s * dzval * poro[hadC + hady + prtXCount] * val * ro / b0;
+                                faciesNumRes[onefaciesi - 1] = faciesNumRes[onefaciesi - 1] + ReservorDraw.Cal_Capacity(s, dzval * ntgs[hadC + hady + prtXCount], poro[hadC + hady + prtXCount], 100 * val, ro, b0);//100 * s * dzval * poro[hadC + hady + prtXCount] * val * ro / b0;
                             }
                         }
                     }
@@ -6403,12 +6431,12 @@ namespace 数模建模
             jhColumn4.DataType = System.Type.GetType("System.String");
             jhColumn4.ColumnName = "NTG";
             jhDt.Columns.Add(jhColumn4);
-
+            /*
             DataColumn jhColumn5 = new DataColumn();
             jhColumn5.DataType = System.Type.GetType("System.String");
             jhColumn5.ColumnName = "地层系数";
             jhDt.Columns.Add(jhColumn5);
-
+            */
             DataColumn jhColumn6 = new DataColumn();
             jhColumn6.DataType = System.Type.GetType("System.String");
             jhColumn6.ColumnName = "permx";
@@ -6418,8 +6446,8 @@ namespace 数模建模
             double[] lastYXHD = new double[7];
             int[] lastCs = new int[7];
             double[] lastRes = new double[7];
-            ///////////////////////////////////////////////////////////
-            for (int chcount = 4; chcount <= 4; chcount++)//1maxch
+            // 剩余油分布计算哪层 d
+            for (int chcount = 1; chcount <= maxch; chcount++)//1 maxch
             {
 
                 if (allResDt.Rows.Count > 0)
@@ -6457,19 +6485,8 @@ namespace 数模建模
                  }*/
                 //注意顺序
 
-                // 平面干扰
-                // 放后面 防止覆盖太多
-                string tmpVal603 = "0.0000";
-                DataRow rowPlane = allResDt.NewRow();
-                //drawPlane(sender, e);
-                rowPlane["剩余油类型"] = "平面干扰";
-                tmpVal603 = "" + resByColor(603);
-                if ("0.0000".Equals(tmpVal603))
-                {
-                    drawPlane(sender, e);
-                    tmpVal603 = tmpVol4EachRes;
-                }
-                rowPlane["储量"] = (Convert.ToDouble(tmpVal603) + lastRes[4]);
+          
+
                 // 放后面 防止覆盖太多
                 // 层间干扰
                 string tmpVal604 = "0.0000";
@@ -6484,8 +6501,20 @@ namespace 数模建模
                 }
                 rowInterLayer["储量"] = (Convert.ToDouble(tmpVal604) + lastRes[5]);
 
-                
 
+                // 平面干扰
+                // 放后面 防止覆盖太多
+                string tmpVal603 = "0.0000";
+                DataRow rowPlane = allResDt.NewRow();
+                //drawPlane(sender, e);
+                rowPlane["剩余油类型"] = "平面干扰";
+                tmpVal603 = "" + resByColor(603);
+                if ("0.0000".Equals(tmpVal603))
+                {
+                    drawPlane(sender, e);
+                    tmpVal603 = tmpVol4EachRes;
+                }
+                rowPlane["储量"] = (Convert.ToDouble(tmpVal603) + lastRes[4]);
 
                 // 层内干扰
                 // 层内放前面 防止覆盖太多
@@ -6555,7 +6584,6 @@ namespace 数模建模
                 double tmpBorInCtr2 = Convert.ToDouble(tmpVal610);
                 rowFaultBorderOutCtr["储量"] = ((tmpBorInCtr + tmpBorInCtr2) + lastRes[1]);
                 
-                
 
                 //砂体
                 string tmpVal611 = "0.0000";
@@ -6593,7 +6621,7 @@ namespace 数模建模
                         rowJH["RemainType"] = remainType;
                         rowJH["dz"] = bigRow["dz"];
                         rowJH["NTG"] = bigRow["NTG"];
-                        rowJH["地层系数"] = bigRow["地层系数"];
+                        //rowJH["地层系数"] = bigRow["地层系数"];
                         rowJH["permx"] = bigRow["permx"];
                         jhDt.Rows.Add(rowJH);
                     }
@@ -6616,13 +6644,13 @@ namespace 数模建模
                     double ntg = 0;
                     try { ntg = Convert.ToDouble(jhRow["NTG"].ToString()); }
                     catch { }
-                   double dc= Convert.ToDouble(jhRow["地层系数"].ToString());
+                   //double dc= Convert.ToDouble(jhRow["地层系数"].ToString());
                    double permx = Convert.ToDouble(jhRow["permx"].ToString());  
                     double yxhd=0;
                     double syhd=0;
-                      try { yxhd = dc/permx ; }
+                      try { yxhd = dz ; }
                     catch { }
-                      try { syhd = dc/permx /ntg; }
+                      try { syhd = dz/ntg; }
                     catch { }
                     //if (remainType != null && !"".Equals(remainType)) Console.WriteLine(remainType);
                     switch (remainType)

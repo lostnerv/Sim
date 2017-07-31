@@ -59,6 +59,11 @@ namespace 数模建模.SIMB
             column5.DataType = System.Type.GetType("System.Double");
             column5.ColumnName = "地层系数";
             wellCoord.Columns.Add(column5);
+            // 2017年7月31日 13:15:30
+            DataColumn column6 = new DataColumn();
+            column6.DataType = System.Type.GetType("System.Double");
+            column6.ColumnName = "渗透率级差";
+            wellCoord.Columns.Add(column6);
             //井
             DataColumn columnStat = new DataColumn();
             columnStat.DataType = System.Type.GetType("System.String");
@@ -458,8 +463,10 @@ namespace 数模建模.SIMB
                             row["x"] = Convert.ToDouble(coordArray[0]);
                             row["y"] = Convert.ToDouble(coordArray[1]);
                             row["z"] = Convert.ToDouble(coordArray[2]);
-                            //if ("1*".Equals(compdatArray[6])) 不对不对
-                            if (compdatArray[6].ToString().Contains("*"))
+                          
+                            
+                           // if (compdatArray[6].ToString().Contains("*"))
+                            if ("1*".Equals(compdatArray[6])) //不对不对 地层系数不用了
                                 row["地层系数"] = Convert.ToDouble(compdatArray[7]);
                             else
                                 row["地层系数"] = Convert.ToDouble(compdatArray[8]);// 计算注采完善明显 2016-11-7 17:02:06 
