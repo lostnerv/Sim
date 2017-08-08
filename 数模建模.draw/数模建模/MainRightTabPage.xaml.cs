@@ -1940,6 +1940,7 @@ namespace 数模建模
                 Console.WriteLine("真的解析完成");//上面的后台进度条运行灰常慢
                 数模建模.SIMB.FgridPrt fgridPrt = new 数模建模.SIMB.FgridPrt();
                 soiltimeList = fgridPrt.readSoilTime(prtpath);
+                if (soiltimeList.Count < 1) MessageBox.Show("PRT.SOIL数据缺失");
                 foreach (string soiltime in soiltimeList)
                 {
                     this.combo_soiltime.Items.Add(soiltime);
@@ -2091,6 +2092,7 @@ namespace 数模建模
             int[] tablesize = fgridPrt.readFGRID(filepath);
             Console.WriteLine("Size解析完成");
             maxCh = tablesize[2];
+            if (tablesize[2] < 1) MessageBox.Show("Fgrid数据缺失");
             for (int i = 1; i <= tablesize[2]; i++)
             {
                 Fgrid_ch fgrid_ch = new Fgrid_ch();
