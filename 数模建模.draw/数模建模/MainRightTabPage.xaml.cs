@@ -216,6 +216,8 @@ namespace 数模建模
             columnJHinCh.DataType = System.Type.GetType("System.Int32");
             columnJHinCh.ColumnName = "JHinCh"; // =1 =in
             canvesGrid.Columns.Add(columnJHinCh);
+          
+
            /*
             DataColumn columnDC = new DataColumn();
             columnDC.DataType = System.Type.GetType("System.Double");
@@ -227,7 +229,16 @@ namespace 数模建模
             columnRemainTypeTmp.DataType = System.Type.GetType("System.String");
             columnRemainTypeTmp.ColumnName = "tmpType";
             canvesGrid.Columns.Add(columnRemainTypeTmp);
-
+            // dx dy
+            // 2017年8月11日 09:11:47
+            DataColumn columnDx = new DataColumn();
+            DataColumn columnDY = new DataColumn();
+            columnDx.DataType = System.Type.GetType("System.Double");
+            columnDY.DataType = System.Type.GetType("System.Double");
+            columnDx.ColumnName = "dx";
+            columnDY.ColumnName = "dy";
+            canvesGrid.Columns.Add(columnDx);
+            canvesGrid.Columns.Add(columnDY);
             // 
             // 可修改ksbEditDT
             DataColumn columnEXcount = new DataColumn();
@@ -962,7 +973,7 @@ namespace 数模建模
                         // System.Console.WriteLine("cal..." + h);
                         // System.Console.WriteLine("cal..." + s);
                         if (h > 0)
-                            resSum = resSum + ReservorDraw.Cal_Capacity(s, h, (double)canvesRow["poro"],100* (double)canvesRow["barsa"], ro, b0);
+                            resSum = resSum + ReservorDraw.Cal_Capacity(s, h, (double)canvesRow["poro"], (double)canvesRow["barsa"], ro, b0);
                     }
                 }
                 res_result.Text = resSum.ToString("0.0000") + "万吨";
@@ -1012,7 +1023,7 @@ namespace 数模建模
                           .Sum() / 2 / 1000000);//据说计算面积
                         h = (double)canvesRow["dz"];
                         if (h > 0)
-                            resSum = resSum + ReservorDraw.Cal_Capacity(s, h, (double)canvesRow["poro"], 100*(double)canvesRow["barsa"], ro, b0);
+                            resSum = resSum + ReservorDraw.Cal_Capacity(s, h, (double)canvesRow["poro"], (double)canvesRow["barsa"], ro, b0);
                     }
                 }
                 res_result.Text = resSum.ToString("0.0000") + "万吨";
@@ -1362,7 +1373,14 @@ namespace 数模建模
                 Dispatcher.Invoke(updatePbDelegate, System.Windows.Threading.DispatcherPriority.Background, new object[] {
                     System.Windows.Controls.ProgressBar.ValueProperty, Convert.ToDouble(20) 
                 });
+                // 2017年8月10日 17:16:34
+                // 饱和度、孔隙度 dz  净毛比 ntgs = new double[x * y * z];
                 DataTable dtprt = fgridPrt.readPRT(prtpath, ch, combo_soiltimeStr);// 现饱和度 旧版读取 孔隙度、渗透率
+                double[] poro = fgridPrt.poro;// 孔隙度 2017年5月8日 20:44:06 取自prt2017年8月10日 17:22:06
+                dzs = fgridPrt.dzs;// 2017年8月10日 20:06:37 dz又从prt全取了 和以前一样
+                ntgs = fgridPrt.ntgs;
+               // DataTable dxDt = fgridPrt.dxDt;
+              //  DataTable dyDt = fgridPrt.dyDt;
                 Console.WriteLine("prt完成");
                 Dispatcher.Invoke(updatePbDelegate, System.Windows.Threading.DispatcherPriority.Background, new object[] {
                     System.Windows.Controls.ProgressBar.ValueProperty, Convert.ToDouble(30) 
@@ -1375,15 +1393,20 @@ namespace 数模建模
                 Dispatcher.Invoke(updatePbDelegate, System.Windows.Threading.DispatcherPriority.Background, new object[] {
                     System.Windows.Controls.ProgressBar.ValueProperty, Convert.ToDouble(40) 
                 });
-                double[] poro;// = fgridPrt.poro;//孔隙度 旧版 现在为空值
+            
+                // = fgridPrt.poro;//孔隙度 旧版 现在为空值
                 //permx = fgridPrt.permx;//渗透率 旧版 现在为空值
-                DataTable dzDt = fgridPrt.dzDt;//厚度 旧版 不用了
+
+               // DataTable dzDt = fgridPrt.dzDt;//厚度 旧版 不用了
+
                 welspecs = fgridPrt.welspecs;//井口网格坐标
-                ntgs = fgridPrt.readNTG(gproPath);// 净毛比 2017年5月8日 20:43:53
-                poro = fgridPrt.poro;// 孔隙度 2017年5月8日 20:44:06
+                // 旧的
+                 fgridPrt.readNTG(gproPath);// 净毛比 2017年5月8日 20:43:53 去除孔隙度2017年8月10日 17:18:37
+                //poro = fgridPrt.poro;// 孔隙度 2017年5月8日 20:44:06 取自prt2017年8月10日 17:22:06
                 permx = fgridPrt.permx;// 渗透率 2017年5月8日 20:44:08.
                 //dzs = fgridPrt.readDz(finitPath);
-                dzs = fgridNew.readDzFromFgrid(fgridpath, tablesize);// fgrid dz 2017年7月10日 11:38:57
+
+               // dzs = fgridNew.readDzFromFgrid(fgridpath, tablesize);// fgrid dz 2017年7月10日 11:38:57
                 //
                 System.Console.WriteLine("开始求极值:" + ((DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds - timed));
                 //求极值
@@ -1538,6 +1561,9 @@ namespace 数模建模
                     //全局储量
                     if (val > 0 && poro[hadC + hady + prtXCount] > 0 && b0 > 0)
                     {
+                        // 2017年8月11日 09:10:54
+                       /* double dx = Convert.ToDouble(dxDt.Rows[prtYCount][prtXCount]);
+                        double dy = Convert.ToDouble(dyDt.Rows[prtYCount][prtXCount]);*/
                         // Console.WriteLine("dzNUM:" + (hadC + hady + prtXCount));
                         //   Console.WriteLine("dz:" + dzval);
                         hasDraw = true;
@@ -1555,11 +1581,14 @@ namespace 数模建模
                         points.Add(new Point(rawx3, rawy3));
                         points.Add(new Point(rawx2, rawy2));
                         points.Add(new Point(rawx0, rawy0));//注意
+                        /**/
                         double s = Math.Abs(points.Take(points.Count - 1)
                           .Select((p, si) => (points[si + 1].X - p.X) * (points[si + 1].Y + p.Y))
                           .Sum() / 2 / 1000000);//km2
+                        
+                        // double s = dx*dy/1000000;
                         // ntg 2017年7月31日 11:41:39
-                        allVol = allVol + ReservorDraw.Cal_Capacity(s, dzval * ntgs[hadC + hady + prtXCount], poro[hadC + hady + prtXCount], 100 * val, ro, b0);
+                        allVol = allVol + ReservorDraw.Cal_Capacity(s, dzval * ntgs[hadC + hady + prtXCount], poro[hadC + hady + prtXCount],  val, ro, b0);
                         //100 * s * dzval * poro[hadC + hady + prtXCount] * val * ro / b0;
                     }
                     if ("相图".Equals(drawTypeStr))
@@ -2369,7 +2398,7 @@ namespace 数模建模
                                     h = (double)canvesRow["dz"];
                                     if (h > 0)
                                     {
-                                        resSum = resSum + ReservorDraw.Cal_Capacity(s, h, (double)canvesRow["poro"], 100*(double)canvesRow["barsa"], ro, b0);
+                                        resSum = resSum + ReservorDraw.Cal_Capacity(s, h, (double)canvesRow["poro"], (double)canvesRow["barsa"], ro, b0);
                                     }
                                 }
                             }
@@ -2618,7 +2647,7 @@ namespace 数模建模
                                 h = (double)canvesRow["dz"];
                                 if (h > 0)
                                 {
-                                    resSum = resSum + ReservorDraw.Cal_Capacity(s, h, (double)canvesRow["poro"],100* (double)canvesRow["barsa"], ro, b0);
+                                    resSum = resSum + ReservorDraw.Cal_Capacity(s, h, (double)canvesRow["poro"], (double)canvesRow["barsa"], ro, b0);
                                 }
                             }
                             break;//该点已画完了 找下一个点
@@ -2825,7 +2854,7 @@ namespace 数模建模
                           .Sum() / 2 / 1000000);//据说计算面积
                         h = (double)canvesRow["dz"];
                         if (h > 0)
-                            resSum = resSum + ReservorDraw.Cal_Capacity(s, h, (double)canvesRow["poro"],100* (double)canvesRow["barsa"], ro, b0);
+                            resSum = resSum + ReservorDraw.Cal_Capacity(s, h, (double)canvesRow["poro"], (double)canvesRow["barsa"], ro, b0);
                     }
                 }
                 res_result.Text = resSum.ToString("0.0000") + "万吨";
@@ -3150,6 +3179,7 @@ namespace 数模建模
             double a = 0;
             double b = 0;
             List<Point> perfectPoints = new List<Point>();
+            List<Point> hasCalPoints = new List<Point>(); // 去重
             try
             {
                 if (this.textProja != null && !"".Equals(textProja))
@@ -3265,6 +3295,7 @@ namespace 数模建模
                          Canvas.SetLeft(wellborder, (double)row1["x0"] - wellborder.Width / 2 + 3 / 2);// + wellpoint.Width / 2后是在多边形中心画
                          Canvas.SetTop(wellborder, (double)row1["y0"] - wellborder.Height / 2 + 3 / 2);
                          this.canvesprt.Children.Add(wellborder);*/
+                      
                         foreach (DataRow row3 in canvesGrid.Rows)
                         {
                             double soil = (double)row3["barsa"];
@@ -3306,20 +3337,28 @@ namespace 数模建模
                                     Point rawp2 = new Point((double)row3["rawx1"], (double)row3["rawy1"]);
                                     Point rawp3 = new Point((double)row3["rawx2"], (double)row3["rawy2"]);
                                     Point rawp4 = new Point((double)row3["rawx3"], (double)row3["rawy3"]);
-                                    List<Point> points = new List<Point>();
-                                    points.Add(rawp1);
-                                    points.Add(rawp2);
-                                    points.Add(rawp4);
-                                    points.Add(rawp3);
-                                    points.Add(rawp1);
-                                    s = Math.Abs(points.Take(points.Count - 1)
-                                       .Select((p, i) => (points[i + 1].X - p.X) * (points[i + 1].Y + p.Y))
-                                       .Sum() / 2 / 1000000);//据说计算面积
-                                    h = (double)row3["dz"];
-                                    if (h > 0)
+                                    if (hasCalPoints.Contains(rawp1)) // 去重
                                     {
-                                        resSum = resSum + ReservorDraw.Cal_Capacity(s, h, (double)row3["poro"],100* (double)row3["barsa"], ro, b0);
+                                        //break; // 该画的点也咩有了
                                     }
+                                    else {
+                                        hasCalPoints.Add(rawp1);
+                                        List<Point> points = new List<Point>();
+                                        points.Add(rawp1);
+                                        points.Add(rawp2);
+                                        points.Add(rawp4);
+                                        points.Add(rawp3);
+                                        points.Add(rawp1);
+                                        s = Math.Abs(points.Take(points.Count - 1)
+                                           .Select((p, i) => (points[i + 1].X - p.X) * (points[i + 1].Y + p.Y))
+                                           .Sum() / 2 / 1000000);//据说计算面积
+                                        h = (double)row3["dz"];
+                                        if (h > 0)
+                                        {
+                                            resSum = resSum + ReservorDraw.Cal_Capacity(s, h, (double)row3["poro"], (double)row3["barsa"], ro, b0);
+                                        }
+                                    }
+                                  
                                 }
                             }
                             isInPerfect = false;
@@ -3538,7 +3577,7 @@ namespace 数模建模
                                     h = (double)row3["dz"];
                                     if (h > 0)
                                     {
-                                        resSum = resSum + ReservorDraw.Cal_Capacity(s, h, (double)row3["poro"], 100*(double)row3["barsa"], ro, b0);
+                                        resSum = resSum + ReservorDraw.Cal_Capacity(s, h, (double)row3["poro"], (double)row3["barsa"], ro, b0);
                                     }
                                 }
                             }
@@ -4270,6 +4309,7 @@ namespace 数模建模
             double b0 = 0;
             double resSum = 0;
             List<Point> hasColorPoints = new List<Point>();
+            List<Point> hasCaledPoints = new List<Point>();
             if (perfectPoints == null || perfectPoints.Count == 0)
             {
                 //getPerfectPoints();
@@ -4392,20 +4432,24 @@ namespace 数模建模
                                         Point rawp2 = new Point((double)row3["rawx1"], (double)row3["rawy1"]);
                                         Point rawp3 = new Point((double)row3["rawx2"], (double)row3["rawy2"]);
                                         Point rawp4 = new Point((double)row3["rawx3"], (double)row3["rawy3"]);
-                                        List<Point> points = new List<Point>();
-                                        hasColorPoints.Add(rawp1);
-                                        points.Add(rawp1);
-                                        points.Add(rawp2);
-                                        points.Add(rawp4);
-                                        points.Add(rawp3);
-                                        points.Add(rawp1);
-                                        s = Math.Abs(points.Take(points.Count - 1)
-                                           .Select((p, i) => (points[i + 1].X - p.X) * (points[i + 1].Y + p.Y))
-                                           .Sum() / 2 / 1000000);//据说计算面积
-                                        h = (double)row3["dz"];
-                                        if (h > 0)
+                                        if (!hasCaledPoints.Contains(rawp1))
                                         {
-                                            tmpSumRes = tmpSumRes + ReservorDraw.Cal_Capacity(s, h, (double)row3["poro"], 100*(double)row3["barsa"], ro, b0);
+                                            hasCaledPoints.Add(rawp1);
+                                            List<Point> points = new List<Point>();
+                                            hasColorPoints.Add(rawp1);
+                                            points.Add(rawp1);
+                                            points.Add(rawp2);
+                                            points.Add(rawp4);
+                                            points.Add(rawp3);
+                                            points.Add(rawp1);
+                                            s = Math.Abs(points.Take(points.Count - 1)
+                                               .Select((p, i) => (points[i + 1].X - p.X) * (points[i + 1].Y + p.Y))
+                                               .Sum() / 2 / 1000000);//据说计算面积
+                                            h = (double)row3["dz"];
+                                            if (h > 0)
+                                            {
+                                                tmpSumRes = tmpSumRes + ReservorDraw.Cal_Capacity(s, h, (double)row3["poro"], (double)row3["barsa"], ro, b0);
+                                            }
                                         }
                                     }
                                 }
@@ -4480,20 +4524,25 @@ namespace 数模建模
                                 Point rawp4 = new Point((double)row3["rawx3"], (double)row3["rawy3"]);
                                 if (!hasColorPoints.Contains(rawp1))
                                 {
-                                    List<Point> points = new List<Point>();
-                                    points.Add(rawp1);
-                                    points.Add(rawp2);
-                                    points.Add(rawp4);
-                                    points.Add(rawp3);
-                                    points.Add(rawp1);
-                                    s = Math.Abs(points.Take(points.Count - 1)
-                                       .Select((p, i) => (points[i + 1].X - p.X) * (points[i + 1].Y + p.Y))
-                                       .Sum() / 2 / 1000000);//据说计算面积
-                                    h = (double)row3["dz"];
-                                    if (h > 0)
+                                    if (!hasCaledPoints.Contains(rawp1))
                                     {
-                                        tmpSumRes = tmpSumRes + ReservorDraw.Cal_Capacity(s, h, (double)row3["poro"], 100*(double)row3["barsa"], ro, b0);
+                                        hasCaledPoints.Add(rawp1);
+                                        List<Point> points = new List<Point>();
+                                        points.Add(rawp1);
+                                        points.Add(rawp2);
+                                        points.Add(rawp4);
+                                        points.Add(rawp3);
+                                        points.Add(rawp1);
+                                        s = Math.Abs(points.Take(points.Count - 1)
+                                           .Select((p, i) => (points[i + 1].X - p.X) * (points[i + 1].Y + p.Y))
+                                           .Sum() / 2 / 1000000);//据说计算面积
+                                        h = (double)row3["dz"];
+                                        if (h > 0)
+                                        {
+                                            tmpSumRes = tmpSumRes + ReservorDraw.Cal_Capacity(s, h, (double)row3["poro"], (double)row3["barsa"], ro, b0);
+                                        }
                                     }
+                                   
                                 }
                             }
                         }
@@ -4635,6 +4684,7 @@ namespace 数模建模
             double b0 = 0;
             double resSum = 0;
             List<Point> hasColorPoints = new List<Point>();
+            List<Point> hasCaledPoints = new List<Point>();
             if (perfectPoints == null || perfectPoints.Count == 0)
             {
                 //getPerfectPoints();
@@ -4757,21 +4807,27 @@ namespace 数模建模
                                         Point rawp2 = new Point((double)row3["rawx1"], (double)row3["rawy1"]);
                                         Point rawp3 = new Point((double)row3["rawx2"], (double)row3["rawy2"]);
                                         Point rawp4 = new Point((double)row3["rawx3"], (double)row3["rawy3"]);
-                                        List<Point> points = new List<Point>();
-                                        hasColorPoints.Add(rawp1);
-                                        points.Add(rawp1);
-                                        points.Add(rawp2);
-                                        points.Add(rawp4);
-                                        points.Add(rawp3);
-                                        points.Add(rawp1);
-                                        s = Math.Abs(points.Take(points.Count - 1)
-                                           .Select((p, i) => (points[i + 1].X - p.X) * (points[i + 1].Y + p.Y))
-                                           .Sum() / 2 / 1000000);//据说计算面积
-                                        h = (double)row3["dz"];
-                                        if (h > 0)
+
+                                        if (!hasCaledPoints.Contains(rawp1))
                                         {
-                                            tmpSumRes = tmpSumRes + ReservorDraw.Cal_Capacity(s, h, (double)row3["poro"], 100*(double)row3["barsa"], ro, b0);
+                                            hasCaledPoints.Add(rawp1);
+                                            List<Point> points = new List<Point>();
+                                            hasColorPoints.Add(rawp1);
+                                            points.Add(rawp1);
+                                            points.Add(rawp2);
+                                            points.Add(rawp4);
+                                            points.Add(rawp3);
+                                            points.Add(rawp1);
+                                            s = Math.Abs(points.Take(points.Count - 1)
+                                               .Select((p, i) => (points[i + 1].X - p.X) * (points[i + 1].Y + p.Y))
+                                               .Sum() / 2 / 1000000);//据说计算面积
+                                            h = (double)row3["dz"];
+                                            if (h > 0)
+                                            {
+                                                tmpSumRes = tmpSumRes + ReservorDraw.Cal_Capacity(s, h, (double)row3["poro"], (double)row3["barsa"], ro, b0);
+                                            }
                                         }
+                                       
                                     }
                                 }
                                 if (!isSameFacies)
@@ -4843,8 +4899,9 @@ namespace 数模建模
                                 Point rawp2 = new Point((double)row3["rawx1"], (double)row3["rawy1"]);
                                 Point rawp3 = new Point((double)row3["rawx2"], (double)row3["rawy2"]);
                                 Point rawp4 = new Point((double)row3["rawx3"], (double)row3["rawy3"]);
-                                if (!hasColorPoints.Contains(rawp1))
+                                if (!hasColorPoints.Contains(rawp1)&&!hasCaledPoints.Contains(rawp1)) 
                                 {
+                                    hasCaledPoints.Add(rawp1);
                                     List<Point> points = new List<Point>();
                                     points.Add(rawp1);
                                     points.Add(rawp2);
@@ -4857,7 +4914,7 @@ namespace 数模建模
                                     h = (double)row3["dz"];
                                     if (h > 0)
                                     {
-                                        tmpSumRes = tmpSumRes + ReservorDraw.Cal_Capacity(s, h, (double)row3["poro"],100* (double)row3["barsa"], ro, b0);
+                                        tmpSumRes = tmpSumRes + ReservorDraw.Cal_Capacity(s, h, (double)row3["poro"], (double)row3["barsa"], ro, b0);
                                     }
                                 }
                             }
@@ -5081,7 +5138,7 @@ namespace 数模建模
                                             h = (double)row3["dz"];
                                             if (h > 0)
                                             {
-                                                resSum = resSum + ReservorDraw.Cal_Capacity(s, h, (double)row3["poro"],100* (double)row3["barsa"], ro, b0);
+                                                resSum = resSum + ReservorDraw.Cal_Capacity(s, h, (double)row3["poro"], (double)row3["barsa"], ro, b0);
                                             }
                                         }
                                     }
@@ -5136,7 +5193,7 @@ namespace 数模建模
                                     h = (double)row3["dz"];
                                     if (h > 0)
                                     {
-                                        resSum = resSum + ReservorDraw.Cal_Capacity(s, h, (double)row3["poro"], 100*(double)row3["barsa"], ro, b0);
+                                        resSum = resSum + ReservorDraw.Cal_Capacity(s, h, (double)row3["poro"], (double)row3["barsa"], ro, b0);
                                     }
                                 }
                             }
@@ -5268,7 +5325,7 @@ namespace 数模建模
                                     h = (double)canvesRow["dz"];
                                     if (h > 0)
                                     {
-                                        resSum = resSum + ReservorDraw.Cal_Capacity(s, h, (double)canvesRow["poro"],100* (double)canvesRow["barsa"], ro, b0);
+                                        resSum = resSum + ReservorDraw.Cal_Capacity(s, h, (double)canvesRow["poro"], (double)canvesRow["barsa"], ro, b0);
                                     }
                                 }
                             }
@@ -5843,7 +5900,7 @@ namespace 数模建模
                                 double s = Math.Abs(points.Take(points.Count - 1)
                                   .Select((p, si) => (points[si + 1].X - p.X) * (points[si + 1].Y + p.Y))
                                   .Sum() / 2 / 1000000);//km2
-                                faciesNumRes[onefaciesi - 1] = faciesNumRes[onefaciesi - 1] + ReservorDraw.Cal_Capacity(s, dzval * ntgs[hadC + hady + prtXCount], poro[hadC + hady + prtXCount], 100 * val, ro, b0);//100 * s * dzval * poro[hadC + hady + prtXCount] * val * ro / b0;
+                                faciesNumRes[onefaciesi - 1] = faciesNumRes[onefaciesi - 1] + ReservorDraw.Cal_Capacity(s, dzval * ntgs[hadC + hady + prtXCount], poro[hadC + hady + prtXCount],  val, ro, b0);//100 * s * dzval * poro[hadC + hady + prtXCount] * val * ro / b0;
                             }
                         }
                     }
@@ -6293,7 +6350,7 @@ namespace 数模建模
                     h = (double)canvesRow["dz"];
                     if (h > 0)
                     {
-                        resSum = resSum + ReservorDraw.Cal_Capacity(s, h, (double)canvesRow["poro"], 100*(double)canvesRow["barsa"], ro, b0);
+                        resSum = resSum + ReservorDraw.Cal_Capacity(s, h, (double)canvesRow["poro"], (double)canvesRow["barsa"], ro, b0);
                     }
                 }
             }
@@ -6373,7 +6430,7 @@ namespace 数模建模
                             h = (double)canvesRow["dz"];
                             if (h > 0)
                             {
-                                resSum = resSum + ReservorDraw.Cal_Capacity(s, h, (double)canvesRow["poro"], 100*(double)canvesRow["barsa"], ro, b0);
+                                resSum = resSum + ReservorDraw.Cal_Capacity(s, h, (double)canvesRow["poro"], (double)canvesRow["barsa"], ro, b0);
                             }
                         }
                     }

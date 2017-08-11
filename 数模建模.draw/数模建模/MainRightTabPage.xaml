@@ -70,20 +70,21 @@
 -->
                     <TextBlock  Height="23" HorizontalAlignment="Left" Margin="170,65,0,0"  
                                 VerticalAlignment="Top" Width="110" Text="地层均质系数(≤4)"/>
-                    <TextBox   Height="23" HorizontalAlignment="Left" Margin="275,63,0,0" Name="obFactor" VerticalAlignment="Top"
+                    <TextBox   Height="23" HorizontalAlignment="Left" Margin="270,63,0,0" Name="obFactor" VerticalAlignment="Top"
                                Width="50" Text="0.5" />
                     <TextBlock  Height="23" HorizontalAlignment="Left" Margin="330,65,0,0"  
                                 VerticalAlignment="Top" Width="130" Text="地层均质系数(≥5)"/>
-                    <TextBox   Height="23" HorizontalAlignment="Left" Margin="435,63,0,0" Name="notObFactor" VerticalAlignment="Top"
+                    <TextBox   Height="23" HorizontalAlignment="Left" Margin="430,63,0,0" Name="notObFactor" VerticalAlignment="Top"
                                Width="50" Text="0.4" />
 
                     <TextBlock Text="原油密度" Margin="0,35,0,0"  Height="23" Width="50" HorizontalAlignment="Left" VerticalAlignment="Top" />
                     <TextBox  Name="res_density" Text="0.852" Margin="50,33,0,0" Height="23" Width="50" HorizontalAlignment="Left" VerticalAlignment="Top"  />
-                    <TextBlock Text="体积系数" Margin="120,35,0,0" HorizontalAlignment="Left"  Height="23" Width="50"  VerticalAlignment="Top" />
-                    <TextBox  Name="res_vol"  Margin="170,33,0,0" Height="23" Width="50" HorizontalAlignment="Left"  VerticalAlignment="Top"  Text="1.26" />
+                    <TextBlock Text="t/m³" Margin="100,35,0,0"  Height="23" Width="40" HorizontalAlignment="Left" VerticalAlignment="Top" /> 
+                    <TextBlock Text="体积系数" Margin="170,35,0,0" HorizontalAlignment="Left"  Height="23" Width="50"  VerticalAlignment="Top" />
+                    <TextBox  Name="res_vol"  Margin="220,33,0,0" Height="23" Width="50" HorizontalAlignment="Left"  VerticalAlignment="Top"  Text="1.26" />
 
                     <TextBlock  Name="res_result" Margin="235,35,0,0"  HorizontalAlignment="Left" Width="100" Height="23" Grid.ColumnSpan="2" VerticalAlignment="Top" />
-                    <TextBlock Name="ch_res_all" Margin="340,35,0,0" HorizontalAlignment="Left"  Height="23" Width="150" Grid.ColumnSpan="2" VerticalAlignment="Top"  />
+                    <TextBlock Name="ch_res_all" Margin="330,35,0,0" HorizontalAlignment="Left"  Height="23" Width="150" Grid.ColumnSpan="2" VerticalAlignment="Top"  />
                     <TextBlock  Height="23" HorizontalAlignment="Left" Margin="55,5,0,0"  
                                 VerticalAlignment="Top" Width="50" Text="层号" Grid.Row="0" Grid.Column="1"/>
                     <ComboBox  Name="ComboBoxCH" HorizontalAlignment="Left" VerticalAlignment="Top"  Margin="85,2,0,0" Width="40" Grid.Column="1" Height="23px" />

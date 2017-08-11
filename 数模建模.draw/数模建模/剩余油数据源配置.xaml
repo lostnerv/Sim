@@ -14,16 +14,16 @@
             <RowDefinition Height="1*"/>
             <RowDefinition Height="1*"/>
         </Grid.RowDefinitions>
-        <local:SelectFilePath x:Name="fgrid" dataPath="fgrid文件：" Grid.Row="0" Grid.Column="2"></local:SelectFilePath>
-        <local:SelectFilePath x:Name="prtinc" dataPath="prt文件：" Grid.Row="1" Grid.Column="2"></local:SelectFilePath>
-        <local:SelectFilePath x:Name="schinc" dataPath="sch文件：" Grid.Row="2" Grid.Column="2"></local:SelectFilePath>
-        <local:SelectFilePath x:Name="gothinc" dataPath="goth断层文件：" Grid.Row="3" Grid.Column="2"></local:SelectFilePath>
+        <local:SelectFilePath x:Name="fgrid" dataPath=".FGRID 文件：" Grid.Row="0" Grid.Column="2"></local:SelectFilePath>
+        <local:SelectFilePath x:Name="prtinc" dataPath=".PRT (饱和度、孔隙度等)：" Grid.Row="1" Grid.Column="2"/>
+        <local:SelectFilePath x:Name="schinc" dataPath="SCH.INC (井点)：" Grid.Row="2" Grid.Column="2"></local:SelectFilePath>
+        <local:SelectFilePath x:Name="gothinc" dataPath="GOTH.INC (断层)：" Grid.Row="3" Grid.Column="2"></local:SelectFilePath>
         <!--  reg/facies -->
-        <local:SelectFilePath x:Name="faciesinc" dataPath="reg(FACIES)文件：" Grid.Row="4" Grid.Column="2"></local:SelectFilePath>
-        <local:SelectFilePath x:Name="gproinc" dataPath="gpro文件：" Grid.Row="5" Grid.Column="2"></local:SelectFilePath>
+        <local:SelectFilePath x:Name="faciesinc" dataPath="REG.INC (FACIES)：" Grid.Row="4" Grid.Column="2"></local:SelectFilePath>
+        <local:SelectFilePath x:Name="gproinc" dataPath="GPRO.INC 文件：" Grid.Row="5" Grid.Column="2"></local:SelectFilePath>
         <!--
         <local:SelectFilePath x:Name="finitinc" dataPath="finit文件：" Grid.Row="6" Grid.Column="2"></local:SelectFilePath>-->
-        <local:SelectFilePath x:Name="partinc" dataPath="分区文件(可选)：" Grid.Row="6" Grid.Column="2"></local:SelectFilePath>
+        <local:SelectFilePath x:Name="partinc" dataPath="分区文件 (可选)：" Grid.Row="6" Grid.Column="2"></local:SelectFilePath>
         <Button x:Name="simaf_save" Grid.Row="12" Grid.Column="7" Content="保存" Click="simaf_save_Click"></Button>
     </Grid>
 </Window>

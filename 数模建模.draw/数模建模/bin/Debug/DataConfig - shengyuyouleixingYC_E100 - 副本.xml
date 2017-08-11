@@ -18,10 +18,10 @@
   <Node name="simboutput" path="D:\用户目录\Desktop\新建文件夹 (6)" />
   <Node name="sandvalue" path="" />
   <Node name="FGRID" path="F:\360Downloads\corslet(10.64.96.123)\shengyuyouleixing\YC_E100.FGRID" />
-  <Node name="PRTINC" path="F:\360Downloads\corslet(10.64.96.123)\WANGLI\shengyuyouleixing1\YC_E100.PRT" />
+  <Node name="PRTINC" path="F:\360Downloads\corslet(10.64.96.123)\shengyuyouleixing\YC_E100.PRT" />
   <Node name="SCH" path="F:\360Downloads\corslet(10.64.96.123)\shengyuyouleixing\YC_SCH.INC" />
   <Node name="GOTH" path="F:\360Downloads\corslet(10.64.96.123)\shengyuyouleixing\YC_GOTH.INC" />
-  <Node name="FACIES" path="save\faciesColor4_2017-08-11_星期五_115609.txt" />
+  <Node name="FACIES" path="F:\360Downloads\corslet(10.64.96.123)\shengyuyouleixing\facies.txt" />
   <Node name="GPRO" path="F:\360Downloads\corslet(10.64.96.123)\shengyuyouleixing\YC_GPRO.INC" />
   <Node name="FINIT" path="F:\Workspace\VS_Workspace\Sim-master\剩余油文件\SYYCS_E100.FINIT" />
   <Node name="partinc" path="" />

@@ -718,9 +718,16 @@ namespace 数模建模.Drawer
 
         public static double Cal_Capacity(double S,double h,double fai,double s0,double ro,double B)
         {
-            //double A,
+            //double A,采用容积法计算储量，具体公式如下：  N=0.01AohφSoiρoa/Boi 
+            // 式中：N——石油地质储量，104t  
+            // Ao——含油面积，km2 
+            // h——有效厚度，m 
+            // φ——有效孔隙度，% 
+            // Soi——含油饱和度，%  
+            // ρoa——地面原油密度，g/cm3  t/m3
+            // Boi——体积系数 
             double N = 0;
-            N = 0.01 * S * h * fai * s0 * (ro / B);// 100 是%%=0.01*0.01，0.01是100*100
+            N = 100 * S * h * fai * s0 * (ro / B);// 100 是%%=0.01*0.01，0.01是100*100 （%*100）
             return N;
         }
 

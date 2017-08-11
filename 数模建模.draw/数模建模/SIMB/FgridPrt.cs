@@ -31,7 +31,9 @@ namespace 数模建模.SIMB
         public DataTable dzDt = new DataTable();//厚度
         public DataTable welspecs = new DataTable();//井口网格坐标
         public DataTable welspecsFakerWellCoord = new DataTable();//井口网格坐标
-
+        public double[] dzs;// 净毛比  2017年8月10日 20:02:18
+        public DataTable dxDt = new DataTable();// 算面积 2017年8月11日 09:03:58
+        public DataTable dyDt = new DataTable();// 算面积 2017年8月11日 09:03:58
         public FgridPrt()
         {
             //井位网格坐标
@@ -155,17 +157,26 @@ namespace 数模建模.SIMB
             int[] result = { x, y, z };
             return result;
         }
-        //提取数据
-        //网格
-        /**
-         * 饱和度
-         * 2017年5月10日 09:30:51
-         * */
+        ///  2017年5月10日 09:30:51 
+        ///  2017年8月10日 17:17:49
+        /// <summary>
+        ///   提取数据  饱和度
+        ///  孔隙度 
+        /// </summary>
+        /// <param name="filepath"></param>
+        /// <param name="ch"></param>
+        /// <param name="soiltime"></param>
+        /// <returns></returns>
         public DataTable readPRT(string filepath, String ch, String soiltime)
         {
             permx = new double[x * y * z];
             poro = new double[x * y * z];
+            dzs = new double[x * y * z];
+            ntgs = new double[x * y * z];
+
             DataTable dtresult = new DataTable();
+            DataTable poroDT = new DataTable();
+            DataTable ntgDT = new DataTable();
             Boolean startFlag = false;
             int startNum = -1;//起始i值
             // int endNum = -1;
@@ -188,21 +199,35 @@ namespace 数模建模.SIMB
             for (int i = 1; i <= x; i++)
             {
                 DataColumn column = new DataColumn();
+                DataColumn column2 = new DataColumn();
+                DataColumn column3 = new DataColumn();
                 column.DataType = System.Type.GetType("System.Double");//该列的数据类型 
+                column2.DataType = System.Type.GetType("System.Double");//该列的数据类型 
+                column2.DataType = System.Type.GetType("System.Double");//该列的数据类型 
                 column.ColumnName = "v" + i;
+                column2.ColumnName = "v" + i;
+                column3.ColumnName = "v" + i;
                 dzDt.Columns.Add(column);
+                poroDT.Columns.Add(column2);
+                ntgDT.Columns.Add(column3);
             }
             for (int i = 1; i <= y; i++)
             {
                 DataRow row = dzDt.NewRow();
+                DataRow poroRow = poroDT.NewRow();
+                DataRow ntgRow = ntgDT.NewRow();
                 dzDt.Rows.Add(row);
+                poroDT.Rows.Add(poroRow);
+                ntgDT.Rows.Add(ntgRow);
 
             }
+
             StreamReader sr = new StreamReader(filepath, Encoding.Default);
             String line;
 
             while ((line = sr.ReadLine()) != null)
             {
+               //line= line.Trim();
                 if (line.Trim() != "")
                 {
                     /* if (line.Contains("1: PORO"))//空隙度
@@ -310,8 +335,17 @@ namespace 数模建模.SIMB
                          row["stat"] = "WATER";
                          wellStat.Rows.Add(row);
                      }*/
-                    // else
-                    if (line.Contains("DZ ") && line.Contains(" AT"))//z厚度
+                    //  
+                    // 2017年8月11日 09:01:55 原来用网格算面积 现在用dx*dy
+                   /* if (line.Contains("DX ") && line.Contains(" AT"))//z厚度
+                    {
+                        dxDt = readPRTijk(line, sr, ch);
+                    }
+                    else if (0==line.Trim().IndexOf("DY ") && line.Contains(" AT"))//z厚度
+                    {
+                        dyDt = readPRTijk(line, sr, ch);
+                    }
+                    else*/ if (line.Contains("DZ ") && line.Contains(" AT"))//z厚度
                     {
                         bool findDzFlag = false;
                         while ((line = sr.ReadLine()) != null)
@@ -367,8 +401,178 @@ namespace 数模建模.SIMB
                                 }
                             }
                         }
+                        // 2017年8月10日 20:03:09
+                        int chInt = Convert.ToInt32(ch);
+                        int POROcount = (chInt - 1) * x * y;
+                        for (int j = 0; j < y; j++)
+                        {
+                            for (int i = 0; i < x; i++)
+                            {
+                                string dzStr = dzDt.Rows[j][i].ToString();
+                                if (!"".Equals(dzStr))
+                                    dzs[POROcount] = Convert.ToDouble(dzStr);
+                                POROcount++;
+                            }
+                        }
+
+
                     }
-                    else if (line.Contains("SOIL ") && line.Contains(" AT"))//饱和度信息 UNITS BARSA是压力单位
+                    // 2017年8月10日 16:45:58
+                    // 孔隙度 从gpro 改为prt 单位%<1
+                    else if (line.Contains("PORO ") && line.Contains(" AT"))
+                    {
+                        bool findPOROFlag = false;// 找到就开始准备结束
+                        bool allBreak = false;
+                        while ((line = sr.ReadLine()) != null)
+                        {
+                            if (findPOROFlag && line.Contains("***"))// 文末结束
+                            {
+                                break;
+                            }
+                            if (line.Contains("MINIMUM VALUE"))// 准备开始数据行
+                            {
+                                findPOROFlag = true;
+                            }
+                            else if (line.Contains("I,  J,  K) I="))// 开始数据行
+                            {
+                                bool POROdataStartFlag = false;
+                                // dz
+                                int startNumDz = int.Parse(line.Substring(15, 3).Trim());
+
+                                while ((line = sr.ReadLine()) != null)
+                                {
+                                    if (("".Equals(line) || line.Contains("***")) && POROdataStartFlag)//"".Equals(line) ||
+                                    {
+                                        if (line.Contains("***")) allBreak = true;
+                                        break;
+                                    }
+                                    else if (line.Length > 0 && !line.Contains("I,  J,  K) I="))
+                                    {
+                                        POROdataStartFlag = true;
+                                        int k = 0;//一行的循环count i
+                                        int rowNum = -1;
+                                        int filech = -1;
+                                        rowNum = int.Parse(line.Substring(4, 3).Trim());//行号j                                        
+                                        filech = int.Parse(line.Substring(8, 3).Trim());//层号k
+                                        if (ch.Equals("" + filech))//ch.Equals("" + filech))
+                                        {
+                                            string[] sArray = line.Substring(12).Split(' ');
+                                            if (sArray.Length > 2)
+                                            {
+                                                foreach (string i in sArray)
+                                                {
+                                                    if (i != "" && "-----" != i)
+                                                    {
+                                                        double val = Convert.ToDouble(i.Replace("*", "."));
+                                                        // poro[POROcount] = val;
+                                                        poroDT.Rows[rowNum - 1][startNumDz + k - 1] = val;
+                                                        k++;
+                                                    }
+                                                    else if ("-----" == i)
+                                                    {
+                                                        //poro[POROcount] = 0;
+                                                        poroDT.Rows[rowNum - 1][startNumDz + k - 1] = 0;
+                                                        k++;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }// while2
+                            }
+                            if (allBreak) break;
+                        }// while 1
+
+                        int chInt = Convert.ToInt32(ch);
+                        int POROcount = (chInt - 1) * x * y;
+                        for (int j = 0; j < y; j++)
+                        {
+                            for (int i = 0; i < x; i++)
+                            {
+                                poro[POROcount] = (double)poroDT.Rows[j][i];
+                                POROcount++;
+                            }
+                        }
+
+                    }
+                    // 2017年8月10日 16:45:58
+                    // 净毛比 从gpro 改为prt 单位%<1
+                    else if (line.Contains("NTG ") && line.Contains(" AT"))
+                    {
+                        bool findPOROFlag = false;// 找到就开始准备结束
+
+                        while ((line = sr.ReadLine()) != null)
+                        {
+                            if (findPOROFlag && line.Contains("***"))// 文末结束
+                            {
+                                break;
+                            }
+                            if (line.Contains("MINIMUM VALUE"))// 准备开始数据行
+                            {
+                                findPOROFlag = true;
+                            }
+                            else if (line.Contains("I,  J,  K) I="))// 开始数据行
+                            {
+                                bool POROdataStartFlag = false;
+                                // dz
+                                int startNumDz = int.Parse(line.Substring(15, 3).Trim());
+
+                                while ((line = sr.ReadLine()) != null)
+                                {
+                                    if (("".Equals(line) || line.Contains("***")) && POROdataStartFlag)//"".Equals(line) ||
+                                    {
+                                        break;
+                                    }
+                                    else if (line.Length > 0 && !line.Contains("I,  J,  K) I="))
+                                    {
+                                        POROdataStartFlag = true;
+                                        int k = 0;//一行的循环count i
+                                        int rowNum = -1;
+                                        int filech = -1;
+                                        rowNum = int.Parse(line.Substring(4, 3).Trim());//行号j                                        
+                                        filech = int.Parse(line.Substring(8, 3).Trim());//层号k
+                                        if (ch.Equals("" + filech))//ch.Equals("" + filech))
+                                        {
+                                            string[] sArray = line.Substring(12).Split(' ');
+                                            if (sArray.Length > 2)
+                                            {
+                                                foreach (string i in sArray)
+                                                {
+                                                    if (i != "" && "-----" != i)
+                                                    {
+                                                        double val = Convert.ToDouble(i.Replace("*", "."));
+                                                        // poro[POROcount] = val;
+                                                        ntgDT.Rows[rowNum - 1][startNumDz + k - 1] = val;
+                                                        k++;
+                                                    }
+                                                    else if ("-----" == i)
+                                                    {
+                                                        //poro[POROcount] = 0;
+                                                        ntgDT.Rows[rowNum - 1][startNumDz + k - 1] = 0;
+                                                        k++;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        int chInt = Convert.ToInt32(ch);
+                        int POROcount = (chInt - 1) * x * y;
+                        for (int j = 0; j < y; j++)
+                        {
+                            for (int i = 0; i < x; i++)
+                            {
+                                string tmpStr = ntgDT.Rows[j][i].ToString();
+                                ntgs[POROcount] = Convert.ToDouble(tmpStr);
+                                POROcount++;
+                            }
+                        }
+
+                    }
+                    else if (line.Contains("SOIL ") && line.Contains(" AT"))//饱和度信息 UNITS (无关：BARSA是压力单位
                     {
                         //Console.WriteLine(line);
                         line = sr.ReadLine();
@@ -469,10 +673,13 @@ namespace 数模建模.SIMB
                                 // if (compdatArray[6].ToString().Contains("*"))
                                 if ("1*".Equals(compdatArray[6])) // 不对不对 地层系数不用了 1*是省略1
                                     row["地层系数"] = Convert.ToDouble(compdatArray[7]);
+                                else if ("2*".Equals(compdatArray[6]))
+                                    row["地层系数"] = Convert.ToDouble(compdatArray[7]);
                                 else
                                     row["地层系数"] = Convert.ToDouble(compdatArray[8]);// 计算注采完善明显 2016-11-7 17:02:06 
                             }
-                            catch { //Console.WriteLine("没啥用的地层系数错误");
+                            catch
+                            { //Console.WriteLine("没啥用的地层系数错误");
                             }
                             wellCoord.Rows.Add(row);
                         }
@@ -717,21 +924,22 @@ namespace 数模建模.SIMB
                     line = line.Substring(15, 15).Trim();
                     timeList.Add(line);
                 }
-               // }
+                // }
             }
             return timeList;
         }
-        /**
-         *  读取Facies文件中的NTG 1.txt
-         *  2017-1-9 20:00:40
-         *  
-         *  2017年5月8日 20:28:58
-         *  改为GPRO 的NTG、PORO、PERMX
-         */
+        //  2017-1-9 20:00:40  2017年5月8日 20:28:58
+        /// <summary>
+        /// 没有poro
+        ///    读取Facies文件中的NTG 1.txt 
+        ///     改为GPRO 的NTG、PORO、PERMX 
+        /// </summary>
+        /// <param name="filepath"></param>
+        /// <returns></returns>
         public double[] readNTG(string filepath)
         {
-            ntgs = new double[x * y * z];
-            poro = new double[x * y * z];
+            //ntgs = new double[x * y * z];
+            //  poro = new double[x * y * z];
             permx = new double[x * y * z];
             StreamReader sr = new StreamReader(filepath, Encoding.Default);
             String line;
@@ -757,91 +965,91 @@ namespace 数模建模.SIMB
                         default:
                             // Console.WriteLine("de" + line);
                             break;
-                        case "NTG":
-                            Console.WriteLine("nt" + line);
-                            int fipnumCount = 0;
-                            while ((line = sr.ReadLine()) != null)
-                            {
+                        /* case "NTG":
+                             Console.WriteLine("nt" + line);
+                             int fipnumCount = 0;
+                             while ((line = sr.ReadLine()) != null)
+                             {
 
-                                check1complete = true;
-                                if ("".Equals(line))
-                                {
-                                    break;
-                                }
-                                else if (line.Contains("--"))
-                                {
-                                    continue;
-                                }
-                                else
-                                {
+                                 check1complete = true;
+                                 if ("".Equals(line))
+                                 {
+                                     break;
+                                 }
+                                 else if (line.Contains("--"))
+                                 {
+                                     continue;
+                                 }
+                                 else
+                                 {
 
-                                    string[] fipnumOneline = line.Split(' ');
-                                    foreach (string onefipnum in fipnumOneline)
-                                    {
-                                        if ("/".Equals(onefipnum))
-                                        {
-                                            break;
-                                        }
-                                        else if (onefipnum != null && onefipnum.Contains("*"))
-                                        {//解压缩
-                                            string[] manys = onefipnum.Split('*');
-                                            for (int i = 0; i < Convert.ToDouble(manys[0]); i++)
-                                            {
-                                                ntgs[fipnumCount] = Convert.ToDouble(manys[1]);
-                                                fipnumCount++;
-                                            }
-                                        }
-                                        else if (onefipnum != null && !"".Equals(onefipnum))
-                                        {
-                                            //Console.WriteLine(onefipnum+"ntcccc" + line);
-                                            ntgs[fipnumCount] = Convert.ToDouble(onefipnum);
-                                            fipnumCount++;
-                                        }
-                                    }
-                                }
-                            }
-                            break;
-                        case "PORO":// 孔隙度
-                            Console.WriteLine("poro" + line);
-                            int poroCount = 0;
-                            while ((line = sr.ReadLine()) != null)
-                            {
-                                check2complete = true;
-                                if ("".Equals(line))
-                                {
-                                    break;
-                                }
-                                else if (line.Contains("--"))
-                                {
-                                    continue;
-                                }
-                                else
-                                {
-                                    string[] fipnumOneline = line.Split(' ');
-                                    foreach (string onefipnum in fipnumOneline)
-                                    {
-                                        if ("/".Equals(onefipnum))
-                                        {
-                                            break;
-                                        }
-                                        else if (onefipnum != null && onefipnum.Contains("*"))
-                                        {//解压缩
-                                            string[] manys = onefipnum.Split('*');
-                                            for (int i = 0; i < Convert.ToDouble(manys[0]); i++)
-                                            {
-                                                poro[poroCount] = Convert.ToDouble(manys[1]);
-                                                poroCount++;
-                                            }
-                                        }
-                                        else if (onefipnum != null && !"".Equals(onefipnum))
-                                        {
-                                            poro[poroCount] = Convert.ToDouble(onefipnum);
-                                            poroCount++;
-                                        }
-                                    }
-                                }
-                            }
-                            break;
+                                     string[] fipnumOneline = line.Split(' ');
+                                     foreach (string onefipnum in fipnumOneline)
+                                     {
+                                         if ("/".Equals(onefipnum))
+                                         {
+                                             break;
+                                         }
+                                         else if (onefipnum != null && onefipnum.Contains("*"))
+                                         {//解压缩
+                                             string[] manys = onefipnum.Split('*');
+                                             for (int i = 0; i < Convert.ToDouble(manys[0]); i++)
+                                             {
+                                                 ntgs[fipnumCount] = Convert.ToDouble(manys[1]);
+                                                 fipnumCount++;
+                                             }
+                                         }
+                                         else if (onefipnum != null && !"".Equals(onefipnum))
+                                         {
+                                             //Console.WriteLine(onefipnum+"ntcccc" + line);
+                                             ntgs[fipnumCount] = Convert.ToDouble(onefipnum);
+                                             fipnumCount++;
+                                         }
+                                     }
+                                 }
+                             }
+                             break;
+                         /* case "PORO":// 孔隙度
+                              Console.WriteLine("poro" + line);
+                              int poroCount = 0;
+                              while ((line = sr.ReadLine()) != null)
+                              {
+                                  check2complete = true;
+                                  if ("".Equals(line))
+                                  {
+                                      break;
+                                  }
+                                  else if (line.Contains("--"))
+                                  {
+                                      continue;
+                                  }
+                                  else
+                                  {
+                                      string[] fipnumOneline = line.Split(' ');
+                                      foreach (string onefipnum in fipnumOneline)
+                                      {
+                                          if ("/".Equals(onefipnum))
+                                          {
+                                              break;
+                                          }
+                                          else if (onefipnum != null && onefipnum.Contains("*"))
+                                          {//解压缩
+                                              string[] manys = onefipnum.Split('*');
+                                              for (int i = 0; i < Convert.ToDouble(manys[0]); i++)
+                                              {
+                                                  poro[poroCount] = Convert.ToDouble(manys[1]);
+                                                  poroCount++;
+                                              }
+                                          }
+                                          else if (onefipnum != null && !"".Equals(onefipnum))
+                                          {
+                                              poro[poroCount] = Convert.ToDouble(onefipnum);
+                                              poroCount++;
+                                          }
+                                      }
+                                  }
+                              }
+                              break;*/
                         case "PERMX":// 渗透率
                             Console.WriteLine("PERMX" + line);
                             int permxCount = 0;
@@ -920,7 +1128,7 @@ namespace 数模建模.SIMB
                             {
                                 break;
                             }
-                           
+
                             if ("".Equals(line))
                             {
                                 break;
@@ -934,7 +1142,7 @@ namespace 数模建模.SIMB
                                 string[] dzOneline = line.Split(' ');
                                 foreach (string onedz in dzOneline)
                                 {
-                                    if ("/".Equals(onedz)|| onedz.Contains("'"))
+                                    if ("/".Equals(onedz) || onedz.Contains("'"))
                                     {
                                         check1complete = true;
                                         break;
@@ -1034,7 +1242,87 @@ namespace 数模建模.SIMB
                 sr.Close();
                 return partfacies;
             }
-           
+
+        }
+        // 2017年8月11日 08:59:58
+        /// <summary>
+        /// 通用读取方法 比如类似prt.dx,prt.dy 等
+        /// </summary>
+        /// <returns></returns>
+        public DataTable readPRTijk(string line, StreamReader sr, string ch)
+        {
+            DataTable dtresult = new DataTable();
+            //规划Datatable大小
+            for (int i = 1; i <= x; i++)
+            {
+                DataColumn column = new DataColumn();
+                column.DataType = System.Type.GetType("System.Double");//该列的数据类型 
+                column.ColumnName = "v" + i;
+                dtresult.Columns.Add(column);
+            }
+            for (int i = 1; i <= y; i++)
+            {
+                DataRow row = dtresult.NewRow();
+                dtresult.Rows.Add(row);
+            }
+            bool findDzFlag = false;
+            bool allBreak = false;
+            while ((line = sr.ReadLine()) != null)
+            {
+                if (findDzFlag && line.Contains("**"))
+                {
+                    break;
+                }
+                if (line.Contains("MINIMUM VALUE"))
+                {
+                    findDzFlag = true;
+                }
+                else if (line.Contains("I,  J,  K) I="))
+                {
+                    bool dzstartFlag = false;
+                    int startNumDz = int.Parse(line.Substring(15, 3).Trim());
+                    while ((line = sr.ReadLine()) != null)
+                    {
+                        if (("".Equals(line) || line.Contains("**")) && dzstartFlag)
+                        {
+                            if (line.Contains("***")) allBreak = true;
+                            break;
+                        }
+                        else if (line.Length > 0)
+                        {
+                            dzstartFlag = true;
+                            int k = 0;//一行的循环count i
+                            int rowNum = -1;
+                            int filech = -1;
+                            rowNum = int.Parse(line.Substring(4, 3).Trim());//行号j                                        
+                            filech = int.Parse(line.Substring(8, 3).Trim());//层号k
+                            if (ch.Equals("" + filech))
+                            {
+                                string[] sArray = line.Substring(12).Split(' ');
+                                if (sArray.Length > 2)
+                                {
+                                    foreach (string i in sArray)
+                                    {
+                                        if (i != "" && "-----" != i)
+                                        {
+                                            double val = Convert.ToDouble(i.Replace("*", "."));
+                                            dtresult.Rows[rowNum - 1][startNumDz + k - 1] = val;
+                                            k++;
+                                        }
+                                        else if ("-----" == i)
+                                        {
+                                            dtresult.Rows[rowNum - 1][startNumDz + k - 1] = 0;
+                                            k++;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    } // while2
+                }
+                if (allBreak) break;
+            } // while1
+            return dtresult;
         }
     }
 }
