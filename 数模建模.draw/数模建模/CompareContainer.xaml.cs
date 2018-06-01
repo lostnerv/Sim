@@ -14,6 +14,7 @@ using 数模建模.Drawer;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Collections;
+using 数模建模.tools;
 
 namespace 数模建模
 {
@@ -23,11 +24,14 @@ namespace 数模建模
    
     public partial class CompareContainer : Window
     {
+      
+
+        /*
         string fgridpath = "E:\\Documents\\项目开发\\MyWork\\8\\需求\\f10-27right\\F10-27RIGHT_E100.FGRID";
         string prtpath = "E:\\wf.txt";
         string schIncPath = "E:\\Documents\\项目开发\\MyWork\\8\\需求\\f10-27right\\f10-27right_sch.inc";
         string gothIncPath = "E:\\Documents\\项目开发\\MyWork\\8\\需求\\f10-27right\\f10-27right_goth.inc";
-        string faciesPath = "E:\\1.txt";
+        string faciesPath = "E:\\1.txt";*/
         String drawTypeLeftStr, drawTypeRightStr,ch;
         DataTable canvesGrid= new DataTable();//坐标转换并记录对应网格坐标和层号
         DataTable faultDt = new DataTable();//断层
@@ -64,6 +68,13 @@ namespace 数模建模
 
         private void readCombo()
         {
+            XmlHelper helper = new XmlHelper();// 2018-5-31
+            string fgridpath = helper.GetXMLDocument("FGRID");
+            string prtpath = helper.GetXMLDocument("PRTINC");
+            string schIncPath = helper.GetXMLDocument("SCH");
+            string gothIncPath = helper.GetXMLDocument("GOTH");
+            string faciesPath = helper.GetXMLDocument("FACIES");
+
             TimeSpan ts = DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0);
             double timed = ts.TotalSeconds;
             string ch = this.comboCH.Text;
@@ -125,6 +136,13 @@ namespace 数模建模
 
         private void click_draw(object sender, RoutedEventArgs e)
         {
+            XmlHelper helper = new XmlHelper(); //2018-5-31
+            string fgridpath = helper.GetXMLDocument("FGRID");
+            string prtpath = helper.GetXMLDocument("PRTINC");
+            string schIncPath = helper.GetXMLDocument("SCH");
+            string gothIncPath = helper.GetXMLDocument("GOTH");
+            string faciesPath = helper.GetXMLDocument("FACIES");
+            string gproPath = helper.GetXMLDocument("GPRO");//渗透率
             TimeSpan ts = DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0);
             double timed = ts.TotalSeconds;
             //
@@ -186,6 +204,7 @@ namespace 数模建模
                 faultDt = fgridPrt.readGothInc(gothIncPath, ch);//断层
                 fgridPrt.readSchInc(schIncPath, ch);
                 poro = fgridPrt.poro;//孔隙度
+                fgridPrt.readNTG(gproPath);
                 permx = fgridPrt.permx;//渗透率
                 dzDt = fgridPrt.dzDt;//厚度
                 System.Console.WriteLine("开始求极值:" + ((DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds - timed));
@@ -199,9 +218,13 @@ namespace 数模建模
                         list.Add(tempd);
                     }
                 }
-                list.Sort();
-                minpermx = Convert.ToDouble(list[0]);
-                maxpermx = Convert.ToDouble(list[list.Count - 1]);
+                if (list.Count > 0)
+                {
+                    list.Sort();
+                    minpermx = Convert.ToDouble(list[0]);
+                    maxpermx = Convert.ToDouble(list[list.Count - 1]);
+                }
+               
                 //孔隙度极值
                 list.Clear();
                 //list = new ArrayList(poro);
@@ -213,9 +236,12 @@ namespace 数模建模
                         list.Add(tempd);
                     }
                 }
-                list.Sort();
-                minporo = Convert.ToDouble(list[0]);
-                maxporo = Convert.ToDouble(list[list.Count - 1]);
+                if (list.Count > 0)
+                {
+                    list.Sort();
+                    minporo = Convert.ToDouble(list[0]);
+                    maxporo = Convert.ToDouble(list[list.Count - 1]);
+                }
 
                 // 计算缩放比例
                 double dzoomx2, dzoomy2;
@@ -306,6 +332,14 @@ namespace 数模建模
         }
         private void drawCanvas(String drawTypeStr, 数模建模.SIMB.FgridPrt fgridPrt, Canvas canvesptr)
         {
+            XmlHelper helper = new XmlHelper();// 2018-5-31
+            string fgridpath = helper.GetXMLDocument("FGRID");
+            string prtpath = helper.GetXMLDocument("PRTINC");
+            string schIncPath = helper.GetXMLDocument("SCH");
+            string gothIncPath = helper.GetXMLDocument("GOTH");
+            string faciesPath = helper.GetXMLDocument("FACIES");
+
+
             int prtXCount = 0;
             int prtYCount = 0;
             int onefacies = 0;

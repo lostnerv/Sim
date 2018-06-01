@@ -490,6 +490,11 @@ namespace 数模建模.SIMB
                             for (int i = 0; i < x; i++)
                             {
                                 poro[POROcount] = (double)poroDT.Rows[j][i];
+                                if (poro[POROcount] > 0)
+                                {
+                                    //Console.WriteLine(POROcount);
+                                    //Console.WriteLine("cuk you kakdka  lkaaslmdl;asl;dkl;asdl;asl;d");
+                                } 
                                 POROcount++;
                             }
                         }
@@ -887,6 +892,10 @@ namespace 数模建模.SIMB
                                         for (int i = 0; i < (int)Convert.ToDouble(manys[0]); i++)
                                         {
                                             facies[fipnumCount] = (int)Convert.ToDouble(manys[1]);
+                                         // if (facies[fipnumCount] > 0)
+                                          //  {
+                                         //       Console.WriteLine("hahahahhahaha" + (facies[fipnumCount]));
+                                         //   }
                                             fipnumCount++;
                                         }
                                     }
@@ -1066,6 +1075,7 @@ namespace 数模建模.SIMB
                                 }
                                 else
                                 {
+                                   
                                     string[] fipnumOneline = line.Split(' ');
                                     foreach (string onefipnum in fipnumOneline)
                                     {
@@ -1078,6 +1088,7 @@ namespace 数模建模.SIMB
                                             string[] manys = onefipnum.Split('*');
                                             for (int i = 0; i < Convert.ToDouble(manys[0]); i++)
                                             {
+                                              
                                                 permx[permxCount] = Convert.ToDouble(manys[1]);
                                                 permxCount++;
                                             }

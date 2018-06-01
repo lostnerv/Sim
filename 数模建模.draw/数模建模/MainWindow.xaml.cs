@@ -78,9 +78,11 @@ namespace 数模建模
 
         private void bt_convertFacies_click(object sender, RoutedEventArgs e)
         {
-            string faciesPath = "E:\\1.txt";
+            XmlHelper helper = new XmlHelper();
+            string faciesPath = helper.GetXMLDocument("FACIES"); // "E:\\1.txt";
             string outPath = "D:";
-            string fgridpath = "E:\\Documents\\项目开发\\MyWork\\8\\需求\\f10-27right\\F10-27RIGHT_E100.FGRID";           
+            string fgridpath = helper.GetXMLDocument("FGRID");   //"E:\\Documents\\项目开发\\MyWork\\8\\需求\\f10-27right\\F10-27RIGHT_E100.FGRID";  
+              
             数模建模.SIMB.ConvertFacies convertFacies = new 数模建模.SIMB.ConvertFacies();
             int[] tablesize= convertFacies.readFGRID(fgridpath);
             foreach (int k in tablesize)

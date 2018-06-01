@@ -23,6 +23,7 @@ using System.Threading;
 using System.IO;
 using System.Windows.Markup;
 using System.Xml;
+
 namespace 数模建模
 {
     /// <summary>
@@ -483,14 +484,14 @@ namespace 数模建模
                             if ("OIL".Equals(stat) && wellLength < 100 * m_d_zoomfactor2)//百米内油井视为同井
                             {
                                 hasProd = true;
-                                Console.WriteLine("本油井找到");
+                             //   Console.WriteLine("本油井找到");
                                 pClick = point0;
                             }
                             if ("WATER".Equals(stat) && wellLength <= wellR * 2)//井距是wellr200 井范围增大4倍数
                             {
                                 //System.Console.WriteLine(stat);
                                 wellCtrlPoint.Add(point0);
-                                Console.WriteLine("邻水井找到");
+                            //    Console.WriteLine("邻水井找到");
                             }
                             else if ("OIL".Equals(stat) && wellLength <= wellR * 2 * 1.5
                                 && wellLength >= 100 * m_d_zoomfactor2)//百米内油井视为同井
@@ -500,8 +501,8 @@ namespace 数模建模
                                 point0 = new Point((point0.X + pClick.X) / 2,
                                     (point0.Y + pClick.Y) / 2);
                                 wellCtrlPoint.Add(point0);
-                                System.Console.WriteLine("l:" + wellLength);
-                                System.Console.WriteLine("r:" + wellR);
+                               // System.Console.WriteLine("l:" + wellLength);
+                              //  System.Console.WriteLine("r:" + wellR);
                                 // if (wellLength <= wellR * 2)
                                 //{
                                 drawedWellR = wellLength / 2;
@@ -1263,7 +1264,6 @@ namespace 数模建模
          * 饱和度和断层
          * 2016-7-2 11:33:06
          */
-
         private void findDc(object sender, RoutedEventArgs e)
         {
             progressBar1.Maximum = 100;
@@ -1319,6 +1319,8 @@ namespace 数模建模
             perfectPoints.Clear();//注采完善区域
             if (ch != null && !"".Equals(ch))//选中层号之后才开始
             {
+                double minporo = 0;
+                double maxporo = 0;
                 Canvas canvesptr = this.canvesprt;
                 canvesptr.Children.Clear();
                 ReservorDraw.pointList.Clear();
@@ -1401,7 +1403,7 @@ namespace 数模建模
 
                 welspecs = fgridPrt.welspecs;//井口网格坐标
                 // 旧的
-                 fgridPrt.readNTG(gproPath);// 净毛比 2017年5月8日 20:43:53 去除孔隙度2017年8月10日 17:18:37
+                fgridPrt.readNTG(gproPath);// 渗透率 净毛比 2017年5月8日 20:43:53 去除孔隙度2017年8月10日 17:18:37
                 //poro = fgridPrt.poro;// 孔隙度 2017年5月8日 20:44:06 取自prt2017年8月10日 17:22:06
                 permx = fgridPrt.permx;// 渗透率 2017年5月8日 20:44:08.
                 //dzs = fgridPrt.readDz(finitPath);
@@ -1421,7 +1423,7 @@ namespace 数模建模
                 }
                 if (0 == list.Count)
                 {
-                    MessageBox.Show("Prt文件没有数据");
+                    MessageBox.Show("gpro文件没有正确格式的permx数据");
                     Environment.Exit(0);
                 }
                 list.Sort();
@@ -1438,9 +1440,20 @@ namespace 数模建模
                         list.Add(tempd);
                     }
                 }
-                list.Sort();
-                double minporo = Convert.ToDouble(list[0]);
-                double maxporo = Convert.ToDouble(list[list.Count - 1]);
+                if (0 == list.Count ) 
+                {
+                    if (null == allCh)// allCh 表示由分析按钮进入的数据，不是画图
+                    {
+                        MessageBox.Show("Prt文件没有正确格式的PORO数据");
+                        Environment.Exit(0);
+                    }
+                }
+                else 
+                {
+                    list.Sort();
+                    minporo = Convert.ToDouble(list[0]);
+                    maxporo = Convert.ToDouble(list[list.Count - 1]);
+                }
 
                 // 计算缩放比例
                 double dzoomx2, dzoomy2;
@@ -5748,6 +5761,9 @@ namespace 数模建模
                 // dzs = fgridPrt.readDz(finitPath); // 新DZ 2017年5月23日 14:24:35
                 dzs = fgridNew.readDzFromFgrid(fgridpath, tablesize);// fgrid dz 2017年7月10日 11:38:57
                 System.Console.WriteLine("开始求极值:" + ((DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds - timed));
+
+                double minporo = 0;
+                double maxporo = 0;
                 //求极值
                 //渗透率
                 ArrayList list = new ArrayList();
@@ -5772,10 +5788,12 @@ namespace 数模建模
                         list.Add(tempd);
                     }
                 }
-                list.Sort();
-                double minporo = Convert.ToDouble(list[0]);
-                double maxporo = Convert.ToDouble(list[list.Count - 1]);
-
+                if (list.Count > 0)// 2018-5-31 右下分析统计报错
+                {
+                    list.Sort();
+                    minporo = Convert.ToDouble(list[0]);
+                    maxporo = Convert.ToDouble(list[list.Count - 1]);
+                }
                 // 计算缩放比例
                 /* double dzoomx2, dzoomy2;
                  double maxX2 = Convert.ToDouble(dtfgridNew.Compute("max(x)", ""));
@@ -5801,8 +5819,8 @@ namespace 数模建模
                  TextBlock[] TextNames = new TextBlock[wellCoord.Rows.Count];*/
                 double[] pointX = new double[wellCoord.Rows.Count];
                 double[] pointY = new double[wellCoord.Rows.Count];
-                int jhCount = 0;
-                Boolean noDz = false;
+                //int jhCount = 0;
+                //Boolean noDz = false;
                 //facies = null;
                 /*if ("相图".Equals(drawTypeStr))
                 {

@@ -144,7 +144,8 @@
                         <Button Content="剩余油储量" Margin="0,390,0,0"   Width="120" Click="newWinEachRes" HorizontalAlignment="Left"  ></Button>
                         <Button Content="单井各层储量" Margin="0,415,0,0"   Width="120"  Click="newWinEachWell" HorizontalAlignment="Left"  ></Button>
                         <Button Content="各层平均孔渗饱" Margin="0,440,0,0"   Width="120"  Click="newKsbEachC" HorizontalAlignment="Left"  ></Button>
-                        <!--                         --> <Button Content="分类型剩余油分布" Margin="0,465,0,0"   Width="120"  Click="remainGrid" HorizontalAlignment="Left"  ></Button>
+                        <!--                         --> 
+                        <Button Content="分类型剩余油分布" Margin="0,465,0,0"   Width="120"  Click="remainGrid" HorizontalAlignment="Left"  ></Button>
 
                     </Canvas>
 
